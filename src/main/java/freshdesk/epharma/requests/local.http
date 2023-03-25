@@ -1,0 +1,115 @@
+###
+# Get ticket list
+GET http://localhost:8080/tickets
+
+###
+# Get ticket per id
+GET http://localhost:8080/tickets/1
+
+###
+# Get ticket list per page
+GET http://localhost:8080/tickets?page=1
+
+###
+# Create a ticket
+POST http://localhost:8080/tickets
+{
+    "phone": "+3519191919191",
+    "name": "Name goes here as well",
+    "subject": "Hello I'm a subject",
+    "requester_id": null,
+    "responder_id": null,
+    "priority": 2,
+    "status": 2,
+    "cc_emails": null,
+    "fwd_emails": null,
+    "reply_cc_emails": null,
+    "source": 1,
+    "email_config_id": null,
+    "group_id": null,
+    "company_id": null,
+    "type": null,
+    "to_emails": null,
+    "product_id": null,
+    "fr_escalated": null,
+    "spam": null,
+    "urgent": null,
+    "is_escalated": null,
+    "created_at": null,
+    "updated_at": null,
+    "due_by": null,
+    "fr_due_by": null,
+    "description_text": null,
+    "description": "Hello I'm a description",
+    "tags": null,
+    "attachments": null,
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/tickets/29"
+        },
+        "ticket": {
+            "href": "http://localhost:8080/tickets/29"
+        }
+    }
+}
+
+###
+# Update a ticket
+PUT http://localhost:8080/tickets/1
+{
+    "phone": null,
+    "name": null,
+    "subject": "Hello I'm a subject",
+    "requester_id": null,
+    "responder_id": null,
+    "priority": 3,
+    "status": 3,
+    "cc_emails": null,
+    "fwd_emails": null,
+    "reply_cc_emails": null,
+    "source": null,
+    "email_config_id": null,
+    "group_id": null,
+    "company_id": null,
+    "type": null,
+    "to_emails": null,
+    "product_id": null,
+    "fr_escalated": null,
+    "spam": null,
+    "urgent": null,
+    "is_escalated": null,
+    "created_at": null,
+    "updated_at": null,
+    "due_by": null,
+    "fr_due_by": null,
+    "description_text": null,
+    "description": null,
+    "tags": null,
+    "attachments": null,
+    "_links": {
+        "self": {
+            "href": "http://localhost:8080/tickets/21"
+        },
+        "ticket": {
+            "href": "http://localhost:8080/tickets/21"
+        }
+    }
+}
+
+###
+# Restore a previously deleted ticket
+PUT http://localhost:8080/tickets/1/restore
+
+###
+# Delete a ticket
+DEL http://localhost:8080/tickets/1
+
+###
+# Delete tickets in bulk
+DEL http://localhost:8080/tickets/bulk_delete
+{
+    "bulk_action":
+    {
+        "ids": [2,3,4]
+    }
+}

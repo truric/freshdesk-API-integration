@@ -1,0 +1,309 @@
+{
+	"info": {
+		"_postman_id": "6258508b-b868-49b9-b041-e087a5591443",
+		"name": "Freshdesk",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all tickets",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tickets per page",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets?page=1",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get tickets per id",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets/5",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"path": [
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a  ticket",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"phone\": \"+3519191919193\", \r\n  \"source\" : 1,\r\n  \"status\": 2,\r\n  \"priority\": 2,\r\n  \"subject\": \"Hello I'm a subject\",\r\n  \"description\": \"Hello I'm a description\",\r\n  \"name\": \"Name goes here as well\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a ticket",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\",\r\n    \"product_id\": null,\r\n    \"type\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets/5",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"path": [
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Restore a ticket",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets/1/restore",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"path": [
+						"1",
+						"restore"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a ticket",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets/1",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"path": [
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete tickets in bulk",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "x",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{API_KEY}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MAIN_DOMAIN}}tickets/bulk_delete",
+					"host": [
+						"{{MAIN_DOMAIN}}tickets"
+					],
+					"path": [
+						"bulk_delete"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "API_KEY",
+			"value": "SFwYEiL3MAdxtTqepSv"
+		},
+		{
+			"key": "MAIN_DOMAIN",
+			"value": "https://eixpharma.freshdesk.com/api/v2/"
+		}
+	]
+}
