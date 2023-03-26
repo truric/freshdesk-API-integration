@@ -2,30 +2,44 @@ package freshdesk.epharma;
 
 import freshdesk.epharma.controller.TicketController;
 import freshdesk.epharma.model.Ticket;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class FreshdeskApplicationTests {
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Autowired
 	private TicketController ticketController;
 
-	@Autowired
-	RestTemplate restTemplate;
+	private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 
 	@Value("${freshdesk.url.main}")
 	private String MAIN_URL;
+
+	private MockRestServiceServer mockServer;
+
+	@BeforeEach
+	public void setup() {
+		mockServer = MockRestServiceServer.createServer(new RestTemplateBuilder().build());
+	}
 
 	@Test
 	void getAllTickets() {
@@ -37,7 +51,7 @@ class FreshdeskApplicationTests {
 
 			assert tickets != null;
 			for (Ticket ticket : tickets) {
-				System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getId(), ticket.getName(),
+				System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getPhone(), ticket.getName(),
 						ticket.getSubject(), ticket.getPhone(), ticket.getPriority(), ticket.getStatus());
 			}
 
@@ -48,13 +62,13 @@ class FreshdeskApplicationTests {
 
 	@Test
 	void getTicketById() {
-		long ticketId = 1;
+		long ticketId = 2;
 		ResponseEntity<Ticket> response = ticketController.getTicketById(ticketId);
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
 			System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", "ID", "Name", "Subject", "Phone", "Priority", "Status");
-			System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getId(), ticket.getName(),
+			System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getPhone(), ticket.getName(),
 					ticket.getSubject(), ticket.getPhone(), ticket.getPriority(), ticket.getStatus());
 		} else {
 			System.out.println("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
@@ -71,7 +85,7 @@ class FreshdeskApplicationTests {
 			System.out.println("Page number: " +  pageNumber + "\n");
 			System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", "ID", "Name", "Subject", "Phone", "Priority", "Status");
 			for (Ticket ticket : tickets) {
-				System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getId(), ticket.getName(),
+				System.out.printf("%-10s %-20s %-50s %-15s %-10s %-15s%n", ticket.getPhone(), ticket.getName(),
 						ticket.getSubject(), ticket.getPhone(), ticket.getPriority(), ticket.getStatus());
 			}
 		} else {
@@ -87,44 +101,102 @@ class FreshdeskApplicationTests {
 	}
 
 	@Test
-	@Disabled
-//	TODO
 	void createTicket() {
-		ticketController.createTicket(new Ticket());
+		Ticket newTicket = new Ticket("11223344", 1, 2, 1,
+				"Ticket subject", "Ticket description", "Ticket name");
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		ResponseEntity<Ticket> response = ticketController.createTicket(newTicket);
+		HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
 
-		HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
-		ResponseEntity<Ticket> response = restTemplate.exchange(
-				MAIN_URL,
-				HttpMethod.POST,
-				requestEntity,
-				Ticket.class);
-
-		assertEquals(HttpStatus.CREATED, response.getStatusCode());
-		assertNotNull(response.getBody());
-//        assertEquals("John Smith", response.getBody().getName());
-//        assertEquals("Example subject", response.getBody().getSubject());
-//        assertEquals(2, response.getBody().getPriority());
-//        assertEquals(1, response.getBody().getStatus());
-//        assertEquals("1234567890", response.getBody().getPhone());
+		if (httpStatus == HttpStatus.CREATED) {
+			Ticket createdTicket = response.getBody();
+			System.out.printf(String.valueOf(createdTicket));
+		} else {
+			fail("Failed to create ticket");
+		}
 	}
 
+	/**
+	 * this will be the mockito approach
+	 *
+	 * private MockRestServiceServer mockServer;
+	 *
+	 * @BeforeEach
+	 * public void setup() {
+	 * 		mockServer = MockRestServiceServer.createServer(new RestTemplateBuilder().build());
+	 * }
+	 *
+	 * ......
+	 * 		URI uri = UriComponentsBuilder.fromUriString(MAIN_URL)
+	 * 				.path("tickets")
+	 * 				.build()
+	 * 				.toUri();
+	 *
+	 *
+	 * 		// Mock the response from the external API
+	 * 		mockServer.expect(requestTo(uri))
+	 * 				.andExpect(method(HttpMethod.POST))
+	 * 				.andRespond(withStatus(HttpStatus.CREATED));
+	 *
+	 * 		ResponseEntity<String> response = restTemplate.postForEntity(uri, newTicket, String.class);
+	 * 		assertEquals(HttpStatus.OK, response.getStatusCode());
+	 *
+	 * 		// Verify that the ticket was created in the database
+	 * 		ResponseEntity<Ticket> savedTicket = ticketController.getTicketById(newTicket.getId());
+	 * 		assertNotNull(savedTicket);
+	 * 		assertEquals(newTicket.getSubject(), savedTicket.getBody().getSubject());
+	 *
+	 * 		mockServer.expect(requestTo(uri))
+	 * 				.andExpect(method(HttpMethod.POST))
+	 * 				.andRespond(withStatus(HttpStatus.CREATED));
+	 */
 
 	@Test
-	@Disabled
-//	TODO
-	void updateTicket() {
-		ticketController.updateTicket(1L, new Ticket());
+	void updateTicket() throws ResourceNotFoundException {
+		Ticket newTicket = new Ticket("11223344", 1, 2, 1,
+				"Ticket subject", "Ticket description", "Ticket name");
+		ResponseEntity<Ticket> createResponse = ticketController.createTicket(newTicket);
+
+		String responseBody = String.valueOf(createResponse.getBody());
+		/**
+		 * API doesn't allow id to be a property
+		 * have to get id from full json object
+		 * every property that are returned are the ones set up
+		 * meanwhile, postman returns full json object, id inclusive
+		 */
+		int startIndex = responseBody.indexOf("\"id\": \"") + 7;
+		int endIndex = responseBody.indexOf(",", startIndex);
+		if (endIndex < 0 || endIndex > responseBody.length()) {
+			endIndex = responseBody.length() - 1;
+		}
+		String ticketIdString = responseBody.substring(startIndex, endIndex);
+		Long ticketId = Long.parseLong(ticketIdString);
+
+		Ticket updatedTicket = new Ticket("99887766", 2, 1, 2,
+				"Updated subject", "Updated description", "Updated name");
+		ResponseEntity<Ticket> updateResponse = ticketController.updateTicket(ticketId, updatedTicket);
+
+		assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
+
+		ResponseEntity<Ticket> getResponse = ticketController.getTicketById(ticketId);
+
+		assertEquals(HttpStatus.OK, getResponse.getStatusCode());
+
+		Ticket returnedTicket = getResponse.getBody();
+		assertEquals(updatedTicket.getPhone(), returnedTicket.getPhone());
+		assertEquals(updatedTicket.getPriority(), returnedTicket.getPriority());
+		assertEquals(updatedTicket.getSubject(), returnedTicket.getSubject());
+		assertEquals(updatedTicket.getDescription(), returnedTicket.getDescription());
+		assertEquals(updatedTicket.getName(), returnedTicket.getName());
+
+//		assertEquals(ticketId, returnedTicket.getId());
 	}
 
 	@Test
 	@Disabled
 //	TODO
 	void deleteTicketById() {
-		int ticketIdToDelete = 3;
+		int ticketIdToDelete = 2;
 		ResponseEntity<Void> response = restTemplate.exchange(
 				MAIN_URL + "/tickets/" + ticketIdToDelete,
 				HttpMethod.DELETE,
@@ -141,5 +213,34 @@ class FreshdeskApplicationTests {
 		);
 		assertEquals(HttpStatus.OK, getResponse.getStatusCode());
 	}
+
+//	@Test
+//	void anotherDeleteByIdApproach() {
+//		// Create a new ticket to delete
+//		Ticket newTicket = new Ticket("1234567890", 1, 1, 1,
+//				"Ticket subject", "Ticket description", "Ticket name");
+//		ResponseEntity<String> createResponse = ticketController.createTicket(newTicket);
+//		assertEquals(HttpStatus.CREATED, createResponse.getStatusCode());
+//		assertNotNull(newTicket);
+//
+//		// Delete the created ticket
+//		ResponseEntity<Void> deleteResponse = restTemplate.exchange(
+//				MAIN_URL + "/tickets/" + newTicket.getId(),
+//				HttpMethod.DELETE,
+//				null,
+//				Void.class
+//		);
+//		assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
+//		assertNull(deleteResponse.getBody());
+//		assertNull(newTicket);
+//
+//		// Verify that the ticket has been deleted
+//		ResponseEntity<Ticket> getResponse = restTemplate.getForEntity(
+//				MAIN_URL + "/tickets/" + newTicket.getId(),
+//				Ticket.class
+//		);
+//		assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
+//		assertNull(getResponse.getBody());
+//	}
 
 }

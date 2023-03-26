@@ -1,6 +1,5 @@
 package freshdesk.epharma.config;
 
-import freshdesk.epharma.error.RestTemplateResponseErrorHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +22,7 @@ public class TicketRestTemplateConfig {
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(Collections.singletonList(new AuthHeaderInterceptor(API_KEY)));
-        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
+//        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
         return restTemplate;
     }
 
