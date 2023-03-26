@@ -1,6 +1,7 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.model.Ticket;
+import freshdesk.epharma.model.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -109,17 +110,17 @@ public class TicketController {
      */
 
     @PostMapping("/tickets")
-    public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
+    public ResponseEntity<TicketResponse> createTicket(@RequestBody Ticket ticket) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
+        ResponseEntity<TicketResponse> response = restTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
-                Ticket.class);
+                TicketResponse.class);
 
         return response;
     }

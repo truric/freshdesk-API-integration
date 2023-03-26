@@ -2,6 +2,7 @@ package freshdesk.epharma;
 
 import freshdesk.epharma.controller.TicketController;
 import freshdesk.epharma.model.Ticket;
+import freshdesk.epharma.model.TicketResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -105,16 +106,17 @@ class FreshdeskApplicationTests {
 		Ticket newTicket = new Ticket("11223344", 1, 2, 1,
 				"Ticket subject", "Ticket description", "Ticket name");
 
-		ResponseEntity<Ticket> response = ticketController.createTicket(newTicket);
-		HttpStatus httpStatus = (HttpStatus) response.getStatusCode();
+		ResponseEntity<TicketResponse> response = ticketController.createTicket(newTicket);
+		HttpStatusCode httpStatus = response.getStatusCode();
 
 		if (httpStatus == HttpStatus.CREATED) {
-			Ticket createdTicket = response.getBody();
-			System.out.printf(String.valueOf(createdTicket));
+			TicketResponse createdTicket = response.getBody();
+			System.out.println(createdTicket);
 		} else {
 			fail("Failed to create ticket");
 		}
 	}
+
 
 	/**
 	 * this will be the mockito approach
@@ -155,7 +157,7 @@ class FreshdeskApplicationTests {
 	void updateTicket() throws ResourceNotFoundException {
 		Ticket newTicket = new Ticket("11223344", 1, 2, 1,
 				"Ticket subject", "Ticket description", "Ticket name");
-		ResponseEntity<Ticket> createResponse = ticketController.createTicket(newTicket);
+		ResponseEntity<TicketResponse> createResponse = ticketController.createTicket(newTicket);
 
 		String responseBody = String.valueOf(createResponse.getBody());
 		/**
