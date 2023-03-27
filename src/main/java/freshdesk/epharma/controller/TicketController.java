@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -71,44 +73,6 @@ public class TicketController {
         return ResponseEntity.ok(Arrays.asList(tickets));
     }
 
-//    @PostMapping("/tickets")
-//    public ResponseEntity<String> createTicket(@RequestBody Ticket ticket) {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
-//
-//        ResponseEntity<Ticket> response = restTemplate.postForEntity(
-//                MAIN_URL + "tickets", requestEntity, Ticket.class
-//        );
-//
-//        if (response.getStatusCode() == HttpStatus.CREATED) {
-//            return ResponseEntity.ok().body("Ticket successfully created " + ticket.getName() + ". Status code: " + response.getStatusCodeValue());
-//        } else {
-//            throw new ResourceNotFoundException("Ticket not created");
-//        }
-//    }
-
-    /***
-     * TicketResponse approach
-     *
-     *     @PostMapping("/tickets")
-     *     public ResponseEntity<TicketResponse> createTicket(@RequestBody Ticket ticket) {
-     *         HttpHeaders headers = new HttpHeaders();
-     *         headers.setContentType(MediaType.APPLICATION_JSON);
-     *
-     *         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
-     *
-     *         ResponseEntity<TicketResponse> response = restTemplate.exchange(
-     *                 MAIN_URL + "tickets",
-     *                 HttpMethod.POST,
-     *                 requestEntity,
-     *                 TicketResponse.class);
-     *
-     *         return response;
-     *     }
-     *
-     */
-
     @PostMapping("/tickets")
     public ResponseEntity<TicketResponse> createTicket(@RequestBody Ticket ticket) {
         HttpHeaders headers = new HttpHeaders();
@@ -125,28 +89,8 @@ public class TicketController {
         return response;
     }
 
-//    @PutMapping("/tickets/{id}")
-//    public ResponseEntity<String> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-//
-//        ResponseEntity<Ticket> response = restTemplate.exchange(
-//                MAIN_URL + "tickets/" + ticketId,
-//                HttpMethod.PUT,
-//                requestEntity,
-//                Ticket.class);
-//
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            return ResponseEntity.ok("Ticket [#" + ticketDetails.getPhone() + "] updated successfully");
-//        } else {
-//            throw new ResourceNotFoundException("Ticket not updated");
-//        }
-//    }
-
     @PutMapping("/tickets/{id}")
-    public ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
+    public ResponseEntity<TicketResponse> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -159,7 +103,17 @@ public class TicketController {
                 Ticket.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseEntity.ok(response.getBody());
+            Ticket updatedTicket = response.getBody();
+            assert updatedTicket != null;
+            TicketResponse updatedTicketResponse = new TicketResponse(
+                    updatedTicket.getSubject(),
+                    updatedTicket.getDescription(),
+                    updatedTicket.getName(),
+                    updatedTicket.getRequesterId(),
+                    updatedTicket.getStatus(),
+                    updatedTicket.getPriority()
+            );
+            return ResponseEntity.ok(updatedTicketResponse);
         } else {
             throw new ResourceNotFoundException("Ticket not updated");
         }
@@ -185,7 +139,6 @@ public class TicketController {
         }
     }
 
-//    TODO
     @PutMapping("/tickets/{id}/restore")
     public ResponseEntity<String> restoreDeletedTicket(@PathVariable Long id) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
@@ -199,10 +152,38 @@ public class TicketController {
                 requestEntity,
                 Ticket.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
             return ResponseEntity.ok("Ticket [#" + id + "] restored successfully");
         } else {
             throw new ResourceNotFoundException("Ticket with id: #" + id + " not found");
+        }
+    }
+
+    @PostMapping("/tickets/bulk_delete")
+    public ResponseEntity<String> deleteTicketsInBulk(@RequestBody Map<String, List<Long>> bulkAction) {
+        List<Long> ids = bulkAction.get("ids");
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.badRequest().body("No ticket ids provided for bulk delete");
+        }
+
+        Map<String, List<Long>> requestMap = new HashMap<>();
+        requestMap.put("ids", ids);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, List<Long>>> requestEntity = new HttpEntity<>(requestMap, headers);
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                MAIN_URL + "tickets/bulk_delete",
+                HttpMethod.POST,
+                requestEntity,
+                Void.class);
+
+        if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+            return ResponseEntity.ok().body("Tickets " + ids + " deleted successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete tickets " + ids);
         }
     }
 

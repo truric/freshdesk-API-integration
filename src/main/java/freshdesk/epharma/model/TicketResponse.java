@@ -2,32 +2,30 @@ package freshdesk.epharma.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
 public class TicketResponse {
+    public TicketResponse(String subject, String description, String name, Long requesterId, Integer status, Integer priority) {
+        this.subject = subject;
+        this.description = description;
+        this.name = name;
+        this.requesterId = requesterId;
+        this.status = status;
+        this.priority = priority;
+    }
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("cc_emails")
-    private List<String> ccEmails;
+    @JsonProperty("phone")
+    private String phone;
 
-    @JsonProperty("fwd_emails")
-    private List<String> fwdEmails;
-
-    @JsonProperty("reply_cc_emails")
-    private List<String> replyCcEmails;
-
-    @JsonProperty("ticket_cc_emails")
-    private List<String> ticketCcEmails;
-
-    @JsonProperty("fr_escalated")
-    private boolean frEscalated;
-
-    @JsonProperty("spam")
-    private boolean spam;
+    @JsonProperty("name")
+    private String name;
 
     @JsonProperty("email_config_id")
     private Integer emailConfigId;
@@ -56,12 +54,6 @@ public class TicketResponse {
     @JsonProperty("subject")
     private String subject;
 
-    @JsonProperty("support_email")
-    private String supportEmail;
-
-    @JsonProperty("to_emails")
-    private String toEmails;
-
     @JsonProperty("product_id")
     private Integer productId;
 
@@ -74,33 +66,15 @@ public class TicketResponse {
     @JsonProperty("fr_due_by")
     private String frDueBy;
 
-    @JsonProperty("is_escalated")
-    private boolean isEscalated;
-
     @JsonProperty("description")
     private String description;
 
-    @JsonProperty("description_text")
-    private String descriptionText;
-
     @JsonProperty("custom_fields")
     private Map<String, Object> customFields;
-
-    @JsonProperty("created_at")
-    private String createdAt;
-
-    @JsonProperty("updated_at")
-    private String updatedAt;
 
     @JsonProperty("tags")
     private List<String> tags;
 
     @JsonProperty("attachments")
     private List<String> attachments;
-
-    @JsonProperty("nr_due_by")
-    private String nrDueBy;
-
-    @JsonProperty("nr_escalated")
-    private boolean nrEscalated;
 }
