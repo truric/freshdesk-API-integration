@@ -1,12 +1,15 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.model.Ticket;
+import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketQueryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -20,15 +23,15 @@ public class TicketController {
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
-    private RestTemplate restTemplate;
+    private RestTemplate ticketRestTemplate;
 
-    @GetMapping
+    @GetMapping("/tickets")
     public ResponseEntity<List<Ticket>> getAllTickets() {
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket[]> responseEntity = restTemplate.exchange(
+        ResponseEntity<Ticket[]> responseEntity = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.GET,
                 requestEntity,
@@ -45,7 +48,7 @@ public class TicketController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
                 MAIN_URL + "/tickets/" + ticketId,
                 HttpMethod.GET,
                 requestEntity,
@@ -65,7 +68,7 @@ public class TicketController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket[]> response = restTemplate.getForEntity(
+        ResponseEntity<Ticket[]> response = ticketRestTemplate.getForEntity(
                 MAIN_URL + "tickets?page=" + page,
                 Ticket[].class
         );
@@ -80,7 +83,30 @@ public class TicketController {
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+                MAIN_URL + "tickets",
+                HttpMethod.POST,
+                requestEntity,
+                Ticket.class);
+
+        return response;
+    }
+
+    @PostMapping(value = "/tickets", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Ticket> createTicketWithAttachment(
+            @RequestPart("ticket") Ticket ticket,
+            @RequestPart("attachment") TicketAttachment attachment) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+        body.add("ticket", ticket);
+        body.add("attachments[]", attachment);
+
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
@@ -96,7 +122,7 @@ public class TicketController {
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticketDetails, headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId,
                 HttpMethod.PUT,
                 requestEntity,
@@ -146,7 +172,7 @@ public class TicketController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> responseEntity = restTemplate.exchange(
+        ResponseEntity<Ticket> responseEntity = ticketRestTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 requestEntity,
@@ -162,7 +188,7 @@ public class TicketController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(
+        ResponseEntity<Void> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId,
                 HttpMethod.DELETE,
                 requestEntity,
@@ -182,7 +208,7 @@ public class TicketController {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets/" + id + "/restore",
                 HttpMethod.PUT,
                 requestEntity,
@@ -210,7 +236,7 @@ public class TicketController {
 
         HttpEntity<Map<String, List<Long>>> requestEntity = new HttpEntity<>(requestMap, headers);
 
-        ResponseEntity<Void> response = restTemplate.exchange(
+        ResponseEntity<Void> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets/bulk_delete",
                 HttpMethod.POST,
                 requestEntity,

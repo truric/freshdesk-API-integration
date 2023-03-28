@@ -81,6 +81,12 @@
             <artifactId>spring-core</artifactId>
             <version>6.0.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>9.0.63</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 	<build>

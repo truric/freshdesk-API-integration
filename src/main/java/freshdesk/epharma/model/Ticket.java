@@ -8,13 +8,17 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 //@JsonRootName(value = "results")
 //@JsonPropertyOrder({"id", "phone", "source", "status", "priority", "subject", "description", "name", "requester_id"})
 public class Ticket {
+//public class Ticket implements Serializable {
 
     public Ticket(String phone, Integer source, Integer status, Integer priority, String subject,
                   String description, String name) {
@@ -53,6 +57,17 @@ public class Ticket {
     @NotNull
     @JsonProperty("requester_id")
     private Long requesterId;
+
+    @JsonProperty("attachments")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<TicketAttachment> attachments;
+
+//    usage:
+//    newTicket.setCustomFields(new HashMap<>());
+//    newTicket.getCustomFields().put("cf_testfield", "abcd");
+//    LOGGER.info(objectMapper.writeValueAsString(newTicket));
+//    @JsonProperty("custom_fields")
+//    private Map<String, Object> customFields;
 
 //    @JsonProperty("results")
 //    private List<Ticket> tickets;

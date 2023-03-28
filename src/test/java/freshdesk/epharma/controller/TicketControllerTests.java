@@ -1,19 +1,30 @@
 package freshdesk.epharma.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.model.Ticket;
+import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketQueryDTO;
 import freshdesk.epharma.factory.TestDataFactory;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,15 +34,23 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TicketControllerTests {
+	@Value("${freshdesk.url.main}")
+	private String MAIN_URL;
+
+	@Value("${attachment.filepath}")
+	private String ATTACHMENT_FILE_PATH;
 
 	@Autowired
 	private RestTemplate restTemplate;
 
 	@Autowired
 	private TicketController ticketController;
+
+	@Autowired
+	ObjectMapper objectMapper;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 	private final Ticket newTicket = TestDataFactory.createNewTicket();
@@ -103,6 +122,35 @@ class TicketControllerTests {
 		}
 	}
 
+	@Test
+	public void testCreateTicketWithAttachment() throws Exception {
+		Ticket ticket = new Ticket();
+		ticket.setSubject("Test ticket with attachment");
+		ticket.setDescription("Test ticket description");
+
+		byte[] fileBytes = Files.readAllBytes(Paths.get(ATTACHMENT_FILE_PATH));
+		Resource attachment = new ByteArrayResource(fileBytes) {
+			@Override
+			public String getFilename() {
+				return "epharma.jpeg";
+			}
+		};
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		body.add("ticket", ticket);
+		body.add("attachment", attachment);
+
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+		ResponseEntity<Ticket> responseEntity = restTemplate.postForEntity(MAIN_URL+ "/tickets", requestEntity, Ticket.class);
+
+		assertEquals(201, responseEntity.getStatusCodeValue());
+		assertNotNull(responseEntity.getBody().getId());
+	}
+
 	/**
 	 * this will be the mockito approach
 	 *
@@ -142,7 +190,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Update a Ticket by it's id")
-	@Order(5)
+	@Order(6)
 	public void testUpdateTicketById() {
 		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
@@ -165,7 +213,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Delete a Ticket by it's id")
-	@Order(6)
+	@Order(7)
 	public void testDeleteTicket() throws Exception {
 		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
@@ -184,8 +232,8 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Restore a deleted Ticket by it's id")
-	@Order(7)
-	public void testRestoreDeletedTicket() throws ResourceNotFoundException {
+	@Order(8)
+	public void testRestoreDeletedTicket() throws ResourceNotFoundException, JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 		assertEquals(HttpStatus.CREATED, createdResponse.getStatusCode());
@@ -210,11 +258,12 @@ class TicketControllerTests {
 		assertEquals(newTicket.getSubject(), restoredTicket2.getSubject());
 //		newTicket.getDescription() String value has HTML div tag e.a. "<div>...text...</div>" and restoredTicket2 does not
 		assertTrue(restoredTicket2.getDescription().contains(newTicket.getDescription()));
+		LOGGER.info(objectMapper.writeValueAsString(restoredTicket2));
 	}
 
 	@Test
 	@DisplayName("Filter Tickets by query")
-	@Order(8)
+	@Order(9)
 	public void testFilterTicketsByQuery() throws Exception {
 		TicketQueryDTO query = new TicketQueryDTO();
 		query.setQuery("priority:3");
@@ -227,7 +276,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Delete multiple Tickets in bulk")
-	@Order(9)
+	@Order(10)
 	public void testDeleteTicketsInBulk() throws Exception {
 		ResponseEntity<Ticket> createdResponse1 = ticketController.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse2 = ticketController.createTicket(newTicket);
