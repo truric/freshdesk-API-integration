@@ -1,18 +1,18 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.model.Ticket;
-import freshdesk.epharma.model.TicketResponse;
+import freshdesk.epharma.model.TicketQueryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URI;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -74,23 +74,23 @@ public class TicketController {
     }
 
     @PostMapping("/tickets")
-    public ResponseEntity<TicketResponse> createTicket(@RequestBody Ticket ticket) {
+    public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
 
-        ResponseEntity<TicketResponse> response = restTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
-                TicketResponse.class);
+                Ticket.class);
 
         return response;
     }
 
     @PutMapping("/tickets/{id}")
-    public ResponseEntity<TicketResponse> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
+    public ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -105,18 +105,54 @@ public class TicketController {
         if (response.getStatusCode() == HttpStatus.OK) {
             Ticket updatedTicket = response.getBody();
             assert updatedTicket != null;
-            TicketResponse updatedTicketResponse = new TicketResponse(
+
+            Ticket updated = new Ticket(
+                    updatedTicket.getPhone(),
+                    updatedTicket.getSource(),
+                    updatedTicket.getStatus(),
+                    updatedTicket.getPriority(),
                     updatedTicket.getSubject(),
                     updatedTicket.getDescription(),
-                    updatedTicket.getName(),
-                    updatedTicket.getRequesterId(),
-                    updatedTicket.getStatus(),
-                    updatedTicket.getPriority()
+                    updatedTicket.getName()
             );
-            return ResponseEntity.ok(updatedTicketResponse);
+            return ResponseEntity.ok(updated);
         } else {
             throw new ResourceNotFoundException("Ticket not updated");
         }
+    }
+
+    @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Ticket searchTickets(@ModelAttribute TicketQueryDTO query) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(MAIN_URL + "search/tickets")
+                .queryParam("query", "\"" + query.getQuery() + "\"");
+
+        URI uri = builder.build().toUri();
+        String url = uri.toString().replace("%22", "\"");
+
+        if (query.getPage() != null) {
+            url += ("page" + query.getPage());
+        }
+
+        if (query.getPerPage() != null) {
+            url += ("per_page" + query.getPerPage());
+        }
+
+        if (query.getInclude() != null && !query.getInclude().isEmpty()) {
+            url += ("include" + String.join(",", query.getInclude()));
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Ticket> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                Ticket.class);
+
+        return responseEntity.getBody();
     }
 
     @DeleteMapping("/tickets/{id}")
