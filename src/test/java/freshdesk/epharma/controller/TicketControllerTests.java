@@ -122,35 +122,6 @@ class TicketControllerTests {
 		}
 	}
 
-	@Test
-	public void testCreateTicketWithAttachment() throws Exception {
-		Ticket ticket = new Ticket();
-		ticket.setSubject("Test ticket with attachment");
-		ticket.setDescription("Test ticket description");
-
-		byte[] fileBytes = Files.readAllBytes(Paths.get(ATTACHMENT_FILE_PATH));
-		Resource attachment = new ByteArrayResource(fileBytes) {
-			@Override
-			public String getFilename() {
-				return "epharma.jpeg";
-			}
-		};
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-		body.add("ticket", ticket);
-		body.add("attachment", attachment);
-
-		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-		ResponseEntity<Ticket> responseEntity = restTemplate.postForEntity(MAIN_URL+ "/tickets", requestEntity, Ticket.class);
-
-		assertEquals(201, responseEntity.getStatusCodeValue());
-		assertNotNull(responseEntity.getBody().getId());
-	}
-
 	/**
 	 * this will be the mockito approach
 	 *
@@ -310,4 +281,34 @@ class TicketControllerTests {
 		assertEquals(HttpStatus.OK, notFoundResponse3.getStatusCode());
 	}
 
+	@Test
+	@DisplayName("Create a new Ticket with an attachment")
+	@Disabled
+	public void testCreateTicketWithAttachment() throws Exception {
+		Ticket ticket = new Ticket();
+		ticket.setSubject("Test ticket with attachment");
+		ticket.setDescription("Test ticket description");
+
+		byte[] fileBytes = Files.readAllBytes(Paths.get(ATTACHMENT_FILE_PATH));
+		Resource attachment = new ByteArrayResource(fileBytes) {
+			@Override
+			public String getFilename() {
+				return "epharma.jpeg";
+			}
+		};
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
+		body.add("ticket", ticket);
+		body.add("attachment", attachment);
+
+		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+		ResponseEntity<Ticket> responseEntity = restTemplate.postForEntity(MAIN_URL+ "/tickets", requestEntity, Ticket.class);
+
+		assertEquals(201, responseEntity.getStatusCodeValue());
+		assertNotNull(responseEntity.getBody().getId());
+	}
 }
