@@ -2,6 +2,7 @@ package freshdesk.epharma.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import freshdesk.epharma.api.TicketApi;
 import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketQueryDTO;
@@ -52,9 +53,21 @@ class TicketControllerTests {
 	@Autowired
 	ObjectMapper objectMapper;
 
+	@Autowired
+	TicketApi ticketApi;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 	private final Ticket newTicket = TestDataFactory.createNewTicket();
 	private final Ticket updatedTicket = TestDataFactory.createUpdatedTicket();
+
+	@Test
+	@DisplayName("Get Ticket list")
+	@Order(1)
+	void testGetAllTicketss() throws JsonProcessingException {
+		ResponseEntity<List<Ticket>> tickets = ticketApi.getAllTickets();
+		assertNotNull(tickets);
+		LOGGER.info(objectMapper.writeValueAsString(tickets));
+	}
 
 	@Test
 	@DisplayName("Get Ticket list")
@@ -237,7 +250,7 @@ class TicketControllerTests {
 	@Order(9)
 	public void testFilterTicketsByQuery() throws Exception {
 		TicketQueryDTO query = new TicketQueryDTO();
-		query.setQuery("priority:3");
+		query.setPriority(3);
 
 		Ticket filteredTicket = ticketController.searchTickets(query);
 

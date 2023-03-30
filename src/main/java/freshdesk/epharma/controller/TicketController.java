@@ -1,11 +1,11 @@
 package freshdesk.epharma.controller;
 
+import freshdesk.epharma.api.TicketApi;
 import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketQueryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,16 +16,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.*;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
-public class TicketController {
+public class TicketController implements TicketApi {
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
     private RestTemplate ticketRestTemplate;
 
-    @GetMapping("/tickets")
+    @Override
     public ResponseEntity<List<Ticket>> getAllTickets() {
         HttpHeaders headers = new HttpHeaders();
 
@@ -42,7 +44,7 @@ public class TicketController {
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 
-    @GetMapping("/tickets/{id}")
+    @Override
     public ResponseEntity<Ticket> getTicketById(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
 
@@ -62,7 +64,7 @@ public class TicketController {
         }
     }
 
-    @GetMapping("/tickets/paginated")
+    @Override
     public ResponseEntity<List<Ticket>> getTicketsWithPagination(@RequestParam int page) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -76,7 +78,7 @@ public class TicketController {
         return ResponseEntity.ok(Arrays.asList(tickets));
     }
 
-    @PostMapping("/tickets")
+    @Override
     public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -92,7 +94,7 @@ public class TicketController {
         return response;
     }
 
-    @PostMapping(value = "/tickets", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Override
     public ResponseEntity<Ticket> createTicketWithAttachment(
             @RequestPart("ticket") Ticket ticket,
             @RequestPart("attachment") TicketAttachment attachment) {
@@ -115,8 +117,9 @@ public class TicketController {
         return response;
     }
 
-    @PutMapping("/tickets/{id}")
-    public ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId, @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
+    @Override
+    public ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId,
+                                               @RequestBody Ticket ticketDetails) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -150,30 +153,31 @@ public class TicketController {
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
     public Ticket searchTickets(@ModelAttribute TicketQueryDTO query) {
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(MAIN_URL + "search/tickets")
-                .queryParam("query", "\"" + query.getQuery() + "\"");
+        MultiValueMap<String, String> queryParams = buildQueryParams(query);
 
-        URI uri = builder.build().toUri();
-        String url = uri.toString().replace("%22", "\"");
-
-        if (query.getPage() != null) {
-            url += ("page" + query.getPage());
+        StringBuilder queryStringBuilder = new StringBuilder();
+        for (Map.Entry<String, List<String>> entry : queryParams.entrySet()) {
+            String key = entry.getKey();
+            for (String value : entry.getValue()) {
+                queryStringBuilder.append(key)
+                        .append("=")
+                        .append(value)
+                        .append("&");
+            }
         }
 
-        if (query.getPerPage() != null) {
-            url += ("per_page" + query.getPerPage());
+        String queryString = queryStringBuilder.toString();
+        if (queryString.endsWith("&")) {
+            queryString = queryString.substring(0, queryString.length() - 1);
         }
 
-        if (query.getInclude() != null && !query.getInclude().isEmpty()) {
-            url += ("include" + String.join(",", query.getInclude()));
-        }
+        URI uri = URI.create(MAIN_URL + "search/tickets?query=" + queryString.replace("=",":"));
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         ResponseEntity<Ticket> responseEntity = ticketRestTemplate.exchange(
-                url,
+                uri,
                 HttpMethod.GET,
                 requestEntity,
                 Ticket.class);
@@ -181,7 +185,7 @@ public class TicketController {
         return responseEntity.getBody();
     }
 
-    @DeleteMapping("/tickets/{id}")
+    @Override
     public ResponseEntity<String> deleteTicket(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -201,7 +205,7 @@ public class TicketController {
         }
     }
 
-    @PutMapping("/tickets/{id}/restore")
+    @Override
     public ResponseEntity<String> restoreDeletedTicket(@PathVariable Long id) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -221,7 +225,7 @@ public class TicketController {
         }
     }
 
-    @PostMapping("/tickets/bulk_delete")
+    @Override
     public ResponseEntity<String> deleteTicketsInBulk(@RequestBody Map<String, List<Long>> bulkAction) {
         List<Long> ids = bulkAction.get("ids");
         if (ids == null || ids.isEmpty()) {
@@ -247,6 +251,41 @@ public class TicketController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete tickets " + ids);
         }
+    }
+
+    private MultiValueMap<String, String> buildQueryParams(TicketQueryDTO query) {
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        if (query.getPriority() != null) {
+            queryParams.add("%22priority", String.valueOf(query.getPriority()) + "%22");
+        }
+        if (query.getStatus() != null) {
+            queryParams.add("%22status", String.valueOf(query.getStatus()) + "%22");
+        }
+        if (query.getType() != null) {
+            queryParams.add("%22type", query.getType() + "%22");
+        }
+        if (query.getTag() != null) {
+            queryParams.add("%22tag", query.getTag() + "%22");
+        }
+        if (query.getDueBy() != null) {
+            queryParams.add("%22due_by", query.getDueBy().toString() + "%22");
+        }
+        if (query.getFrDueBy() != null) {
+            queryParams.add("%22fr_due_by", query.getFrDueBy().toString() + "%22");
+        }
+        if (query.getCreatedAt() != null) {
+            queryParams.add("%22created_at", query.getCreatedAt().toString() + "%22");
+        }
+        if (query.getUpdatedAt() != null) {
+            queryParams.add("%22updated_at", query.getUpdatedAt().toString() + "%22");
+        }
+        if (query.getAgentId() != null) {
+            queryParams.add("%22agent_id", String.valueOf(query.getAgentId()) + "%22");
+        }
+        if (query.getGroupId() != null) {
+            queryParams.add("%22group_id", String.valueOf(query.getGroupId()) + "%22");
+        }
+        return queryParams;
     }
 
 }
