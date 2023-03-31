@@ -75,7 +75,7 @@ class TicketControllerTests {
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
-			LOGGER.info("Retrieved ticket: {}", ticket.toString());
+			LOGGER.info("Retrieved ticket: {}", ticket);
 		} else {
 			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
 		}
@@ -276,7 +276,7 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Filter Tickets by query")
 	@Order(9)
-	public void testFilterTicketsByQuery() throws Exception {
+	public void testFilterTicketsByQuery() {
 		TicketQueryDTO query = new TicketQueryDTO();
 
 		// Integer values test
@@ -301,7 +301,7 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Delete multiple Tickets in bulk")
 	@Order(10)
-	public void testDeleteTicketsInBulk() throws Exception {
+	public void testDeleteTicketsInBulk() {
 		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
