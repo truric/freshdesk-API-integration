@@ -12,9 +12,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -152,35 +153,23 @@ public class TicketController implements TicketApi {
 
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
     public Ticket searchTickets(@ModelAttribute TicketQueryDTO query) {
-        HttpHeaders headers = new HttpHeaders();
-
         MultiValueMap<String, String> queryParams = buildQueryParams(query);
 
-        StringBuilder queryStringBuilder = new StringBuilder();
-        for (Map.Entry<String, List<String>> entry : queryParams.entrySet()) {
-            String key = entry.getKey();
-            for (String value : entry.getValue()) {
-                queryStringBuilder.append(key)
-                        .append("=")
-                        .append(value)
-                        .append("&");
-            }
-        }
+        String queryString = queryParams.entrySet().stream()
+                .map(entry -> entry.getKey() + entry.getValue().get(0))
+                .collect(Collectors.joining(" "));
 
-        String queryString = queryStringBuilder.toString();
-        if (queryString.endsWith("&")) {
-            queryString = queryString.substring(0, queryString.length() - 1);
-        }
+        URI uri = URI.create(MAIN_URL + "search/tickets?query=" + queryString);
 
-        URI uri = URI.create(MAIN_URL + "search/tickets?query=" + queryString.replace("=",":"));
-
+        HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         ResponseEntity<Ticket> responseEntity = ticketRestTemplate.exchange(
                 uri,
                 HttpMethod.GET,
                 requestEntity,
-                Ticket.class);
+                Ticket.class
+        );
 
         return responseEntity.getBody();
     }
@@ -255,36 +244,38 @@ public class TicketController implements TicketApi {
 
     private MultiValueMap<String, String> buildQueryParams(TicketQueryDTO query) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        if (query.getPriority() != null) {
-            queryParams.add("%22priority", String.valueOf(query.getPriority()) + "%22");
-        }
-        if (query.getStatus() != null) {
-            queryParams.add("%22status", String.valueOf(query.getStatus()) + "%22");
-        }
-        if (query.getType() != null) {
-            queryParams.add("%22type", query.getType() + "%22");
-        }
-        if (query.getTag() != null) {
-            queryParams.add("%22tag", query.getTag() + "%22");
-        }
-        if (query.getDueBy() != null) {
-            queryParams.add("%22due_by", query.getDueBy().toString() + "%22");
-        }
-        if (query.getFrDueBy() != null) {
-            queryParams.add("%22fr_due_by", query.getFrDueBy().toString() + "%22");
-        }
-        if (query.getCreatedAt() != null) {
-            queryParams.add("%22created_at", query.getCreatedAt().toString() + "%22");
-        }
-        if (query.getUpdatedAt() != null) {
-            queryParams.add("%22updated_at", query.getUpdatedAt().toString() + "%22");
-        }
+
         if (query.getAgentId() != null) {
-            queryParams.add("%22agent_id", String.valueOf(query.getAgentId()) + "%22");
+            queryParams.add("%22", "agent_id:" + query.getAgentId().toString() + "%22");
         }
         if (query.getGroupId() != null) {
-            queryParams.add("%22group_id", String.valueOf(query.getGroupId()) + "%22");
+            queryParams.add("%22", "group_id:" + query.getGroupId().toString() + "%22");
         }
+        if (query.getPriority() != null) {
+            queryParams.add("%22", "priority:" + query.getPriority() + "%22");
+        }
+        if (query.getStatus() != null) {
+            queryParams.add("%22", "status:" + query.getStatus() + "%22");
+        }
+        if (query.getTag() != null) {
+            queryParams.add("%22", "tag:" + query.getTag() + "%22");
+        }
+        if (query.getType() != null) {
+            queryParams.add("%22", "type:" + query.getType() + "%22");
+        }
+        if (query.getDueBy() != null) {
+            queryParams.add("%22", "due_by:" + query.getDueBy().toString() + "%22");
+        }
+        if (query.getFrDueBy() != null) {
+            queryParams.add("%22", "fr_due_by:" + query.getFrDueBy().toString() + "%22");
+        }
+        if (query.getCreatedAt() != null) {
+            queryParams.add("%22", "created_at:" + query.getCreatedAt().toString() + "%22");
+        }
+        if (query.getUpdatedAt() != null) {
+            queryParams.add("%22", "updated_at:" + query.getUpdatedAt().toString() + "%22");
+        }
+
         return queryParams;
     }
 

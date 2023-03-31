@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -250,10 +251,20 @@ class TicketControllerTests {
 	@Order(9)
 	public void testFilterTicketsByQuery() throws Exception {
 		TicketQueryDTO query = new TicketQueryDTO();
-		query.setPriority(3);
+		query.setPriority(3); // Integer values test
 
 		Ticket filteredTicket = ticketController.searchTickets(query);
 
+		assertNotNull(filteredTicket);
+		LOGGER.info(filteredTicket.toString());
+
+		query.setTag("TAG"); // String values test
+		ticketController.searchTickets(query);
+		assertNotNull(filteredTicket);
+		LOGGER.info(filteredTicket.toString());
+
+		query.setCreatedAt(LocalDate.of(2023, 4, 1)); // LocalDate values test
+		ticketController.searchTickets(query);
 		assertNotNull(filteredTicket);
 		LOGGER.info(filteredTicket.toString());
 	}
