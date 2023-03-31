@@ -7,6 +7,8 @@ import freshdesk.epharma.model.*;
 import freshdesk.epharma.factory.TestDataFactory;
 import freshdesk.epharma.service.TicketService;
 import org.junit.jupiter.api.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +30,10 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -41,29 +45,14 @@ class TicketControllerTests {
 	private String ATTACHMENT_FILE_PATH;
 
 	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
 	private TicketService ticketService;
 
 	@Autowired
 	ObjectMapper objectMapper;
 
-	@Autowired
-	TicketApi ticketApi;
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 	private final Ticket newTicket = TestDataFactory.createNewTicket();
 	private final Ticket updatedTicket = TestDataFactory.createUpdatedTicket();
-
-	@Test
-	@DisplayName("Get Ticket list")
-	@Order(1)
-	void testGetAllTicketss() throws JsonProcessingException {
-		ResponseEntity<List<Ticket>> tickets = ticketApi.getAllTickets();
-		assertNotNull(tickets);
-		LOGGER.info(objectMapper.writeValueAsString(tickets));
-	}
 
 	@Test
 	@DisplayName("Get Ticket list")
@@ -118,17 +107,14 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket")
-	@Order(4)
 	void testCreateTicket() {
-		ResponseEntity<Ticket> response = ticketService.createTicket(newTicket);
-		HttpStatusCode httpStatus = response.getStatusCode();
+		Ticket newTicket = TestDataFactory.createNewTicket();
 
-		if (httpStatus == HttpStatus.CREATED) {
-			Ticket createdTicket = response.getBody();
-			LOGGER.info(createdTicket.toString());
-		} else {
-			LOGGER.error("Failed to create ticket");
-		}
+		ResponseEntity<Ticket> response = ticketService.createTicket(newTicket);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertNotNull(response.getBody());
+		assertNotNull(response.getBody().getId());
 	}
 
 	/**
