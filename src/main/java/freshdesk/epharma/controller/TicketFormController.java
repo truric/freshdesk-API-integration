@@ -1,6 +1,5 @@
 package freshdesk.epharma.controller;
 
-import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -32,7 +32,7 @@ public class TicketFormController {
                 requestEntity,
                 TicketForm[].class);
 
-        List<TicketForm> ticketForms = Arrays.asList(responseEntity.getBody());
+        List<TicketForm> ticketForms = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
 
         return new ResponseEntity<>(ticketForms, HttpStatus.OK);
     }
@@ -63,13 +63,11 @@ public class TicketFormController {
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketForm, headers);
 
-        ResponseEntity<TicketForm> response = tickeFormtRestTemplate.exchange(
+        return tickeFormtRestTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
                 TicketForm.class);
-
-        return response;
     }
 
     @PutMapping("/ticket-forms/{id}")

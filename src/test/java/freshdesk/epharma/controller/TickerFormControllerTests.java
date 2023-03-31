@@ -54,7 +54,7 @@ public class TickerFormControllerTests {
         if (response.getStatusCode() == HttpStatus.OK) {
             TicketForm ticketForm = response.getBody();
             assert ticketForm != null;
-            LOGGER.info("Retrieved Ticket Form: {}", ticketForm.toString());
+            LOGGER.info("Retrieved Ticket Form: {}", ticketForm);
         } else {
             LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
         }
@@ -70,6 +70,7 @@ public class TickerFormControllerTests {
 
         if (httpStatus == HttpStatus.CREATED) {
             TicketForm createdTicketForm = response.getBody();
+            assert createdTicketForm != null;
             LOGGER.info(createdTicketForm.toString());
         } else {
             LOGGER.error("Failed to create Ticket Form");
@@ -86,7 +87,6 @@ public class TickerFormControllerTests {
 
         assert createdTicketForm != null;
         ResponseEntity<TicketForm> updatedResponse = ticketFormController.updateTicketForm(createdTicketForm.getId(), updatedTicketForm);
-        TicketForm responseTicketForm = updatedResponse.getBody();
 
         HttpStatusCode httpStatus = updatedResponse.getStatusCode();
         assertEquals(HttpStatus.OK, httpStatus);
@@ -99,9 +99,10 @@ public class TickerFormControllerTests {
     @DisplayName("Delete a Ticket Form by it's id")
     @Disabled
     @Order(5)
-    public void testDeleteTicketForm() throws Exception {
+    public void testDeleteTicketForm() {
         ResponseEntity<TicketForm> createdResponse = ticketFormController.createTicketForm(newTicketForm);
         TicketForm createdTicket = createdResponse.getBody();
+        assert createdTicket != null;
         Long ticketFormId = createdTicket.getId();
 
         ResponseEntity<String> deleteResponse = ticketFormController.deleteTicketForm(ticketFormId);

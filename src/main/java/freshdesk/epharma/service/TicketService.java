@@ -1,7 +1,6 @@
 package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketApi;
-import freshdesk.epharma.factory.TestDataFactory;
 import freshdesk.epharma.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +15,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,8 +25,6 @@ public class TicketService implements TicketApi {
     private String MAIN_URL;
     @Autowired
     private RestTemplate ticketRestTemplate;
-
-    private final Ticket newTicket = TestDataFactory.createNewTicket();
 
     @Override
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -44,7 +38,7 @@ public class TicketService implements TicketApi {
                 requestEntity,
                 Ticket[].class);
 
-        List<Ticket> tickets = Arrays.asList(responseEntity.getBody());
+        List<Ticket> tickets = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
 
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
@@ -73,13 +67,12 @@ public class TicketService implements TicketApi {
     public ResponseEntity<List<Ticket>> getTicketsWithPagination(@RequestParam int page) {
         HttpHeaders headers = new HttpHeaders();
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-
         ResponseEntity<Ticket[]> response = ticketRestTemplate.getForEntity(
                 MAIN_URL + "tickets?page=" + page,
                 Ticket[].class
         );
         Ticket[] tickets = response.getBody();
+        assert tickets != null;
         return ResponseEntity.ok(Arrays.asList(tickets));
     }
 
@@ -90,13 +83,11 @@ public class TicketService implements TicketApi {
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        return ticketRestTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
                 Ticket.class);
-
-        return response;
     }
 
     @Override
@@ -116,13 +107,11 @@ public class TicketService implements TicketApi {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        return ticketRestTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
                 Ticket.class);
-
-        return response;
     }
 
     @Override
@@ -281,10 +270,10 @@ public class TicketService implements TicketApi {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
 
         if (query.getAgentId() != null) {
-            queryParams.add("%22", "agent_id:" + query.getAgentId().toString() + "%22");
+            queryParams.add("%22", "agent_id:" + query.getAgentId() + "%22");
         }
         if (query.getGroupId() != null) {
-            queryParams.add("%22", "group_id:" + query.getGroupId().toString() + "%22");
+            queryParams.add("%22", "group_id:" + query.getGroupId() + "%22");
         }
         if (query.getPriority() != null) {
             queryParams.add("%22", "priority:" + query.getPriority() + "%22");
@@ -299,16 +288,16 @@ public class TicketService implements TicketApi {
             queryParams.add("%22", "type:" + query.getType() + "%22");
         }
         if (query.getDueBy() != null) {
-            queryParams.add("%22", "due_by:" + query.getDueBy().toString() + "%22");
+            queryParams.add("%22", "due_by:" + query.getDueBy() + "%22");
         }
         if (query.getFrDueBy() != null) {
-            queryParams.add("%22", "fr_due_by:" + query.getFrDueBy().toString() + "%22");
+            queryParams.add("%22", "fr_due_by:" + query.getFrDueBy() + "%22");
         }
         if (query.getCreatedAt() != null) {
-            queryParams.add("%22", "created_at:" + query.getCreatedAt().toString() + "%22");
+            queryParams.add("%22", "created_at:" + query.getCreatedAt() + "%22");
         }
         if (query.getUpdatedAt() != null) {
-            queryParams.add("%22", "updated_at:" + query.getUpdatedAt().toString() + "%22");
+            queryParams.add("%22", "updated_at:" + query.getUpdatedAt() + "%22");
         }
 
         return queryParams;

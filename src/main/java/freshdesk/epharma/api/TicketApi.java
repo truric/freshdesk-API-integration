@@ -1,10 +1,8 @@
 package freshdesk.epharma.api;
 
 import freshdesk.epharma.model.Ticket;
-import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketBulkUpdateResponse;
 import freshdesk.epharma.model.TicketQueryDTO;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;

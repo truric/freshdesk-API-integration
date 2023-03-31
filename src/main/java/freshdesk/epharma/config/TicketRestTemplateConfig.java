@@ -22,7 +22,6 @@ public class TicketRestTemplateConfig {
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(Collections.singletonList(new AuthHeaderInterceptor(API_KEY)));
-//        restTemplate.setErrorHandler(new RestTemplateResponseErrorHandler());
         return restTemplate;
     }
 

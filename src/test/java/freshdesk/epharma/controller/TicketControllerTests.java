@@ -2,13 +2,10 @@ package freshdesk.epharma.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freshdesk.epharma.api.TicketApi;
 import freshdesk.epharma.model.*;
 import freshdesk.epharma.factory.TestDataFactory;
 import freshdesk.epharma.service.TicketService;
 import org.junit.jupiter.api.*;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +15,6 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -30,10 +26,8 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -97,6 +91,7 @@ class TicketControllerTests {
 		if (httpStatus == HttpStatus.OK) {
 			List<Ticket> tickets = responseEntity.getBody();
 			LOGGER.info("Page number: " +  pageNumber + "\n");
+			assert tickets != null;
 			for (Ticket ticket : tickets) {
 				LOGGER.info(ticket.toString());
 			}
@@ -163,7 +158,6 @@ class TicketControllerTests {
 
 		assert createdTicket != null;
 		ResponseEntity<Ticket> updatedResponse = ticketService.updateTicket(createdTicket.getId(), updatedTicket);
-		Ticket responseTicket = updatedResponse.getBody();
 
 		HttpStatusCode httpStatus = updatedResponse.getStatusCode();
 		assertEquals(HttpStatus.OK, httpStatus);
@@ -201,6 +195,9 @@ class TicketControllerTests {
 		priorityTicket.setPriority(4);
 		properties.put("priority", priorityTicket);
 
+		assert createdTicket1 != null;
+		assert createdTicket2 != null;
+		assert createdTicket3 != null;
 		List<Long> ids = Arrays.asList(
 				createdTicket1.getId(),
 				createdTicket2.getId(),
@@ -214,7 +211,7 @@ class TicketControllerTests {
 		assertNotNull(bulkUpdateResponseEntity);
 
 		//TODO
-		assertEquals(3, bulkUpdateResponseEntity.getBody().getIds().size());
+		assertEquals(3, Objects.requireNonNull(bulkUpdateResponseEntity.getBody()).getIds().size());
 		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().size());
 		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
 		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
@@ -224,13 +221,14 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Delete a Ticket by it's id")
 	@Order(7)
-	public void testDeleteTicket() throws Exception {
+	public void testDeleteTicket() {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
+		assert createdTicket != null;
 		Long ticketId = createdTicket.getId();
 
 		ResponseEntity<String> deleteResponse = ticketService.deleteTicket(ticketId);
-		String message = deleteResponse.getBody().toString();
+		String message = deleteResponse.getBody();
 
 		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
 		assertEquals("Ticket [#"+ticketId+"] deleted successfully", message);
@@ -249,6 +247,7 @@ class TicketControllerTests {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 		assertEquals(HttpStatus.CREATED, createdResponse.getStatusCode());
+		assert createdTicket != null;
 		assertNotNull(createdTicket.getId());
 
 		ticketService.deleteTicket(createdTicket.getId());
@@ -264,6 +263,7 @@ class TicketControllerTests {
 
 		assertNotNull(restoredTicket);
 
+		assert restoredTicket2 != null;
 		assertEquals(newTicket.getSource(), restoredTicket2.getSource());
 		assertEquals(newTicket.getStatus(), restoredTicket2.getStatus());
 		assertEquals(newTicket.getPriority(), restoredTicket2.getPriority());
@@ -346,7 +346,7 @@ class TicketControllerTests {
 		Resource attachment = new ByteArrayResource(fileBytes) {
 			@Override
 			public String getFilename() {
-				return "epharma.jpeg";
+				return "pharma.jpeg";
 			}
 		};
 
@@ -363,6 +363,6 @@ class TicketControllerTests {
 				ticket, attachment);
 
 		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-		assertNotNull(responseEntity.getBody().getId());
+		assertNotNull(Objects.requireNonNull(responseEntity.getBody()).getId());
 	}
 }
