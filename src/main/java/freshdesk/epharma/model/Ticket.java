@@ -15,10 +15,7 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-//@JsonRootName(value = "results")
-//@JsonPropertyOrder({"id", "phone", "source", "status", "priority", "subject", "description", "name", "requester_id"})
 public class Ticket {
-//public class Ticket implements Serializable {
 
     public Ticket(String phone, Integer source, Integer status, Integer priority, String subject,
                   String description, String name) {
@@ -61,19 +58,4 @@ public class Ticket {
     @JsonProperty("attachments")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TicketAttachment> attachments;
-
-//    usage:
-//    newTicket.setCustomFields(new HashMap<>());
-//    newTicket.getCustomFields().put("cf_testfield", "abcd");
-//    LOGGER.info(objectMapper.writeValueAsString(newTicket));
-//    @JsonProperty("custom_fields")
-//    private Map<String, Object> customFields;
-
-//    @JsonProperty("results")
-//    private List<Ticket> tickets;
-
-//    endpoint Filter Tickets: GET  /api/v2/search/tickets?query=[query]
-//    https://developers.freshdesk.com/api/#filter_tickets
-//    private TicketWrapper ticketWrapper;
-
 }

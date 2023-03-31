@@ -1,7 +1,6 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketForm;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -63,7 +61,7 @@ public class TickerFormControllerTests {
     }
 
     @Test
-    @DisplayName("Create a new Ticket")
+    @DisplayName("Create a new Ticket Form")
     @Disabled
     @Order(3)
     void testCreateTicket() {

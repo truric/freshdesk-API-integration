@@ -2,9 +2,12 @@ package freshdesk.epharma.api;
 
 import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketAttachment;
+import freshdesk.epharma.model.TicketBulkUpdateResponse;
 import freshdesk.epharma.model.TicketQueryDTO;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +31,16 @@ public interface TicketApi {
     @PostMapping(value = "/tickets", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<Ticket> createTicketWithAttachment(
             @RequestPart("ticket") Ticket ticket,
-            @RequestPart("attachment") TicketAttachment attachment);
+            @RequestPart("attachment") Resource attachment);
 
     @PutMapping("/tickets/{id}")
     ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId,
                                         @RequestBody Ticket ticketDetails) throws ResourceNotFoundException;
+
+    @PostMapping("/bulk-update")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    ResponseEntity<TicketBulkUpdateResponse> bulkUpdateTickets(
+            @RequestBody TicketBulkUpdateResponse bulkUpdateRequest);
 
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
     Ticket searchTickets(@ModelAttribute TicketQueryDTO query);

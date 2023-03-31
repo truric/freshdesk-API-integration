@@ -3,26 +3,21 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketApi;
-import freshdesk.epharma.model.Ticket;
-import freshdesk.epharma.model.TicketAttachment;
-import freshdesk.epharma.model.TicketQueryDTO;
+import freshdesk.epharma.model.*;
 import freshdesk.epharma.factory.TestDataFactory;
+import freshdesk.epharma.service.TicketService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -49,7 +44,7 @@ class TicketControllerTests {
 	private RestTemplate restTemplate;
 
 	@Autowired
-	private TicketController ticketController;
+	private TicketService ticketService;
 
 	@Autowired
 	ObjectMapper objectMapper;
@@ -74,7 +69,7 @@ class TicketControllerTests {
 	@DisplayName("Get Ticket list")
 	@Order(1)
 	void testGetAllTickets() {
-		ResponseEntity<List<Ticket>> responseEntity = ticketController.getAllTickets();
+		ResponseEntity<List<Ticket>> responseEntity = ticketService.getAllTickets();
 		HttpStatusCode statusCode = responseEntity.getStatusCode();
 		if (statusCode == HttpStatus.OK) {
 			List<Ticket> tickets = responseEntity.getBody();
@@ -93,7 +88,7 @@ class TicketControllerTests {
 	@Order(2)
 	void testGetTicketById() {
 		long ticketId = 2;
-		ResponseEntity<Ticket> response = ticketController.getTicketById(ticketId);
+		ResponseEntity<Ticket> response = ticketService.getTicketById(ticketId);
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
@@ -108,7 +103,7 @@ class TicketControllerTests {
 	@Order(3)
 	void testGetTicketsWithPagination() {
 		int pageNumber = 1;
-		ResponseEntity<List<Ticket>> responseEntity = ticketController.getTicketsWithPagination(pageNumber);
+		ResponseEntity<List<Ticket>> responseEntity = ticketService.getTicketsWithPagination(pageNumber);
 		HttpStatusCode httpStatus = responseEntity.getStatusCode();
 		if (httpStatus == HttpStatus.OK) {
 			List<Ticket> tickets = responseEntity.getBody();
@@ -125,7 +120,7 @@ class TicketControllerTests {
 	@DisplayName("Create a new Ticket")
 	@Order(4)
 	void testCreateTicket() {
-		ResponseEntity<Ticket> response = ticketController.createTicket(newTicket);
+		ResponseEntity<Ticket> response = ticketService.createTicket(newTicket);
 		HttpStatusCode httpStatus = response.getStatusCode();
 
 		if (httpStatus == HttpStatus.CREATED) {
@@ -164,7 +159,7 @@ class TicketControllerTests {
 	 * 		assertEquals(HttpStatus.OK, response.getStatusCode());
 	 *
 	 * 		// Verify that the ticket was created in the database
-	 * 		ResponseEntity<Ticket> savedTicket = ticketController.getTicketById(newTicket.getId());
+	 * 		ResponseEntity<Ticket> savedTicket = ticketService.getTicketById(newTicket.getId());
 	 * 		assertNotNull(savedTicket);
 	 * 		assertEquals(newTicket.getSubject(), savedTicket.getBody().getSubject());
 	 *
@@ -177,11 +172,11 @@ class TicketControllerTests {
 	@DisplayName("Update a Ticket by it's id")
 	@Order(6)
 	public void testUpdateTicketById() {
-		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 
 		assert createdTicket != null;
-		ResponseEntity<Ticket> updatedResponse = ticketController.updateTicket(createdTicket.getId(), updatedTicket);
+		ResponseEntity<Ticket> updatedResponse = ticketService.updateTicket(createdTicket.getId(), updatedTicket);
 		Ticket responseTicket = updatedResponse.getBody();
 
 		HttpStatusCode httpStatus = updatedResponse.getStatusCode();
@@ -197,21 +192,67 @@ class TicketControllerTests {
 	}
 
 	@Test
+	@DisplayName("Bulk Update Tickets")
+	public void testBulkUpdateTickets() {
+		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
+		Ticket createdTicket1 = createdResponse1.getBody();
+		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
+		Ticket createdTicket2 = createdResponse2.getBody();
+		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
+		Ticket createdTicket3 = createdResponse3.getBody();
+
+		Map<String, Ticket> properties = new HashMap<>();
+
+		Ticket statusTicket1 = new Ticket();
+		statusTicket1.setStatus(3);
+		properties.put("status", statusTicket1);
+
+		Ticket sourceTicket = new Ticket();
+		sourceTicket.setSource(1);
+		properties.put("source", sourceTicket);
+
+		Ticket priorityTicket = new Ticket();
+		priorityTicket.setPriority(4);
+		properties.put("priority", priorityTicket);
+
+		List<Long> ids = Arrays.asList(
+				createdTicket1.getId(),
+				createdTicket2.getId(),
+				createdTicket3.getId()
+		);
+
+		TicketBulkUpdateResponse bulkUpdateRequest = new TicketBulkUpdateResponse(ids, properties, null);
+
+		ResponseEntity<TicketBulkUpdateResponse> bulkUpdateResponseEntity = ticketService.bulkUpdateTickets(bulkUpdateRequest);
+
+		assertNotNull(bulkUpdateResponseEntity);
+
+		//TODO
+		assertEquals(3, bulkUpdateResponseEntity.getBody().getIds().size());
+		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().size());
+		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
+		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
+		assertEquals(4, bulkUpdateResponseEntity.getBody().getProperties().get("priority").getPriority().intValue());
+	}
+
+	@Test
 	@DisplayName("Delete a Ticket by it's id")
 	@Order(7)
 	public void testDeleteTicket() throws Exception {
-		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 		Long ticketId = createdTicket.getId();
 
-		ResponseEntity<String> deleteResponse = ticketController.deleteTicket(ticketId);
-		String message = deleteResponse.getBody();
+		ResponseEntity<String> deleteResponse = ticketService.deleteTicket(ticketId);
+		String message = deleteResponse.getBody().toString();
 
 		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
 		assertEquals("Ticket [#"+ticketId+"] deleted successfully", message);
 
-		ResponseEntity<Ticket> notFoundResponse = ticketController.getTicketById(ticketId);
-//		it should be HttpStatus.NOT_FOUND but HttpStatus.OK is default behaviour or freshdesk API
+		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(ticketId);
+
+//		it should be HttpStatus.NOT_FOUND
+//		but HttpStatus.OK is default behaviour or freshdesk API
 		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
 	}
 
@@ -219,18 +260,18 @@ class TicketControllerTests {
 	@DisplayName("Restore a deleted Ticket by it's id")
 	@Order(8)
 	public void testRestoreDeletedTicket() throws ResourceNotFoundException, JsonProcessingException {
-		ResponseEntity<Ticket> createdResponse = ticketController.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 		assertEquals(HttpStatus.CREATED, createdResponse.getStatusCode());
 		assertNotNull(createdTicket.getId());
 
-		ticketController.deleteTicket(createdTicket.getId());
+		ticketService.deleteTicket(createdTicket.getId());
 
-		ResponseEntity<String> restoredResponse = ticketController.restoreDeletedTicket(createdTicket.getId());
+		ResponseEntity<String> restoredResponse = ticketService.restoreDeletedTicket(createdTicket.getId());
 		assertEquals(HttpStatus.OK, restoredResponse.getStatusCode());
 		assertEquals("Ticket [#"+createdTicket.getId()+"] restored successfully", restoredResponse.getBody());
 
-		ResponseEntity<Ticket> restoredTicket = ticketController.getTicketById(createdTicket.getId());
+		ResponseEntity<Ticket> restoredTicket = ticketService.getTicketById(createdTicket.getId());
 		assertEquals(HttpStatus.OK, restoredTicket.getStatusCode());
 
 		Ticket restoredTicket2 = restoredTicket.getBody();
@@ -251,20 +292,22 @@ class TicketControllerTests {
 	@Order(9)
 	public void testFilterTicketsByQuery() throws Exception {
 		TicketQueryDTO query = new TicketQueryDTO();
-		query.setPriority(3); // Integer values test
 
-		Ticket filteredTicket = ticketController.searchTickets(query);
-
+		// Integer values test
+		query.setPriority(3);
+		Ticket filteredTicket = ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
 		LOGGER.info(filteredTicket.toString());
 
-		query.setTag("TAG"); // String values test
-		ticketController.searchTickets(query);
+		// String values test
+		query.setTag("TAG");
+		ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
 		LOGGER.info(filteredTicket.toString());
 
-		query.setCreatedAt(LocalDate.of(2023, 4, 1)); // LocalDate values test
-		ticketController.searchTickets(query);
+		// LocalDate values test
+		query.setCreatedAt(LocalDate.of(2023, 4, 1));
+		ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
 		LOGGER.info(filteredTicket.toString());
 	}
@@ -273,9 +316,9 @@ class TicketControllerTests {
 	@DisplayName("Delete multiple Tickets in bulk")
 	@Order(10)
 	public void testDeleteTicketsInBulk() throws Exception {
-		ResponseEntity<Ticket> createdResponse1 = ticketController.createTicket(newTicket);
-		ResponseEntity<Ticket> createdResponse2 = ticketController.createTicket(newTicket);
-		ResponseEntity<Ticket> createdResponse3 = ticketController.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
+		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
 
 		Ticket createdTicket1 = createdResponse1.getBody();
 		Ticket createdTicket2 = createdResponse2.getBody();
@@ -290,15 +333,15 @@ class TicketControllerTests {
 		Map<String, List<Long>> bulkAction = new HashMap<>();
 		bulkAction.put("ids", ids);
 
-		ResponseEntity<String> deleteResponse = ticketController.deleteTicketsInBulk(bulkAction);
+		ResponseEntity<String> deleteResponse = ticketService.deleteTicketsInBulk(bulkAction);
 		String message = deleteResponse.getBody();
 
 		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
 		assertEquals("Tickets " + ids + " deleted successfully", message);
 
-		ResponseEntity<Ticket> notFoundResponse1 = ticketController.getTicketById(createdTicket1.getId());
-		ResponseEntity<Ticket> notFoundResponse2 = ticketController.getTicketById(createdTicket2.getId());
-		ResponseEntity<Ticket> notFoundResponse3 = ticketController.getTicketById(createdTicket3.getId());
+		ResponseEntity<Ticket> notFoundResponse1 = ticketService.getTicketById(createdTicket1.getId());
+		ResponseEntity<Ticket> notFoundResponse2 = ticketService.getTicketById(createdTicket2.getId());
+		ResponseEntity<Ticket> notFoundResponse3 = ticketService.getTicketById(createdTicket3.getId());
 
 		assertEquals(HttpStatus.OK, notFoundResponse1.getStatusCode());
 		assertEquals(HttpStatus.OK, notFoundResponse2.getStatusCode());
@@ -330,9 +373,10 @@ class TicketControllerTests {
 
 		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-		ResponseEntity<Ticket> responseEntity = restTemplate.postForEntity(MAIN_URL+ "/tickets", requestEntity, Ticket.class);
+		ResponseEntity<Ticket> responseEntity = ticketService.createTicketWithAttachment(
+				ticket, attachment);
 
-		assertEquals(201, responseEntity.getStatusCodeValue());
+		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 		assertNotNull(responseEntity.getBody().getId());
 	}
 }

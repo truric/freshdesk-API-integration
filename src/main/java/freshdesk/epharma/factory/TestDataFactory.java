@@ -1,18 +1,14 @@
 package freshdesk.epharma.factory;
 
 import freshdesk.epharma.model.Ticket;
+import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketFields;
 import freshdesk.epharma.model.TicketForm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TestDataFactory {
     public static Ticket createNewTicket() {
-//    Map<String, Object> customFields = new HashMap<>();
-//        customFields.put("cf_testfield", "abcd");
         return new Ticket(
                 "1234567890",
                 2,
@@ -21,13 +17,10 @@ public class TestDataFactory {
                 "Ticket subject to restore",
                 "Ticket description to restore",
                 "Ticket name to restore"
-//                customFields
         );
     }
 
     public static Ticket createUpdatedTicket() {
-//    Map<String, Object> customFields = new HashMap<>();
-//        customFields.put("cf_testfield", "abcd");
         return new Ticket(
                 "0987654321",
                 3,
@@ -36,7 +29,6 @@ public class TestDataFactory {
                 "Updated subject",
                 "Updated description",
                 "Updated name"
-//                customFields
         );
     }
 
@@ -92,4 +84,11 @@ public class TestDataFactory {
         return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
     }
 
+    public static TicketAttachment createNewTicketAttachment() {
+        return new TicketAttachment(
+                "image/png",
+                "screenshot.png",
+                Base64.getEncoder().encodeToString("Test attachment content".getBytes()).getBytes()
+        );
+    }
 }
