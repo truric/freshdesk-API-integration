@@ -3,6 +3,7 @@ package freshdesk.epharma.controller;
 import freshdesk.epharma.model.*;
 import freshdesk.epharma.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,5 +41,23 @@ public class TicketController {
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         ticketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/archived/{id}")
+    public ResponseEntity<Ticket> getArchivedTicketById(@PathVariable Long id) {
+        return ticketService.getArchivedTicketById(id);
+    }
+
+    @GetMapping("/archived/{id}/conversations")
+    public ResponseEntity<Ticket> getAllConversationsOfArchivedTicketById(
+            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
+        return ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
+
+    }
+
+    @DeleteMapping("/archived/{id}")
+    public ResponseEntity<String> deleteArchivedTicket(
+            @PathVariable(value = "id") Long archivedTicketId) {
+        return ticketService.deleteArchivedTicket(archivedTicketId);
     }
 }

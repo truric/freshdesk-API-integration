@@ -82,6 +82,38 @@ class TicketControllerTests {
 	}
 
 	@Test
+	@DisplayName("Get a Ticket by it's id")
+	@Disabled
+//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	void testGetArchivedTicketById() {
+		long archivedTicketId = 2;
+		ResponseEntity<Ticket> response = ticketService.getArchivedTicketById(archivedTicketId);
+		if (response.getStatusCode() == HttpStatus.OK) {
+			Ticket ticket = response.getBody();
+			assert ticket != null;
+			LOGGER.info("Retrieved archived ticket: {}", ticket);
+		} else {
+			LOGGER.error("Unable to retrieve archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
+		}
+	}
+
+	@Test
+	@DisplayName("Get all conversations of archived ticket by id")
+	@Disabled
+//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	void testGetAllConversationsOfArchivedTicketById() {
+		long archivedTicketId = 2;
+		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
+		if (response.getStatusCode() == HttpStatus.OK) {
+			Ticket ticket = response.getBody();
+			assert ticket != null;
+			LOGGER.info("All conversations retrieved from archived ticket: {}", ticket);
+		} else {
+			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
+		}
+	}
+
+	@Test
 	@DisplayName("Get Ticket list with pagination")
 	@Order(3)
 	void testGetTicketsWithPagination() {
@@ -234,6 +266,29 @@ class TicketControllerTests {
 		assertEquals("Ticket [#"+ticketId+"] deleted successfully", message);
 
 		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(ticketId);
+
+//		it should be HttpStatus.NOT_FOUND
+//		but HttpStatus.OK is default behaviour or freshdesk API
+		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+	}
+
+	@Test
+	@DisplayName("Delete an Archived Ticket by it's id")
+	@Order(7)
+//		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	public void testDeleteArchivedTicket() {
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
+		Ticket archivedTicket = createdResponse.getBody();
+		assert archivedTicket != null;
+		Long archivedTicketId = archivedTicket.getId();
+
+		ResponseEntity<String> deleteResponse = ticketService.deleteArchivedTicket(archivedTicket.getId());
+		String message = deleteResponse.getBody();
+
+		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
+		assertEquals("Archived Ticket [#"+archivedTicketId+"] deleted successfully", message);
+
+		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(archivedTicketId);
 
 //		it should be HttpStatus.NOT_FOUND
 //		but HttpStatus.OK is default behaviour or freshdesk API

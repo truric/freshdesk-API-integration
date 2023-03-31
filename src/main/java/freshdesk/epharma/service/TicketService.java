@@ -64,6 +64,48 @@ public class TicketService implements TicketApi {
     }
 
     @Override
+    public ResponseEntity<Ticket> getArchivedTicketById(
+            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+                MAIN_URL + "tickets/archived/" + archivedTicketId,
+                HttpMethod.GET,
+                requestEntity,
+                Ticket.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Ticket ticket = response.getBody();
+            return ResponseEntity.ok().body(ticket);
+        } else {
+            throw new ResourceNotFoundException("Archived Ticket with id: #" + archivedTicketId + " not found");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Ticket> getAllConversationsOfArchivedTicketById(
+            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+                MAIN_URL + "tickets/archived/" + archivedTicketId + "/conversations",
+                HttpMethod.GET,
+                requestEntity,
+                Ticket.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Ticket ticket = response.getBody();
+            return ResponseEntity.ok().body(ticket);
+        } else {
+            throw new ResourceNotFoundException("Archived Ticket with id: #" + archivedTicketId + " not found");
+        }
+    }
+
+    @Override
     public ResponseEntity<List<Ticket>> getTicketsWithPagination(@RequestParam int page) {
         HttpHeaders headers = new HttpHeaders();
 
@@ -215,6 +257,27 @@ public class TicketService implements TicketApi {
             return ResponseEntity.ok().body("Ticket [#" + ticketId + "] deleted successfully");
         } else {
             throw new ResourceNotFoundException("Ticket not deleted");
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> deleteArchivedTicket(
+            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Void> response = ticketRestTemplate.exchange(
+                MAIN_URL + "tickets/archived/" + archivedTicketId,
+                HttpMethod.DELETE,
+                requestEntity,
+                Void.class);
+
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            return ResponseEntity.ok().body("Archived ticket [#" + archivedTicketId + "] deleted successfully");
+        } else {
+            throw new ResourceNotFoundException("Archived ticket not deleted");
         }
     }
 

@@ -20,6 +20,13 @@ public interface TicketApi {
     @GetMapping("/tickets/{id}")
     ResponseEntity<Ticket> getTicketById(Long ticketId) throws ResourceNotFoundException;
 
+    @GetMapping("/archived/{id}")
+    ResponseEntity<Ticket> getArchivedTicketById(@PathVariable Long id);
+
+    @GetMapping("/archived/{id}/conversations")
+    ResponseEntity<Ticket> getAllConversationsOfArchivedTicketById(
+            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException;
+
     @GetMapping("/tickets/paginated")
     ResponseEntity<List<Ticket>> getTicketsWithPagination(@RequestParam int page);
 
@@ -45,6 +52,10 @@ public interface TicketApi {
 
     @DeleteMapping("/tickets/{id}")
     ResponseEntity<String> deleteTicket(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException;
+
+    @DeleteMapping("/archived/{id}")
+    ResponseEntity<String> deleteArchivedTicket(
+            @PathVariable(value = "id") Long archivedTicketId);
 
     @PutMapping("/tickets/{id}/restore")
     ResponseEntity<String> restoreDeletedTicket(@PathVariable Long id) throws ResourceNotFoundException;
