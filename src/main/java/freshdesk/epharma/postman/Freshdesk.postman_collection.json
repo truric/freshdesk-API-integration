@@ -6,294 +6,772 @@
 	},
 	"item": [
 		{
-			"name": "Get all tickets",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+			"name": "Ticket",
+			"item": [
+				{
+					"name": "Get all tickets",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					]
+				{
+					"name": "Get archived ticket by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/archived/1",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"archived",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get tickets per page",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets?page=1",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket per id",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/581",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"581"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all conversations of an Archive Ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/archived/1/conversations",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"archived",
+								"1",
+								"conversations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket summary",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/114/summary",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"114",
+								"summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket per id with requester",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/1?include=requester",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"1"
+							],
+							"query": [
+								{
+									"key": "include",
+									"value": "requester"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket with query",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}search/tickets?query=\"priority:4\"",
+							"host": [
+								"{{MAIN_DOMAIN}}search"
+							],
+							"path": [
+								"tickets"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "\"priority:4\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list of ticket_fields",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket_fields",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket_fields"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list of admin ticket_fields",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\",\r\n    \"product_id\": null,\r\n    \"type\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a  ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"phone\": \"+3519191919193\",\r\n  \"source\" : 1,\r\n  \"status\": 2,\r\n  \"priority\": 2,\r\n  \"subject\": \"Hello I'm a subject\",\r\n  \"description\": \"Hello I'm a description\",\r\n  \"name\": \"Name goes here as well\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update tickets in bulk",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": {\r\n        \"ids\": [\r\n            15,\r\n            26,\r\n            37\r\n        ],\r\n        \"properties\": {\r\n            \"status\": 2,\r\n            \"priority\": 4\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/bulk_update",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"bulk_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/21",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"21"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Restore a ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/1/restore",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"1",
+								"restore"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/1",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an archived ticket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}tickets/archived/1",
+							"host": [
+								"{{MAIN_DOMAIN}}tickets"
+							],
+							"path": [
+								"archived",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tickets in bulk",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": {\r\n        \"ids\": [\r\n            101,\r\n            102,\r\n            103\r\n        ]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}/tickets/bulk_delete",
+							"host": [
+								"{{MAIN_DOMAIN}}"
+							],
+							"path": [
+								"tickets",
+								"bulk_delete"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Get tickets per page",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+			"name": "Ticket Form",
+			"item": [
+				{
+					"name": "Get all ticket forms",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets?page=1",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"query": [
-						{
-							"key": "page",
-							"value": "1"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get tickets per id",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets/5",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"path": [
-						"5"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Create a  ticket",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+				{
+					"name": "Get ticket form by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"phone\": \"+3519191919193\", \r\n  \"source\" : 1,\r\n  \"status\": 2,\r\n  \"priority\": 2,\r\n  \"subject\": \"Hello I'm a subject\",\r\n  \"description\": \"Hello I'm a description\",\r\n  \"name\": \"Name goes here as well\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Update a ticket",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305"
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\",\r\n    \"product_id\": null,\r\n    \"type\": null\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets/5",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"path": [
-						"5"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Restore a ticket",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+				{
+					"name": "Create a  ticket form",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets/1/restore",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"path": [
-						"1",
-						"restore"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete a ticket",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Custom ticket form\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 1,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 2,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							]
 						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets/1",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"path": [
-						"1"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete tickets in bulk",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "password",
-							"value": "x",
-							"type": "string"
-						},
-						{
-							"key": "username",
-							"value": "{{API_KEY}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{MAIN_DOMAIN}}tickets/bulk_delete",
-					"host": [
-						"{{MAIN_DOMAIN}}tickets"
-					],
-					"path": [
-						"bulk_delete"
-					]
-				}
-			},
-			"response": []
+			]
 		}
 	],
 	"variable": [

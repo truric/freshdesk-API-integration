@@ -219,6 +219,114 @@
         }
       ]
     },
+    "/api/v2/search/tickets=\"{query}:{value}\"": {
+      "get": {
+        "summary": "Filter Tickets with query",
+        "tags": [
+          "ticket"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "operationId": "get-api-v2-search-tickets?query=-priority:3",
+        "description": "Filter Tickets with query.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TIcket-query-params"
+          }
+        ]
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "query",
+          "in": "path",
+          "required": true,
+          "description": "Query property from TicketFields"
+        },
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "value",
+          "in": "path",
+          "required": true,
+          "description": "Value for query param"
+        }
+      ]
+    },
+    "/api/v2/tickets/{id}include=requester": {
+      "get": {
+        "summary": "Get Ticket with requester info",
+        "tags": [
+          "ticket"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "operationId": "get-ticket-with-requester-info",
+        "description": "Get Ticket with requester info."
+      },
+      "parameters": [
+        {
+          "schema": {
+            "type": "string"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Unique Ticket identifier."
+        }
+      ]
+    },
+    "/api/v2/tickets/{id}/summary": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Unique Ticket identifier."
+        }
+      ],
+      "get": {
+        "summary": "Get Ticket summary",
+        "tags": [
+          "ticket"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "operationId": "get-ticket-summry",
+        "parameters": [],
+        "description": "Get Ticket summary."
+      }
+    },
     "/api/v2/tickets/{id}/restore": {
       "parameters": [
         {
@@ -250,6 +358,41 @@
         },
         "description": "Restore Ticket."
       }
+    },
+    "/api/v2/tickets/bulk_update": {
+      "post": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Update Tickets in bulk",
+        "operationId": "update-tickets-in-bulk",
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "description": "Update Tickets in bulk.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketBulkUpdateResponse"
+              }
+            }
+          },
+          "description": ""
+        }
+      },
+      "parameters": []
     },
     "/api/v2/tickets/bulk_delete": {
       "post": {
@@ -309,23 +452,68 @@
         }
       }
     },
-    "/api/v2/tickets/{id}include=requester": {
-      "get": {
-        "summary": "Get Ticket with requester info",
+    "/api/v2/ticket-forms": {
+      "parameters": [],
+      "post": {
         "tags": [
           "ticket"
         ],
+        "summary": "Create new Ticket Form",
+        "operationId": "create-new-ticket-form",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "405": {
+            "description": "Method Not Allowed"
+          }
+        },
+        "description": "Create new Ticket.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TicketForm"
+              }
+            }
+          },
+          "description": ""
+        }
+      },
+      "get": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Get all Ticket Forms",
+        "operationId": "get-all-ticket-forms",
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
           }
         },
-        "operationId": "get-ticket-with-requester-info",
-        "description": "Get Ticket with requester info."
-      },
+        "description": "Get all Ticket Forms.",
+        "parameters": []
+      }
+    },
+    "/api/v2/ticket-forms/{id}": {
       "parameters": [
         {
           "schema": {
@@ -334,13 +522,11 @@
           "name": "id",
           "in": "path",
           "required": true,
-          "description": "Unique Ticket identifier."
+          "description": "Unique Ticket form identifier."
         }
-      ]
-    },
-    "/api/v2/search/tickets=\"{query}:{value}\"": {
+      ],
       "get": {
-        "summary": "Filter Tickets with query",
+        "summary": "Get Ticket form by id",
         "tags": [
           "ticket"
         ],
@@ -348,36 +534,87 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
           }
         },
-        "operationId": "get-api-v2-search-tickets?query=-priority:3",
-        "description": "Filter Tickets with query."
+        "operationId": "get-ticket-form-id",
+        "parameters": [],
+        "description": "Get Ticket form by id"
       },
-      "parameters": [
-        {
-          "schema": {
-            "type": "string"
+      "put": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Update Ticket Form",
+        "operationId": "update-ticket-form",
+        "responses": {
+          "200": {
+            "description": "OK"
           },
-          "name": "query",
-          "in": "path",
-          "required": true,
-          "description": "Query property from TicketFields"
+          "400": {
+            "description": "Bad Request"
+          }
         },
-        {
-          "schema": {
-            "type": "integer"
-          },
-          "name": "value",
-          "in": "path",
-          "required": true,
-          "description": "Value for query param"
+        "description": "Update Ticket.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "x-examples": {
+                  "Example 1": {
+                    "priority": 3,
+                    "status": 3,
+                    "subject": "Hello I'm a subject",
+                    "product_id": null,
+                    "type": null
+                  }
+                },
+                "properties": {
+                  "priority": {
+                    "type": "integer"
+                  },
+                  "status": {
+                    "type": "integer"
+                  },
+                  "subject": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "Example 1": {
+                  "value": {
+                    "priority": 3,
+                    "status": 3,
+                    "subject": "Hello I'm a subject"
+                  }
+                }
+              }
+            }
+          }
         }
-      ]
+      },
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Delete Ticket Form",
+        "operationId": "delete-ticket-form",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Delete Ticket."
+      }
     },
     "/api/v2/ticket_fields": {
       "get": {
@@ -395,6 +632,88 @@
         },
         "operationId": "get-ticket-field-list",
         "description": "Get Ticket field list."
+      }
+    },
+    "/api/v2/tickets/archived/{id}": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Unique Ticket identifier."
+        }
+      ],
+      "get": {
+        "summary": "Get Archived Ticket by id",
+        "tags": [
+          "ticket"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "operationId": "get-archived-ticket-id",
+        "parameters": [],
+        "description": "Get Archived Ticket by id."
+      },
+      "delete": {
+        "tags": [
+          "ticket"
+        ],
+        "summary": "Delete Archived Ticket",
+        "operationId": "delete-archived-ticket",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "description": "Delete Archived Ticket."
+      }
+    },
+    "/api/v2/tickets/archived/{id}/conversations": {
+      "parameters": [
+        {
+          "schema": {
+            "type": "integer"
+          },
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Unique Ticket identifier."
+        }
+      ],
+      "get": {
+        "summary": "Get all conversations of an Archive Ticket",
+        "tags": [
+          "ticket"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "operationId": "get-all-conversations-of-archive-ticket",
+        "parameters": [],
+        "description": "Get all conversations of an Archive Ticket."
       }
     }
   },
@@ -472,6 +791,165 @@
           "contentType",
           "data"
         ]
+      },
+      "TicketForm": {
+        "title": "TicketForm",
+        "x-stoplight": {
+          "id": "3uzs0sq19tlnf"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "title": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "description": {
+            "type": "string"
+          },
+          "portals": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "fields": {
+            "$ref": "#/components/schemas/TicketFields"
+          },
+          "lastUpdatedBy": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TicketFields": {
+        "title": "TicketFields",
+        "x-stoplight": {
+          "id": "d45xr99pb5508"
+        },
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "labelForCustomer": {
+            "type": "string",
+            "format": "double"
+          },
+          "customerCanEdit": {
+            "type": "boolean",
+            "format": "double"
+          },
+          "requiredForCustomers": {
+            "type": "boolean",
+            "format": "double"
+          },
+          "hintForCustomers": {
+            "type": "string",
+            "format": "double"
+          },
+          "placeholderForCustomers": {
+            "type": "string",
+            "format": "double"
+          },
+          "position": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "TicketBulkUpdateResponse": {
+        "title": "TicketBulkUpdateResponse",
+        "x-stoplight": {
+          "id": "n1w0cbufrz17s"
+        },
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          "properties": {
+            "type": "object"
+          },
+          "ticketReply": {
+            "$ref": "#/components/schemas/TicketReply"
+          }
+        }
+      },
+      "TicketReply": {
+        "title": "TicketReply",
+        "x-stoplight": {
+          "id": "r6hutiirjg8b1"
+        },
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string"
+          }
+        }
+      },
+      "TicketQueryDTO": {
+        "title": "TicketQueryDTO",
+        "x-stoplight": {
+          "id": "089tv72cw8k5a"
+        },
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "integer"
+          },
+          "groupId": {
+            "type": "integer"
+          },
+          "priority": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "tag": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "integer"
+          },
+          "agentId - copy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "frDueBy": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "TIcket-query-params": {
+        "name": "queryParam",
+        "in": "query",
+        "schema": {
+          "type": "string"
+        },
+        "description": "Query property from TicketQueryDTO"
       }
     }
   },
