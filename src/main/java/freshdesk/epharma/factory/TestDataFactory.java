@@ -18,6 +18,9 @@ public class TestDataFactory {
     @Value("${attachment.filepath}")
     private static String ATTACHMENT_FILE_PATH;
 
+    @Value("${attachment.filepath2}")
+    private static String ATTACHMENT_FILE_PATH_2;
+
     public static Ticket createNewTicket() {
         return new Ticket(
                 "1234567890",

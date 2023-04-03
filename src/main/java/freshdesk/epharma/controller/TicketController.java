@@ -27,7 +27,7 @@ public class TicketController {
         return ticketService.getTicketById(id);
     }
 
-    @PostMapping
+    @PostMapping("/tickets")
     public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
         return ticketService.createTicket(ticket);
     }

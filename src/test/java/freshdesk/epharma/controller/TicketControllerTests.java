@@ -82,22 +82,6 @@ class TicketControllerTests {
 	}
 
 	@Test
-	@DisplayName("Get all conversations of archived ticket by id")
-	@Disabled
-//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-	void testGetAllConversationsOfArchivedTicketById() {
-		long archivedTicketId = 2;
-		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
-		if (response.getStatusCode() == HttpStatus.OK) {
-			Ticket ticket = response.getBody();
-			assert ticket != null;
-			LOGGER.info("All conversations retrieved from archived ticket: {}", ticket);
-		} else {
-			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
-		}
-	}
-
-	@Test
 	@DisplayName("Get Ticket list with pagination")
 	@Order(3)
 	void testGetTicketsWithPagination() {
@@ -189,55 +173,6 @@ class TicketControllerTests {
 	}
 
 	@Test
-	@DisplayName("Bulk Update Tickets")
-	@Order(6)
-	@Disabled
-	public void testBulkUpdateTickets() {
-		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
-		Ticket createdTicket1 = createdResponse1.getBody();
-		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
-		Ticket createdTicket2 = createdResponse2.getBody();
-		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
-		Ticket createdTicket3 = createdResponse3.getBody();
-
-		Map<String, Ticket> properties = new HashMap<>();
-
-		Ticket statusTicket1 = new Ticket();
-		statusTicket1.setStatus(3);
-		properties.put("status", statusTicket1);
-
-		Ticket sourceTicket = new Ticket();
-		sourceTicket.setSource(1);
-		properties.put("source", sourceTicket);
-
-		Ticket priorityTicket = new Ticket();
-		priorityTicket.setPriority(4);
-		properties.put("priority", priorityTicket);
-
-		assert createdTicket1 != null;
-		assert createdTicket2 != null;
-		assert createdTicket3 != null;
-		List<Long> ids = Arrays.asList(
-				createdTicket1.getId(),
-				createdTicket2.getId(),
-				createdTicket3.getId()
-		);
-
-		TicketBulkUpdateResponse bulkUpdateRequest = new TicketBulkUpdateResponse(ids, properties, null);
-
-		ResponseEntity<TicketBulkUpdateResponse> bulkUpdateResponseEntity = ticketService.bulkUpdateTickets(bulkUpdateRequest);
-
-		assertNotNull(bulkUpdateResponseEntity);
-
-		//TODO
-		assertEquals(3, Objects.requireNonNull(bulkUpdateResponseEntity.getBody()).getIds().size());
-		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().size());
-		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
-		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
-		assertEquals(4, bulkUpdateResponseEntity.getBody().getProperties().get("priority").getPriority().intValue());
-	}
-
-	@Test
 	@DisplayName("Delete a Ticket by it's id")
 	@Order(7)
 	public void testDeleteTicket() {
@@ -253,29 +188,6 @@ class TicketControllerTests {
 		assertEquals("Ticket [#"+ticketId+"] deleted successfully", message);
 
 		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(ticketId);
-
-//		it should be HttpStatus.NOT_FOUND
-//		but HttpStatus.OK is default behaviour or freshdesk API
-		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
-	}
-
-	@Test
-	@DisplayName("Delete an Archived Ticket by it's id")
-	@Disabled
-//		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-	public void testDeleteArchivedTicket() {
-		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
-		Ticket archivedTicket = createdResponse.getBody();
-		assert archivedTicket != null;
-		Long archivedTicketId = archivedTicket.getId();
-
-		ResponseEntity<String> deleteResponse = ticketService.deleteArchivedTicket(archivedTicket.getId());
-		String message = deleteResponse.getBody();
-
-		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
-		assertEquals("Archived Ticket [#"+archivedTicketId+"] deleted successfully", message);
-
-		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(archivedTicketId);
 
 //		it should be HttpStatus.NOT_FOUND
 //		but HttpStatus.OK is default behaviour or freshdesk API
@@ -396,6 +308,94 @@ class TicketControllerTests {
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		assertEquals(newTicketWithMultiAttachments.getSubject(), Objects.requireNonNull(response.getBody()).getSubject());
 		assertNotNull(response.getBody().getId());
+	}
+
+	@Test
+	@DisplayName("Bulk Update Tickets")
+//	@Order(6)
+	@Disabled
+	public void testBulkUpdateTickets() {
+		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
+		Ticket createdTicket1 = createdResponse1.getBody();
+		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
+		Ticket createdTicket2 = createdResponse2.getBody();
+		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
+		Ticket createdTicket3 = createdResponse3.getBody();
+
+		Map<String, Ticket> properties = new HashMap<>();
+
+		Ticket statusTicket1 = new Ticket();
+		statusTicket1.setStatus(3);
+		properties.put("status", statusTicket1);
+
+		Ticket sourceTicket = new Ticket();
+		sourceTicket.setSource(1);
+		properties.put("source", sourceTicket);
+
+		Ticket priorityTicket = new Ticket();
+		priorityTicket.setPriority(4);
+		properties.put("priority", priorityTicket);
+
+		assert createdTicket1 != null;
+		assert createdTicket2 != null;
+		assert createdTicket3 != null;
+		List<Long> ids = Arrays.asList(
+				createdTicket1.getId(),
+				createdTicket2.getId(),
+				createdTicket3.getId()
+		);
+
+		TicketBulkUpdateResponse bulkUpdateRequest = new TicketBulkUpdateResponse(ids, properties, null);
+
+		ResponseEntity<TicketBulkUpdateResponse> bulkUpdateResponseEntity = ticketService.bulkUpdateTickets(bulkUpdateRequest);
+
+		assertNotNull(bulkUpdateResponseEntity);
+
+		//TODO
+		assertEquals(3, Objects.requireNonNull(bulkUpdateResponseEntity.getBody()).getIds().size());
+		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().size());
+		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
+		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
+		assertEquals(4, bulkUpdateResponseEntity.getBody().getProperties().get("priority").getPriority().intValue());
+	}
+
+	@Test
+	@DisplayName("Get all conversations of archived ticket by id")
+	@Disabled
+//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	void testGetAllConversationsOfArchivedTicketById() {
+		long archivedTicketId = 2;
+		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
+		if (response.getStatusCode() == HttpStatus.OK) {
+			Ticket ticket = response.getBody();
+			assert ticket != null;
+			LOGGER.info("All conversations retrieved from archived ticket: {}", ticket);
+		} else {
+			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
+		}
+	}
+
+	@Test
+	@DisplayName("Delete an Archived Ticket by it's id")
+	@Disabled
+//		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	public void testDeleteArchivedTicket() {
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
+		Ticket archivedTicket = createdResponse.getBody();
+		assert archivedTicket != null;
+		Long archivedTicketId = archivedTicket.getId();
+
+		ResponseEntity<String> deleteResponse = ticketService.deleteArchivedTicket(archivedTicket.getId());
+		String message = deleteResponse.getBody();
+
+		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
+		assertEquals("Archived Ticket [#"+archivedTicketId+"] deleted successfully", message);
+
+		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(archivedTicketId);
+
+//		it should be HttpStatus.NOT_FOUND
+//		but HttpStatus.OK is default behaviour or freshdesk API
+		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
 	}
 
 }
