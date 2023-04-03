@@ -87,14 +87,29 @@
             <version>9.0.63</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>9.0.63</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>javax.servlet</groupId>-->
+<!--            <artifactId>servlet-api</artifactId>-->
+<!--            <version>9.0.63</version>-->
+<!--        </dependency>-->
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>3.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.13</version>
 		</dependency>
 	</dependencies>
 
@@ -112,27 +127,27 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>dockerfile-maven-plugin</artifactId>
-				<version>1.4.13</version>
-				<executions>
-					<execution>
-						<id>build-image</id>
-						<phase>package</phase>
-						<goals>
-							<goal>build</goal>
-						</goals>
-						<configuration>
-							<repository>my-repo/my-app</repository>
-							<tag>${project.version}</tag>
-							<buildArgs>
-								<JAR_FILE>freshdesk-0.0.1-SNAPSHOT.jar</JAR_FILE>
-							</buildArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--			<plugin>-->
+<!--				<groupId>com.spotify</groupId>-->
+<!--				<artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--				<version>1.4.13</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>build-image</id>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>build</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<repository>my-repo/my-app</repository>-->
+<!--							<tag>${project.version}</tag>-->
+<!--							<buildArgs>-->
+<!--								<JAR_FILE>freshdesk-0.0.1-SNAPSHOT.jar</JAR_FILE>-->
+<!--							</buildArgs>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 		</plugins>
 	</build>
 

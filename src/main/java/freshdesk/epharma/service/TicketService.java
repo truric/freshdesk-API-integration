@@ -4,7 +4,7 @@ import freshdesk.epharma.api.TicketApi;
 import freshdesk.epharma.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -133,19 +133,31 @@ public class TicketService implements TicketApi {
     }
 
     @Override
-    public ResponseEntity<Ticket> createTicketWithAttachment(
-            @RequestPart("ticket") Ticket ticket,
-            @RequestPart("attachment") Resource attachmentResource) {
+    public ResponseEntity<Ticket> createTicketWithAttachment(Ticket ticket) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("ticket", ticket);
-//        documentation says:
-//        attachments: array of objects	Ticket attachments.
-//        The total size of these attachments cannot exceed 20MB.
-        body.add("attachments[]", attachmentResource);
+
+        if (ticket.getAttachments().size() > 0) {
+            for (int i = 0; i < ticket.getAttachments().size(); i++) {
+                int changeNameIterator = i;
+                body.add("attachments[]", new ByteArrayResource(ticket.getAttachments().get(changeNameIterator).getData()) {
+                    @Override
+                    public String getFilename() {
+                        return ticket.getAttachments().get(changeNameIterator).getName();
+                    }
+                });
+            }
+        }
+
+        body.add("email", ticket.getEmail());
+        body.add("subject", ticket.getSubject());
+        body.add("description", ticket.getDescription());
+        body.add("source", ticket.getSource());
+        body.add("priority", ticket.getPriority());
+        body.add("status", ticket.getStatus());
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

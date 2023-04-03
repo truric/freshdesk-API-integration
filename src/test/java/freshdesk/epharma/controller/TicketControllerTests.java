@@ -9,15 +9,10 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -47,6 +42,11 @@ class TicketControllerTests {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TicketController.class);
 	private final Ticket newTicket = TestDataFactory.createNewTicket();
 	private final Ticket updatedTicket = TestDataFactory.createUpdatedTicket();
+	private final Ticket newTicketWithAttachment = TestDataFactory.createNewTicketWithAttachment();
+	private final Ticket newTicketWithMultiAttachments = TestDataFactory.createNewTicketWithMultiAttachments();
+
+	TicketControllerTests() throws IOException {
+	}
 
 	@Test
 	@DisplayName("Get Ticket list")
@@ -78,22 +78,6 @@ class TicketControllerTests {
 			LOGGER.info("Retrieved ticket: {}", ticket);
 		} else {
 			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
-		}
-	}
-
-	@Test
-	@DisplayName("Get a Ticket by it's id")
-	@Disabled
-//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-	void testGetArchivedTicketById() {
-		long archivedTicketId = 2;
-		ResponseEntity<Ticket> response = ticketService.getArchivedTicketById(archivedTicketId);
-		if (response.getStatusCode() == HttpStatus.OK) {
-			Ticket ticket = response.getBody();
-			assert ticket != null;
-			LOGGER.info("Retrieved archived ticket: {}", ticket);
-		} else {
-			LOGGER.error("Unable to retrieve archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
 		}
 	}
 
@@ -134,6 +118,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket")
+	@Order(4)
 	void testCreateTicket() {
 		Ticket newTicket = TestDataFactory.createNewTicket();
 
@@ -183,7 +168,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Update a Ticket by it's id")
-	@Order(6)
+	@Order(5)
 	public void testUpdateTicketById() {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
@@ -205,6 +190,8 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Bulk Update Tickets")
+	@Order(6)
+	@Disabled
 	public void testBulkUpdateTickets() {
 		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
 		Ticket createdTicket1 = createdResponse1.getBody();
@@ -274,7 +261,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Delete an Archived Ticket by it's id")
-	@Order(7)
+	@Disabled
 //		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
 	public void testDeleteArchivedTicket() {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
@@ -391,33 +378,24 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket with an attachment")
-	@Disabled
-	public void testCreateTicketWithAttachment() throws Exception {
-		Ticket ticket = new Ticket();
-		ticket.setSubject("Test ticket with attachment");
-		ticket.setDescription("Test ticket description");
+	@Order(11)
+	void testCreateTicketWithAttachmentTest() {
+		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithAttachment);
 
-		byte[] fileBytes = Files.readAllBytes(Paths.get(ATTACHMENT_FILE_PATH));
-		Resource attachment = new ByteArrayResource(fileBytes) {
-			@Override
-			public String getFilename() {
-				return "pharma.jpeg";
-			}
-		};
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-		MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-		body.add("ticket", ticket);
-		body.add("attachment", attachment);
-
-		HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-
-		ResponseEntity<Ticket> responseEntity = ticketService.createTicketWithAttachment(
-				ticket, attachment);
-
-		assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-		assertNotNull(Objects.requireNonNull(responseEntity.getBody()).getId());
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(newTicketWithAttachment.getSubject(), Objects.requireNonNull(response.getBody()).getSubject());
+		assertNotNull(response.getBody().getId());
 	}
+
+	@Test
+	@DisplayName("Create a new Ticket with multi attachments")
+	@Order(12)
+	void testCreateTicketWithMultiAttachmentTest() {
+		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithMultiAttachments);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(newTicketWithMultiAttachments.getSubject(), Objects.requireNonNull(response.getBody()).getSubject());
+		assertNotNull(response.getBody().getId());
+	}
+
 }

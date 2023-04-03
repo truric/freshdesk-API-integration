@@ -3,7 +3,6 @@ package freshdesk.epharma.api;
 import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketBulkUpdateResponse;
 import freshdesk.epharma.model.TicketQueryDTO;
-import org.springframework.core.io.Resource;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,9 +33,7 @@ public interface TicketApi {
     ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket);
 
     @PostMapping(value = "/tickets", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    ResponseEntity<Ticket> createTicketWithAttachment(
-            @RequestPart("ticket") Ticket ticket,
-            @RequestPart("attachment") Resource attachment);
+    ResponseEntity<Ticket> createTicketWithAttachment(Ticket ticket);
 
     @PutMapping("/tickets/{id}")
     ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId,

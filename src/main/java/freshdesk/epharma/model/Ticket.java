@@ -28,6 +28,8 @@ public class Ticket {
     @NotNull
     @JsonProperty("phone")
     private String phone;
+    @JsonProperty("email")
+    private String email;
     @NotNull
     @JsonProperty("source")
     private Integer source;

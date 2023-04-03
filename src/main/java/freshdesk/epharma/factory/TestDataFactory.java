@@ -1,13 +1,23 @@
 package freshdesk.epharma.factory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.model.Ticket;
 import freshdesk.epharma.model.TicketAttachment;
 import freshdesk.epharma.model.TicketFields;
 import freshdesk.epharma.model.TicketForm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.util.StreamUtils;
 
+import java.io.IOException;
 import java.util.*;
 
 public class TestDataFactory {
+
+    @Value("${attachment.filepath}")
+    private static String ATTACHMENT_FILE_PATH;
+
     public static Ticket createNewTicket() {
         return new Ticket(
                 "1234567890",
@@ -30,6 +40,53 @@ public class TestDataFactory {
                 "Updated description",
                 "Updated name"
         );
+    }
+
+    public static Ticket createNewTicketWithAttachment() throws IOException {
+        Resource resource = new FileSystemResource("src/main/resources/epharma.jpeg");
+        byte[] attachmentData = StreamUtils.copyToByteArray(resource.getInputStream());
+
+        TicketAttachment attachment = new TicketAttachment();
+        attachment.setName("epharma.jpeg");
+        attachment.setData(attachmentData);
+
+        Ticket ticket = new Ticket();
+        ticket.setSubject("Test Subject");
+        ticket.setDescription("Test Description");
+        ticket.setEmail("test@test.com");
+        ticket.setStatus(2);
+        ticket.setPriority(1);
+        ticket.setAttachments(Collections.singletonList(attachment));
+
+        return ticket;
+    }
+
+    public static Ticket createNewTicketWithMultiAttachments() throws IOException {
+        Resource resource1 = new FileSystemResource("src/main/resources/epharma.jpeg");
+        byte[] attachmentData1 = StreamUtils.copyToByteArray(resource1.getInputStream());
+        TicketAttachment attachment1 = new TicketAttachment();
+        attachment1.setName("attachment1.jpg");
+        attachment1.setData(attachmentData1);
+
+        Resource resource2 = new FileSystemResource("src/main/resources/equipa.jpeg");
+        byte[] attachmentData2 = StreamUtils.copyToByteArray(resource2.getInputStream());
+        TicketAttachment attachment2 = new TicketAttachment();
+        attachment2.setName("attachment2.jpg");
+        attachment2.setData(attachmentData2);
+
+        List<TicketAttachment> attachments = new ArrayList<>();
+        attachments.add(attachment1);
+        attachments.add(attachment2);
+
+        Ticket ticket = new Ticket();
+        ticket.setSubject("Test Subject");
+        ticket.setDescription("Test Description");
+        ticket.setEmail("test@test.com");
+        ticket.setStatus(2);
+        ticket.setPriority(1);
+        ticket.setAttachments(attachments);
+
+        return ticket;
     }
 
     public static TicketForm createNewTicketForm() {
@@ -84,11 +141,8 @@ public class TestDataFactory {
         return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
     }
 
-    public static TicketAttachment createNewTicketAttachment() {
-        return new TicketAttachment(
-                "image/png",
-                "screenshot.png",
-                Base64.getEncoder().encodeToString("Test attachment content".getBytes()).getBytes()
-        );
+    public static String serializeToJson(Object object) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(object);
     }
 }
