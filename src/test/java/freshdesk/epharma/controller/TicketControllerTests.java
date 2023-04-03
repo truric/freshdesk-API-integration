@@ -82,8 +82,23 @@ class TicketControllerTests {
 	}
 
 	@Test
-	@DisplayName("Get Ticket list with pagination")
+	@DisplayName("Get a Tickets summary")
 	@Order(3)
+	void testGetTicketSummary() {
+		long ticketId = 2;
+		ResponseEntity<Ticket> response = ticketService.getTicketSummary(ticketId);
+		if (response.getStatusCode() == HttpStatus.OK) {
+			Ticket ticket = response.getBody();
+			assert ticket != null;
+			LOGGER.info("Retrieved tickets summary: {}", ticket);
+		} else {
+			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
+		}
+	}
+
+	@Test
+	@DisplayName("Get Ticket list with pagination")
+	@Order(4)
 	void testGetTicketsWithPagination() {
 		int pageNumber = 1;
 		ResponseEntity<List<Ticket>> responseEntity = ticketService.getTicketsWithPagination(pageNumber);
@@ -102,7 +117,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket")
-	@Order(4)
+	@Order(5)
 	void testCreateTicket() {
 		Ticket newTicket = TestDataFactory.createNewTicket();
 
@@ -152,7 +167,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Update a Ticket by it's id")
-	@Order(5)
+	@Order(6)
 	public void testUpdateTicketById() {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();

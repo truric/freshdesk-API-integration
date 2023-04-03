@@ -64,6 +64,26 @@ public class TicketService implements TicketApi {
     }
 
     @Override
+    public ResponseEntity<Ticket> getTicketSummary(Long ticketId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+                MAIN_URL + "/tickets/" + ticketId + "summary",
+                HttpMethod.GET,
+                requestEntity,
+                Ticket.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            Ticket ticket = response.getBody();
+            return ResponseEntity.ok().body(ticket);
+        } else {
+            throw new ResourceNotFoundException("Ticket with id: #" + ticketId + " not found");
+        }
+    }
+
+    @Override
     public ResponseEntity<Ticket> getArchivedTicketById(
             @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();

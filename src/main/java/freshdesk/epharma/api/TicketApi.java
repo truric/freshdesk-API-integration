@@ -19,6 +19,9 @@ public interface TicketApi {
     @GetMapping("/tickets/{id}")
     ResponseEntity<Ticket> getTicketById(Long ticketId) throws ResourceNotFoundException;
 
+    @GetMapping("/tickets/{id}/summary")
+    ResponseEntity<Ticket> getTicketSummary(Long ticketId) throws ResourceNotFoundException;
+
     @GetMapping("/archived/{id}")
     ResponseEntity<Ticket> getArchivedTicketById(@PathVariable Long id);
 

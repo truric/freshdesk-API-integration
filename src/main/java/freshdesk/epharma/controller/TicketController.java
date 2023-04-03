@@ -27,6 +27,11 @@ public class TicketController {
         return ticketService.getTicketById(id);
     }
 
+    @GetMapping("/{id}/summary")
+    public ResponseEntity<Ticket> getTicketSummary(@PathVariable Long id) {
+        return ticketService.getTicketById(id);
+    }
+
     @PostMapping("/tickets")
     public ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) {
         return ticketService.createTicket(ticket);
