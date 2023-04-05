@@ -66,7 +66,7 @@ public class TicketFormService implements TicketFormApi {
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketForm, headers);
 
         return tickeFormtRestTemplate.exchange(
-                MAIN_URL + "tickets",
+                MAIN_URL + "ticket-forms",
                 HttpMethod.POST,
                 requestEntity,
                 TicketForm.class);

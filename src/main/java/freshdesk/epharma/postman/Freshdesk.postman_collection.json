@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "6258508b-b868-49b9-b041-e087a5591443",
+		"_postman_id": "0c48d271-ec92-423c-8436-57743b8cc2e5",
 		"name": "Freshdesk",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14707147"
 	},
 	"item": [
 		{
@@ -150,12 +151,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}tickets/581",
+							"raw": "{{MAIN_DOMAIN}}tickets/1",
 							"host": [
 								"{{MAIN_DOMAIN}}tickets"
 							],
 							"path": [
-								"581"
+								"1"
 							]
 						}
 					},
@@ -755,7 +756,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Custom ticket form\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 1,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 2,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"title\": \"Custom ticket form 2\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 103000803251,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 103000803261,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        },\r\n                {\r\n            \"id\": 103000803252,\r\n            \"label_for_customers\": \"subject\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"subject\",\r\n            \"hint_for_customers\": \"subject\"\r\n        },\r\n                {\r\n            \"id\": 103000803260,\r\n            \"label_for_customers\": \"description\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"description\",\r\n            \"hint_for_customers\": \"description\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -1,10 +1,7 @@
 package freshdesk.epharma.factory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freshdesk.epharma.model.Ticket;
-import freshdesk.epharma.model.TicketAttachment;
-import freshdesk.epharma.model.TicketFields;
-import freshdesk.epharma.model.TicketForm;
+import freshdesk.epharma.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -96,24 +93,30 @@ public class TestDataFactory {
         List<TicketFields> fields = new ArrayList<>();
 
         TicketFields field1 = new TicketFields();
-        field1.setId(1L);
-        field1.setLabelForCustomer("Field 1");
         field1.setCustomerCanEdit(true);
-        field1.setRequiredForCustomers(true);
-        field1.setHintForCustomers("Hint for Field 1");
-        field1.setPlaceholderForCustomers("Placeholder for Field 1");
+        field1.setLabelForCustomer("Label for customers test 1");
+        field1.setDisplayedToCustomers(true);
+        field1.setLabel("Label test 1");
+        TicketFieldType type = TicketFieldType.valueOf("CUSTOM_TEXT");
+        field1.setType(type);
 
         fields.add(field1);
 
-        TicketFields field2 = new TicketFields();
-        field2.setId(2L);
-        field2.setLabelForCustomer("Field 2");
-        field2.setCustomerCanEdit(true);
-        field2.setRequiredForCustomers(true);
-        field2.setHintForCustomers("Hint for Field 2");
-        field2.setPlaceholderForCustomers("Placeholder for Field 2");
-
-        fields.add(field2);
+//        TicketFields field2 = new TicketFields();
+//        field2.setCustomerCanEdit(true);
+//        field2.setLabelForCustomer("Label for customers test 2");
+//        field2.setDisplayedToCustomers(true);
+//        field2.setLabel("Label test 2");
+//        field2.setPosition(1);
+//        type = TicketFieldType.CUSTOM_DROPDOWN;
+//        field2.setType(type);
+//        TicketFieldChoices[] choices = new TicketFieldChoices[]{
+//                new TicketFieldChoices("Refund", 1),
+//                new TicketFieldChoices("Faulty Product", 2),
+//                new TicketFieldChoices("Item Not Delivered", 3)
+//        };
+//
+//        fields.add(field2);
 
         return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
     }

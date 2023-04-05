@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,30 +20,38 @@ public class TicketForm {
         this.fields = fields;
     }
 
+    @JsonProperty("id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long id;
 
+    @JsonProperty("name")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @NotNull
+    @UniqueElements
+    private String name;
+
     @JsonProperty("title")
+    @NotNull
     private String title;
 
-    @NotNull
-    @JsonProperty("default")
-    private boolean isDefault;
+//    @JsonProperty("default")
+//    @JsonInclude(JsonInclude.Include.NON_NULL)
+//    private boolean isDefault;
 
     @JsonProperty("description")
+    @NotNull
     private String description;
 
-    @NotNull
     @JsonProperty("portals")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Object> portals;
 
-    @NotNull
     @JsonProperty("fields")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TicketFields> fields;
 
-    @NotNull
     @JsonProperty("last_updated_by")
-    private LocalDate lastUpdatedBy;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long lastUpdatedBy;
 
 }

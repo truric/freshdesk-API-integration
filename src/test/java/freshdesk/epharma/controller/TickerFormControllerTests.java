@@ -47,7 +47,7 @@ public class TickerFormControllerTests {
     }
 
     @Test
-    @DisplayName("Get a Ticket Form by it's id")
+    @DisplayName("Get a Ticket Form by its id")
     @Order(2)
     void testGetTicketFormById() {
         long ticketFormId = 103000131305L;
