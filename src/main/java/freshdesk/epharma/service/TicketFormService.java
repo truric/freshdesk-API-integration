@@ -1,5 +1,6 @@
 package freshdesk.epharma.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFormApi;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketFields.TicketFields;
@@ -89,7 +90,8 @@ public class TicketFormService implements TicketFormApi {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(ticketFields);
     }
-
+@Autowired
+private ObjectMapper objectMapper;
     private ResponseEntity<TicketFields> createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
         Map<String, Object>[] choicesMapArray = (Map<String, Object>[]) ticketFieldsMap.get("choices");
 
@@ -107,16 +109,17 @@ public class TicketFormService implements TicketFormApi {
         ticketFields.setPosition((Integer) ticketFieldsMap.get("position"));
         ticketFields.setType((String) ticketFieldsMap.get("type"));
 
-        List<Map<String, TicketFieldChoices>> choices = new ArrayList<>();
+        List<TicketFieldChoices> choices = new ArrayList<>();
 
         for (Map<String, Object> choiceMap : choicesMapArray) {
             String value = (String) choiceMap.get("value");
-            Integer position = (Integer) choiceMap.get("position");
-            Map<String, TicketFieldChoices> choice = new HashMap<>();
-            choice.put("value", new TicketFieldChoices(value, position));
-//            System.out.println(choice);
-            choices.add(choice);
-//            System.out.println(choices);
+            Integer position = 0;
+
+            if(choiceMap.get("position") instanceof Integer p){
+                position = p;
+            }
+
+            choices.add(new TicketFieldChoices(value, position));
         }
         ticketFields.setChoices(choices);
 
@@ -143,7 +146,15 @@ public class TicketFormService implements TicketFormApi {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<TicketFields> requestEntity = new HttpEntity<>(ticketFields, headers);
+
+        String payload = "";
+        try {
+             payload = objectMapper.writeValueAsString(ticketFields);
+            System.out.println(" payload -> " + payload);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
         return tickeFormtRestTemplate.exchange(
                 MAIN_URL + "admin/ticket_fields",

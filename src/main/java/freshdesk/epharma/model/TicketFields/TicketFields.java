@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -40,7 +39,6 @@ public class TicketFields {
     private String label;
 
     @JsonProperty("type")
-//    @JsonDeserialize(using = TicketFieldTypeDeserializer.class)
     @NotNull
     private String type;
 
@@ -64,7 +62,6 @@ public class TicketFields {
 
     @JsonProperty("choices")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JsonSerialize(using = TicketFieldChoicesSerializer.class)
-    private List<Map<String, TicketFieldChoices>> choices;
+    private List<TicketFieldChoices> choices;
 
 }

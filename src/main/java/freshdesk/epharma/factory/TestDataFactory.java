@@ -1,6 +1,5 @@
 package freshdesk.epharma.factory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.model.Ticket.Ticket;
 import freshdesk.epharma.model.Ticket.TicketAttachment;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
@@ -96,14 +95,14 @@ public class TestDataFactory {
         fieldMap.put("customer_can_edit", true);
         fieldMap.put("label_for_customers", "Label for customers test");
         fieldMap.put("displayed_to_customers", true);
-        fieldMap.put("label", "Label test");
+        fieldMap.put("label", "Label test 123");
         fieldMap.put("position", 1);
         fieldMap.put("type", "custom_dropdown");
 
         List<TicketFieldChoices> choicesList = new ArrayList<>();
-        choicesList.add(new TicketFieldChoices("Refund", 1));
-        choicesList.add(new TicketFieldChoices("Faulty Product", 2));
-        choicesList.add(new TicketFieldChoices("Item Not Delivered", 3));
+        choicesList.add(new TicketFieldChoices("Refund test 123", 3));
+        choicesList.add(new TicketFieldChoices("Faulty Product test 123", 2));
+        choicesList.add(new TicketFieldChoices("Item Not Delivered test 123", 1));
 
         Map<String, Object>[] choicesArray = new Map[choicesList.size()];
         for (int i = 0; i < choicesList.size(); i++) {
@@ -198,8 +197,4 @@ public class TestDataFactory {
 //        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
 //    }
 
-    public static String serializeToJson(Object object) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(object);
-    }
 }
