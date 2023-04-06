@@ -1,7 +1,9 @@
 package freshdesk.epharma.factory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freshdesk.epharma.model.*;
+import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketAttachment;
+import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -89,63 +91,112 @@ public class TestDataFactory {
         return ticket;
     }
 
-    public static TicketForm createNewTicketForm() {
-        List<TicketFields> fields = new ArrayList<>();
+    public static Map<String, Object> createNewTicketFieldCustomDropdown() {
+        Map<String, Object> fieldMap = new HashMap<>();
+        fieldMap.put("customer_can_edit", true);
+        fieldMap.put("label_for_customers", "Label for customers test");
+        fieldMap.put("displayed_to_customers", true);
+        fieldMap.put("label", "Label test");
+        fieldMap.put("position", 1);
+        fieldMap.put("type", "custom_dropdown");
 
-        TicketFields field1 = new TicketFields();
-        field1.setCustomerCanEdit(true);
-        field1.setLabelForCustomer("Label for customers test 1");
-        field1.setDisplayedToCustomers(true);
-        field1.setLabel("Label test 1");
-        TicketFieldType type = TicketFieldType.valueOf("CUSTOM_TEXT");
-        field1.setType(type);
+        List<TicketFieldChoices> choicesList = new ArrayList<>();
+        choicesList.add(new TicketFieldChoices("Refund", 1));
+        choicesList.add(new TicketFieldChoices("Faulty Product", 2));
+        choicesList.add(new TicketFieldChoices("Item Not Delivered", 3));
 
-        fields.add(field1);
+        Map<String, Object>[] choicesArray = new Map[choicesList.size()];
+        for (int i = 0; i < choicesList.size(); i++) {
+            Map<String, Object> choiceMap = new HashMap<>();
+            choiceMap.put("value", choicesList.get(i).getValue());
+            choiceMap.put("position", choicesList.get(i).getPosition());
+            choicesArray[i] = choiceMap;
+        }
 
-//        TicketFields field2 = new TicketFields();
-//        field2.setCustomerCanEdit(true);
-//        field2.setLabelForCustomer("Label for customers test 2");
-//        field2.setDisplayedToCustomers(true);
-//        field2.setLabel("Label test 2");
-//        field2.setPosition(1);
-//        type = TicketFieldType.CUSTOM_DROPDOWN;
-//        field2.setType(type);
+        fieldMap.put("choices", choicesArray);
+
+        return fieldMap;
+    }
+
+    public static Map<String, Object> createNewTicketFieldCustomText() {
+        Map<String, Object> fieldMap = new HashMap<>();
+        fieldMap.put("customers_can_edit", true);
+        fieldMap.put("label_for_customers", "Label for customer test");
+        fieldMap.put("displayed_to_customers", true);
+        fieldMap.put("label", "Label test");
+        fieldMap.put("type", "custom_text");
+        return fieldMap;
+    }
+
+//    public static TicketForm createNewTicketForm() {
+//        int numberOfFields = 2;
+//        Map<String, TicketFields>[] fields = new HashMap[numberOfFields];
+//
+//        Map<String, TicketFields> field1 = new HashMap<>();
+//        TicketFields ticketFields1 = new TicketFields();
+//        ticketFields1.setCustomerCanEdit(true);
+//        ticketFields1.setLabelForCustomer("Label for customers test 1");
+//        ticketFields1.setDisplayedToCustomers(true);
+//        ticketFields1.setLabel("Label test 1");
+//        ticketFields1.setType("custom_text");
+//        field1.put("field1", ticketFields1);
+//        fields[0] = field1;
+//
+//        Map<String, TicketFields> field2 = new HashMap<>();
+//        TicketFields ticketFields2 = new TicketFields();
+//        ticketFields2.setCustomerCanEdit(true);
+//        ticketFields2.setLabelForCustomer("Label for customers test 2");
+//        ticketFields2.setDisplayedToCustomers(true);
+//        ticketFields2.setLabel("Label test 2");
+//        ticketFields2.setPosition(1);
+//        ticketFields2.setType("custom_dropdown");
+//
+//
 //        TicketFieldChoices[] choices = new TicketFieldChoices[]{
 //                new TicketFieldChoices("Refund", 1),
 //                new TicketFieldChoices("Faulty Product", 2),
 //                new TicketFieldChoices("Item Not Delivered", 3)
 //        };
+//        Map<String, TicketFieldChoices>[] choicesArray = new Map[choices.length];
+//        for (int i = 0; i < choices.length; i++) {
+//            Map<String, TicketFieldChoices> choiceMap = new HashMap<>();
+//            choiceMap.put("choice" + i, choices[i]);
+//            choicesArray[i] = choiceMap;
+//        }
+//        ticketFields2.setChoices(choicesArray);
 //
-//        fields.add(field2);
+//        field2.put("field2", ticketFields2);
+//        fields[1] = field2;
+//
+//        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
+//    }
 
-        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
-    }
 
-    public static TicketForm createUpdatedTicketForm() {
-        List<TicketFields> fields = new ArrayList<>();
-
-        TicketFields field3 = new TicketFields();
-        field3.setId(2L);
-        field3.setLabelForCustomer("Field 3");
-        field3.setCustomerCanEdit(false);
-        field3.setRequiredForCustomers(false);
-        field3.setHintForCustomers("Hint for Field 3");
-        field3.setPlaceholderForCustomers("Placeholder for Field 3");
-
-        fields.add(field3);
-
-        TicketFields field4 = new TicketFields();
-        field4.setId(3L);
-        field4.setLabelForCustomer("Field 4");
-        field4.setCustomerCanEdit(false);
-        field4.setRequiredForCustomers(false);
-        field4.setHintForCustomers("Hint for Field 4");
-        field4.setPlaceholderForCustomers("Placeholder for Field 4");
-
-        fields.add(field4);
-
-        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
-    }
+//    public static TicketForm createUpdatedTicketForm() {
+//        List<TicketFields> fields = new ArrayList<>();
+//
+//        TicketFields field3 = new TicketFields();
+//        field3.setId(2L);
+//        field3.setLabelForCustomer("Field 3");
+//        field3.setCustomerCanEdit(false);
+//        field3.setRequiredForCustomers(false);
+//        field3.setHintForCustomers("Hint for Field 3");
+//        field3.setPlaceholderForCustomers("Placeholder for Field 3");
+//
+//        fields.add(field3);
+//
+//        TicketFields field4 = new TicketFields();
+//        field4.setId(3L);
+//        field4.setLabelForCustomer("Field 4");
+//        field4.setCustomerCanEdit(false);
+//        field4.setRequiredForCustomers(false);
+//        field4.setHintForCustomers("Hint for Field 4");
+//        field4.setPlaceholderForCustomers("Placeholder for Field 4");
+//
+//        fields.add(field4);
+//
+//        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
+//    }
 
     public static String serializeToJson(Object object) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();

@@ -1,4 +1,4 @@
-package freshdesk.epharma.model;
+package freshdesk.epharma.model.Ticket;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,6 +1,6 @@
 package freshdesk.epharma.controller;
 
-import freshdesk.epharma.model.*;
+import freshdesk.epharma.model.Ticket.Ticket;
 import freshdesk.epharma.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;

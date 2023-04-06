@@ -1,7 +1,9 @@
 package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketFormApi;
-import freshdesk.epharma.model.TicketForm;
+import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
+import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.TicketForm.TicketForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -10,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class TicketFormService implements TicketFormApi {
@@ -70,6 +70,86 @@ public class TicketFormService implements TicketFormApi {
                 HttpMethod.POST,
                 requestEntity,
                 TicketForm.class);
+    }
+
+    private ResponseEntity<TicketFields> createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
+        Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
+        boolean canEdit = customersCanEdit != null && customersCanEdit;
+
+        Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
+        boolean displayed = displayedToCustomers != null && displayedToCustomers;
+
+        TicketFields ticketFields = TicketFields.builder()
+                .labelForCustomers((String) ticketFieldsMap.get("label_for_customers"))
+                .customerCanEdit(canEdit)
+                .displayedToCustomers(displayed)
+                .label((String) ticketFieldsMap.get("label"))
+                .type((String) ticketFieldsMap.get("type"))
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketFields);
+    }
+
+    private ResponseEntity<TicketFields> createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
+        Map<String, Object>[] choicesMapArray = (Map<String, Object>[]) ticketFieldsMap.get("choices");
+
+        Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
+        boolean canEdit = customersCanEdit != null && customersCanEdit;
+
+        Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
+        boolean displayed = displayedToCustomers != null && displayedToCustomers;
+
+        TicketFields ticketFields = new TicketFields();
+        ticketFields.setCustomerCanEdit(canEdit);
+        ticketFields.setLabelForCustomers((String) ticketFieldsMap.get("label_for_customers"));
+        ticketFields.setDisplayedToCustomers(displayed);
+        ticketFields.setLabel((String) ticketFieldsMap.get("label"));
+        ticketFields.setPosition((Integer) ticketFieldsMap.get("position"));
+        ticketFields.setType((String) ticketFieldsMap.get("type"));
+
+        List<Map<String, TicketFieldChoices>> choices = new ArrayList<>();
+
+        for (Map<String, Object> choiceMap : choicesMapArray) {
+            String value = (String) choiceMap.get("value");
+            Integer position = (Integer) choiceMap.get("position");
+            Map<String, TicketFieldChoices> choice = new HashMap<>();
+            choice.put("value", new TicketFieldChoices(value, position));
+//            System.out.println(choice);
+            choices.add(choice);
+//            System.out.println(choices);
+        }
+        ticketFields.setChoices(choices);
+
+        System.out.println(choices.get(0));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(ticketFields);
+    }
+
+    @PostMapping("/admin/ticket_fields")
+    public ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
+        String type = ticketFieldsMap.get("type").toString();
+
+        TicketFields ticketFields;
+        switch (type) {
+            case "custom_text":
+                ticketFields = createCustomTextFieldFromMap(ticketFieldsMap).getBody();
+                break;
+            case "custom_dropdown":
+                ticketFields = createCustomDropdownFieldFromMap(ticketFieldsMap).getBody();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid ticket field type: " + type);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<TicketFields> requestEntity = new HttpEntity<>(ticketFields, headers);
+
+        return tickeFormtRestTemplate.exchange(
+                MAIN_URL + "admin/ticket_fields",
+                HttpMethod.POST,
+                requestEntity,
+                TicketFields.class);
     }
 
     @PutMapping("/ticket-forms/{id}")

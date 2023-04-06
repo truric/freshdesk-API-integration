@@ -1,4 +1,4 @@
-package freshdesk.epharma.model;
+package freshdesk.epharma.model.TicketFields;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

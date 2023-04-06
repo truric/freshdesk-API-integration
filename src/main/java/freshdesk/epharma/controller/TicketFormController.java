@@ -1,6 +1,7 @@
 package freshdesk.epharma.controller;
 
-import freshdesk.epharma.model.TicketForm;
+import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ticket-forms")
@@ -28,6 +30,11 @@ public class TicketFormController {
     @PostMapping("/ticket-forms")
     public ResponseEntity<TicketForm> createTicketForm(@RequestBody TicketForm ticketForm) {
         return ticketFormService.createTicketForm(ticketForm);
+    }
+
+    @PostMapping("/admin/ticket_fields")
+    ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
+        return ticketFormService.createTicketFields(ticketFieldsMap);
     }
 
     @PutMapping("/ticket-forms/{id}")

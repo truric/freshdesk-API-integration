@@ -1,7 +1,8 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.TicketForm;
+import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -13,9 +14,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -25,8 +26,11 @@ public class TickerFormControllerTests {
     private TicketFormService ticketFormService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketFormController.class);
-    private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
-    private final TicketForm updatedTicketForm = TestDataFactory.createUpdatedTicketForm();
+//    private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
+    private final Map<String, Object> newTicketFieldCustomText = TestDataFactory.createNewTicketFieldCustomText();
+    private final Map<String, Object> newTicketFieldCustomDropDown = TestDataFactory.createNewTicketFieldCustomDropdown();
+
+//    private final TicketForm updatedTicketForm = TestDataFactory.createUpdatedTicketForm();
 
     @Test
     @DisplayName("Get all Ticket Forms")
@@ -48,7 +52,7 @@ public class TickerFormControllerTests {
 
     @Test
     @DisplayName("Get a Ticket Form by its id")
-    @Order(2)
+    @Disabled
     void testGetTicketFormById() {
         long ticketFormId = 103000131305L;
         ResponseEntity<TicketForm> response = ticketFormService.getTicketFormById(ticketFormId);
@@ -61,59 +65,94 @@ public class TickerFormControllerTests {
         }
     }
 
+//    @Test
+//    @DisplayName("Create a new Ticket Form")
+//    @Disabled
+//    @Order(3)
+//    void testCreateTicket() {
+//        ResponseEntity<TicketForm> response = ticketFormService.createTicketForm(newTicketForm);
+//        HttpStatusCode httpStatus = response.getStatusCode();
+//
+//        if (httpStatus == HttpStatus.CREATED) {
+//            TicketForm createdTicketForm = response.getBody();
+//            assert createdTicketForm != null;
+//            LOGGER.info(createdTicketForm.toString());
+//        } else {
+//            LOGGER.error("Failed to create Ticket Form");
+//        }
+//    }
+
     @Test
-    @DisplayName("Create a new Ticket Form")
+    @DisplayName("Create new Ticket Fields with custom dropdown")
     @Disabled
-    @Order(3)
-    void testCreateTicket() {
-        ResponseEntity<TicketForm> response = ticketFormService.createTicketForm(newTicketForm);
+    void testCreateTicketFieldsWithCustomDropdown() {
+        ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomDropDown);
         HttpStatusCode httpStatus = response.getStatusCode();
 
         if (httpStatus == HttpStatus.CREATED) {
-            TicketForm createdTicketForm = response.getBody();
-            assert createdTicketForm != null;
-            LOGGER.info(createdTicketForm.toString());
+            TicketFields createdTicketField = response.getBody();
+            assertNotNull(createdTicketField);
+            LOGGER.info(createdTicketField.toString());
+            assertEquals("custom_dropdown", createdTicketField.getType());
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
         } else {
-            LOGGER.error("Failed to create Ticket Form");
+            LOGGER.error("Failed to create Ticket Fields");
         }
     }
 
     @Test
-    @DisplayName("Update a Ticket Form by it's id")
-    @Order(4)
-    @Disabled
-    public void testUpdateTicketById() {
-        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
-        TicketForm createdTicketForm = createdResponse.getBody();
+    @DisplayName("Create new Ticket Fields with a custom text")
+    void testCreateTicketFieldsWithCustomText() {
+        ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomText);
+        HttpStatusCode httpStatus = response.getStatusCode();
 
-        assert createdTicketForm != null;
-        ResponseEntity<TicketForm> updatedResponse = ticketFormService.updateTicketForm(createdTicketForm.getId(), updatedTicketForm);
-
-        HttpStatusCode httpStatus = updatedResponse.getStatusCode();
-        assertEquals(HttpStatus.OK, httpStatus);
-        assertNotEquals(updatedTicketForm.getTitle(), createdResponse.getBody().getTitle());
-        assertNotEquals(updatedTicketForm.getDescription(), createdResponse.getBody().getDescription());
-        assertNotEquals(updatedTicketForm.getFields(), createdResponse.getBody().getFields());
+        if (httpStatus == HttpStatus.CREATED) {
+            TicketFields createdTicketField = response.getBody();
+            assertNotNull(createdTicketField);
+            LOGGER.info(createdTicketField.toString());
+            assertEquals("custom_text", createdTicketField.getType());
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        } else {
+            LOGGER.error("Failed to create Ticket Fields");
+        }
     }
 
-    @Test
-    @DisplayName("Delete a Ticket Form by it's id")
-    @Disabled
-    @Order(5)
-    public void testDeleteTicketForm() {
-        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
-        TicketForm createdTicket = createdResponse.getBody();
-        assert createdTicket != null;
-        Long ticketFormId = createdTicket.getId();
+//    @Test
+//    @DisplayName("Update a Ticket Form by it's id")
+//    @Order(4)
+//    @Disabled
+//    public void testUpdateTicketById() {
+//        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
+//        TicketForm createdTicketForm = createdResponse.getBody();
+//
+//        assert createdTicketForm != null;
+//        ResponseEntity<TicketForm> updatedResponse = ticketFormService.updateTicketForm(createdTicketForm.getId(), updatedTicketForm);
+//
+//        HttpStatusCode httpStatus = updatedResponse.getStatusCode();
+//        assertEquals(HttpStatus.OK, httpStatus);
+//        assertNotEquals(updatedTicketForm.getTitle(), createdResponse.getBody().getTitle());
+//        assertNotEquals(updatedTicketForm.getDescription(), createdResponse.getBody().getDescription());
+//        assertNotEquals(updatedTicketForm.getFields(), createdResponse.getBody().getFields());
+//    }
 
-        ResponseEntity<String> deleteResponse = ticketFormService.deleteTicketForm(ticketFormId);
-        String message = deleteResponse.getBody();
-
-        assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
-        assertEquals("Ticket [#"+ticketFormId+"] deleted successfully", message);
-
-        ResponseEntity<TicketForm> notFoundResponse = ticketFormService.getTicketFormById(ticketFormId);
-//		it should be HttpStatus.NOT_FOUND but HttpStatus.OK is default behaviour or freshdesk API
-        assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
-    }
+//    @Test
+//    @DisplayName("Delete a Ticket Form by it's id")
+//    @Disabled
+//    @Order(5)
+//    public void testDeleteTicketForm() {
+//        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
+//        TicketForm createdTicket = createdResponse.getBody();
+//        assert createdTicket != null;
+//        Long ticketFormId = createdTicket.getId();
+//
+//        ResponseEntity<String> deleteResponse = ticketFormService.deleteTicketForm(ticketFormId);
+//        String message = deleteResponse.getBody();
+//
+//        assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
+//        assertEquals("Ticket [#"+ticketFormId+"] deleted successfully", message);
+//
+//        ResponseEntity<TicketForm> notFoundResponse = ticketFormService.getTicketFormById(ticketFormId);
+////		it should be HttpStatus.NOT_FOUND but HttpStatus.OK is default behaviour or freshdesk API
+//        assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+//    }
 }

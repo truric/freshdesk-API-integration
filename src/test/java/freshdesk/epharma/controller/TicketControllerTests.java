@@ -2,8 +2,10 @@ package freshdesk.epharma.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freshdesk.epharma.model.*;
 import freshdesk.epharma.factory.TestDataFactory;
+import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
+import freshdesk.epharma.model.Ticket.TicketQueryDTO;
 import freshdesk.epharma.service.TicketService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

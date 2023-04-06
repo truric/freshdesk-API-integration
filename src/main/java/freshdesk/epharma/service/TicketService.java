@@ -1,7 +1,10 @@
 package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketApi;
-import freshdesk.epharma.model.*;
+import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
+import freshdesk.epharma.model.Ticket.TicketQueryDTO;
+import freshdesk.epharma.model.Ticket.TicketReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;

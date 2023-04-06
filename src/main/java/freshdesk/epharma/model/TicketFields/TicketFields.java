@@ -1,23 +1,31 @@
-package freshdesk.epharma.model;
+package freshdesk.epharma.model.TicketFields;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Map;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
 public class TicketFields {
 
     @JsonProperty("id")
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long id;
 
     @JsonProperty("label_for_customers")
     @NotNull
-    private String labelForCustomer;
+    private String labelForCustomers;
 
     @JsonProperty("customers_can_edit")
     @NotNull
@@ -32,20 +40,20 @@ public class TicketFields {
     private String label;
 
     @JsonProperty("type")
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonDeserialize(using = TicketFieldTypeDeserializer.class)
-    private TicketFieldType type;
+//    @JsonDeserialize(using = TicketFieldTypeDeserializer.class)
+    @NotNull
+    private String type;
 
     @JsonProperty("required_for_customers")
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private boolean requiredForCustomers;
 
     @JsonProperty("placeholder_for_customers")
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String placeholderForCustomers;
 
     @JsonProperty("hint_for_customers")
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String hintForCustomers;
 
     @JsonProperty("position")
@@ -56,5 +64,7 @@ public class TicketFields {
 
     @JsonProperty("choices")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private TicketFieldChoices[] choices;
+//    @JsonSerialize(using = TicketFieldChoicesSerializer.class)
+    private List<Map<String, TicketFieldChoices>> choices;
+
 }
