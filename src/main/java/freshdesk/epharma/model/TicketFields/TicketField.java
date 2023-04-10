@@ -28,23 +28,23 @@ public class TicketField {
 
     @JsonProperty("customers_can_edit")
     @NotNull
-    private boolean customerCanEdit;
+    private boolean isCustomersCanEdit;
 
     @JsonProperty("displayed_to_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean displayedToCustomers;
+    private boolean isDisplayedToCustomers;
 
     @JsonProperty("label")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String label;
 
     @JsonProperty("type")
-    @NotNull
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String type;
 
     @JsonProperty("required_for_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean requiredForCustomers;
+    private boolean isRequiredForCustomers;
 
     @JsonProperty("placeholder_for_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -64,4 +64,13 @@ public class TicketField {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TicketFieldChoices> choices;
 
+    public TicketField(String labelForCustomers, boolean isCustomersCanEdit, boolean isDisplayedToCustomers, String label,
+                       boolean isRequiredForCustomers, Integer position) {
+        this.labelForCustomers = labelForCustomers;
+        this.isCustomersCanEdit = isCustomersCanEdit;
+        this.isDisplayedToCustomers = isDisplayedToCustomers;
+        this.label = label;
+        this.isRequiredForCustomers = isRequiredForCustomers;
+        this.position = position;
+    }
 }

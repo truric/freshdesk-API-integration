@@ -65,4 +65,14 @@ public class TicketFieldControllerTests {
             LOGGER.error("Failed to create Ticket Fields");
         }
     }
+
+//    these TicketField properties cannot be updated:
+//    placeholder_for_customers
+//    hint_for_customers
+//    type
+    @Test
+    @DisplayName("")
+    void testUpdateTicketField() {
+
+    }
 }

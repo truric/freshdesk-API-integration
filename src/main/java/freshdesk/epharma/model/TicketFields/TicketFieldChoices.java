@@ -1,6 +1,5 @@
 package freshdesk.epharma.model.TicketFields;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonInclude(JsonInclude.Include.ALWAYS)
+//@JsonInclude(JsonInclude.Include.ALWAYS)
 public class TicketFieldChoices {
 
     @JsonProperty("value")

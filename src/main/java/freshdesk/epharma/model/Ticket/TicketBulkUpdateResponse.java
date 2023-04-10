@@ -18,8 +18,10 @@ public class TicketBulkUpdateResponse {
     @NotNull
     @JsonProperty("ids")
     private List<Long> ids = new ArrayList<>();
+
     @JsonProperty("properties")
     private Map<String, Ticket> properties = new HashMap<>();
+
     @JsonProperty("reply")
     private TicketReply ticketReply;
 }

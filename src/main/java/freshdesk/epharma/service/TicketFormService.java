@@ -30,13 +30,13 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketForm[]> responseEntity = restTemplate.exchange(
+        ResponseEntity<TicketForm[]> response = restTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.GET,
                 requestEntity,
                 TicketForm[].class);
 
-        List<TicketForm> ticketForms = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+        List<TicketForm> ticketForms = Arrays.asList(Objects.requireNonNull(response.getBody()));
 
         return new ResponseEntity<>(ticketForms, HttpStatus.OK);
     }

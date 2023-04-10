@@ -707,6 +707,235 @@
 			"name": "Ticket Field",
 			"item": [
 				{
+					"name": "Section",
+					"item": [
+						{
+							"name": "Get list of ticket_field sections by id",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "x",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{API_KEY}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000875124/sections",
+									"host": [
+										"{{MAIN_DOMAIN}}admin"
+									],
+									"path": [
+										"ticket_fields",
+										"103000875124",
+										"sections"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get a specific section details from ticket_field",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "x",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{API_KEY}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014/sections/103000003940",
+									"host": [
+										"{{MAIN_DOMAIN}}admin"
+									],
+									"path": [
+										"ticket_fields",
+										"103000876014",
+										"sections",
+										"103000003940"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create section for ticket_field by id",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "x",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{API_KEY}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"label\": \"Environment test Type (Web)\",\r\n    \"choice_ids\": [\r\n        75\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014/sections",
+									"host": [
+										"{{MAIN_DOMAIN}}admin"
+									],
+									"path": [
+										"ticket_fields",
+										"103000876014",
+										"sections"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update section from ticket_field",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "x",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{API_KEY}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"label\": \"Environment Type (Mac OS)\",\r\n    \"choice_ids\": [\r\n        75\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014/sections/103000003940",
+									"host": [
+										"{{MAIN_DOMAIN}}admin"
+									],
+									"path": [
+										"ticket_fields",
+										"103000876014",
+										"sections",
+										"103000003940"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get list of ticket_field sections by id Copy",
+							"request": {
+								"auth": {
+									"type": "basic",
+									"basic": [
+										{
+											"key": "password",
+											"value": "x",
+											"type": "string"
+										},
+										{
+											"key": "username",
+											"value": "{{API_KEY}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014/sections/103000003940",
+									"host": [
+										"{{MAIN_DOMAIN}}admin"
+									],
+									"path": [
+										"ticket_fields",
+										"103000876014",
+										"sections",
+										"103000003940"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "Get list of ticket_fields",
 					"request": {
 						"auth": {
@@ -768,9 +997,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}admin",
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields",
 							"host": [
 								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields"
 							]
 						}
 					},
@@ -809,13 +1041,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000875124",
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000868715",
 							"host": [
 								"{{MAIN_DOMAIN}}admin"
 							],
 							"path": [
 								"ticket_fields",
-								"103000875124"
+								"103000868715"
 							]
 						}
 					},
@@ -945,7 +1177,7 @@
 					"response": []
 				},
 				{
-					"name": "Update a ticket_field",
+					"name": "Update a ticket_field by id",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -966,7 +1198,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"label_for_customers\": \"Issue Type\",\r\n    \"label\": \"Issue Type\",\r\n    \"position\": 2,\r\n    \"choices\": [\r\n        {\r\n            \"deleted\": true,\r\n            \"id\": 131\r\n        },\r\n        {\r\n            \"value\": \"Returns/Refund\",\r\n            \"id\": 129\r\n        },\r\n        {\r\n            \"value\": \"Faulty Product\",\r\n            \"id\": 130\r\n        },\r\n        {\r\n            \"value\": \"payments\",\r\n            \"position\": 4\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"label_for_customers\": \"Issue Type\",\r\n    \"customers_can_edit\": false,\r\n    \"displayed_to_customers\": false,\r\n    \"label\": \"Issue Type\",\r\n    \"required_for_customers\": false,\r\n    \"position\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -981,6 +1213,48 @@
 							"path": [
 								"ticket_fields",
 								"103000875124"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a ticket_field by id",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000875123",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields",
+								"103000875123"
 							]
 						}
 					},

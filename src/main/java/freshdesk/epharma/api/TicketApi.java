@@ -44,8 +44,7 @@ public interface TicketApi {
 
     @PostMapping("/bulk-update")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    ResponseEntity<TicketBulkUpdateResponse> bulkUpdateTickets(
-            @RequestBody TicketBulkUpdateResponse bulkUpdateRequest);
+    ResponseEntity<TicketBulkUpdateResponse> bulkUpdateTickets(@RequestBody TicketBulkUpdateResponse bulkUpdateRequest);
 
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
     Ticket searchTickets(@ModelAttribute TicketQueryDTO query);
@@ -54,8 +53,7 @@ public interface TicketApi {
     ResponseEntity<String> deleteTicket(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException;
 
     @DeleteMapping("/archived/{id}")
-    ResponseEntity<String> deleteArchivedTicket(
-            @PathVariable(value = "id") Long archivedTicketId);
+    ResponseEntity<String> deleteArchivedTicket(@PathVariable(value = "id") Long archivedTicketId);
 
     @PutMapping("/tickets/{id}/restore")
     ResponseEntity<String> restoreDeletedTicket(@PathVariable Long id) throws ResourceNotFoundException;
