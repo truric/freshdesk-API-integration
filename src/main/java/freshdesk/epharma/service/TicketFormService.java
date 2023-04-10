@@ -73,7 +73,7 @@ public class TicketFormService implements TicketFormApi {
                 TicketForm.class);
     }
 
-    private ResponseEntity<TicketFields> createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
+    private TicketFields createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
         Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
         boolean canEdit = customersCanEdit != null && customersCanEdit;
 
@@ -88,11 +88,11 @@ public class TicketFormService implements TicketFormApi {
                 .type((String) ticketFieldsMap.get("type"))
                 .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(ticketFields);
+        return ticketFields;
     }
 @Autowired
 private ObjectMapper objectMapper;
-    private ResponseEntity<TicketFields> createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
+    private TicketFields createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
         Map<String, Object>[] choicesMapArray = (Map<String, Object>[]) ticketFieldsMap.get("choices");
 
         Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
@@ -123,9 +123,7 @@ private ObjectMapper objectMapper;
         }
         ticketFields.setChoices(choices);
 
-        System.out.println(choices.get(0));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(ticketFields);
+        return ticketFields;
     }
 
     @PostMapping("/admin/ticket_fields")
@@ -135,10 +133,10 @@ private ObjectMapper objectMapper;
         TicketFields ticketFields;
         switch (type) {
             case "custom_text":
-                ticketFields = createCustomTextFieldFromMap(ticketFieldsMap).getBody();
+                ticketFields = createCustomTextFieldFromMap(ticketFieldsMap);
                 break;
             case "custom_dropdown":
-                ticketFields = createCustomDropdownFieldFromMap(ticketFieldsMap).getBody();
+                ticketFields = createCustomDropdownFieldFromMap(ticketFieldsMap);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid ticket field type: " + type);

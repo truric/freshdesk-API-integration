@@ -53,14 +53,14 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Get Ticket list")
 	@Order(1)
-	void testGetAllTickets() {
+	void testGetAllTickets() throws JsonProcessingException {
 		ResponseEntity<List<Ticket>> responseEntity = ticketService.getAllTickets();
 		HttpStatusCode statusCode = responseEntity.getStatusCode();
 		if (statusCode == HttpStatus.OK) {
 			List<Ticket> tickets = responseEntity.getBody();
 			assert tickets != null;
 			for (Ticket ticket : tickets) {
-				LOGGER.info(ticket.toString());
+				LOGGER.info(objectMapper.writeValueAsString(ticket));
 			}
 
 		} else {
@@ -71,13 +71,13 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Get a Ticket by it's id")
 	@Order(2)
-	void testGetTicketById() {
+	void testGetTicketById() throws JsonProcessingException {
 		long ticketId = 2;
 		ResponseEntity<Ticket> response = ticketService.getTicketById(ticketId);
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
-			LOGGER.info("Retrieved ticket: {}", ticket);
+			LOGGER.info(objectMapper.writeValueAsString(ticket));
 		} else {
 			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
 		}
@@ -86,13 +86,13 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Get a Tickets summary")
 	@Order(3)
-	void testGetTicketSummary() {
+	void testGetTicketSummary() throws JsonProcessingException {
 		long ticketId = 2;
 		ResponseEntity<Ticket> response = ticketService.getTicketSummary(ticketId);
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
-			LOGGER.info("Retrieved tickets summary: {}", ticket);
+			LOGGER.info(objectMapper.writeValueAsString(ticket));
 		} else {
 			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
 		}
@@ -101,7 +101,7 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Get Ticket list with pagination")
 	@Order(4)
-	void testGetTicketsWithPagination() {
+	void testGetTicketsWithPagination() throws JsonProcessingException {
 		int pageNumber = 1;
 		ResponseEntity<List<Ticket>> responseEntity = ticketService.getTicketsWithPagination(pageNumber);
 		HttpStatusCode httpStatus = responseEntity.getStatusCode();
@@ -110,7 +110,7 @@ class TicketControllerTests {
 			LOGGER.info("Page number: " +  pageNumber + "\n");
 			assert tickets != null;
 			for (Ticket ticket : tickets) {
-				LOGGER.info(ticket.toString());
+				LOGGER.info(objectMapper.writeValueAsString(ticket));
 			}
 		} else {
 			LOGGER.error("Failed to get tickets with pagination");
@@ -120,7 +120,7 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Create a new Ticket")
 	@Order(5)
-	void testCreateTicket() {
+	void testCreateTicket() throws JsonProcessingException {
 		Ticket newTicket = TestDataFactory.createNewTicket();
 
 		ResponseEntity<Ticket> response = ticketService.createTicket(newTicket);
@@ -128,6 +128,7 @@ class TicketControllerTests {
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		assertNotNull(response.getBody());
 		assertNotNull(response.getBody().getId());
+		LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
 	}
 
 	/**
@@ -170,7 +171,7 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Update a Ticket by it's id")
 	@Order(6)
-	public void testUpdateTicketById() {
+	public void testUpdateTicketById() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 
@@ -187,12 +188,13 @@ class TicketControllerTests {
 		assertNotEquals(updatedTicket.getDescription(), createdResponse.getBody().getDescription());
 		assertNotEquals(updatedTicket.getName(), createdResponse.getBody().getName());
 		assertEquals(createdTicket.getRequesterId(), createdResponse.getBody().getRequesterId());
+		LOGGER.info(objectMapper.writeValueAsString(updatedResponse.getBody()));
 	}
 
 	@Test
 	@DisplayName("Delete a Ticket by it's id")
 	@Order(7)
-	public void testDeleteTicket() {
+	public void testDeleteTicket() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
 		assert createdTicket != null;
@@ -209,6 +211,7 @@ class TicketControllerTests {
 //		it should be HttpStatus.NOT_FOUND
 //		but HttpStatus.OK is default behaviour or freshdesk API
 		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+		LOGGER.info(objectMapper.writeValueAsString(notFoundResponse));
 	}
 
 	@Test
@@ -247,32 +250,32 @@ class TicketControllerTests {
 	@Test
 	@DisplayName("Filter Tickets by query")
 	@Order(9)
-	public void testFilterTicketsByQuery() {
+	public void testFilterTicketsByQuery() throws JsonProcessingException {
 		TicketQueryDTO query = new TicketQueryDTO();
 
 		// Integer values test
 		query.setPriority(3);
 		Ticket filteredTicket = ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
-		LOGGER.info(filteredTicket.toString());
+		LOGGER.info(objectMapper.writeValueAsString(filteredTicket));
 
 		// String values test
 		query.setTag("TAG");
 		ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
-		LOGGER.info(filteredTicket.toString());
+		LOGGER.info(objectMapper.writeValueAsString(filteredTicket));
 
 		// LocalDate values test
 		query.setCreatedAt(LocalDate.of(2023, 4, 1));
 		ticketService.searchTickets(query);
 		assertNotNull(filteredTicket);
-		LOGGER.info(filteredTicket.toString());
+		LOGGER.info(objectMapper.writeValueAsString(filteredTicket));
 	}
 
 	@Test
 	@DisplayName("Delete multiple Tickets in bulk")
 	@Order(10)
-	public void testDeleteTicketsInBulk() {
+	public void testDeleteTicketsInBulk() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
@@ -303,35 +306,39 @@ class TicketControllerTests {
 		assertEquals(HttpStatus.OK, notFoundResponse1.getStatusCode());
 		assertEquals(HttpStatus.OK, notFoundResponse2.getStatusCode());
 		assertEquals(HttpStatus.OK, notFoundResponse3.getStatusCode());
+		LOGGER.info(objectMapper.writeValueAsString(message));
+
 	}
 
 	@Test
 	@DisplayName("Create a new Ticket with an attachment")
 	@Order(11)
-	void testCreateTicketWithAttachmentTest() {
+	void testCreateTicketWithAttachmentTest() throws JsonProcessingException {
 		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithAttachment);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		assertEquals(newTicketWithAttachment.getSubject(), Objects.requireNonNull(response.getBody()).getSubject());
 		assertNotNull(response.getBody().getId());
+		LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
 	}
 
 	@Test
 	@DisplayName("Create a new Ticket with multi attachments")
 	@Order(12)
-	void testCreateTicketWithMultiAttachmentTest() {
+	void testCreateTicketWithMultiAttachmentTest() throws JsonProcessingException {
 		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithMultiAttachments);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
 		assertEquals(newTicketWithMultiAttachments.getSubject(), Objects.requireNonNull(response.getBody()).getSubject());
 		assertNotNull(response.getBody().getId());
+		LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
 	}
 
 	@Test
 	@DisplayName("Bulk Update Tickets")
 //	@Order(6)
 	@Disabled
-	public void testBulkUpdateTickets() {
+	public void testBulkUpdateTickets() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
 		Ticket createdTicket1 = createdResponse1.getBody();
 		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
@@ -374,19 +381,20 @@ class TicketControllerTests {
 		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
 		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
 		assertEquals(4, bulkUpdateResponseEntity.getBody().getProperties().get("priority").getPriority().intValue());
+		LOGGER.info(objectMapper.writeValueAsString(bulkUpdateResponseEntity));
 	}
 
 	@Test
 	@DisplayName("Get all conversations of archived ticket by id")
 	@Disabled
 //	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-	void testGetAllConversationsOfArchivedTicketById() {
+	void testGetAllConversationsOfArchivedTicketById() throws JsonProcessingException {
 		long archivedTicketId = 2;
 		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
 		if (response.getStatusCode() == HttpStatus.OK) {
 			Ticket ticket = response.getBody();
 			assert ticket != null;
-			LOGGER.info("All conversations retrieved from archived ticket: {}", ticket);
+			LOGGER.info(objectMapper.writeValueAsString(ticket));
 		} else {
 			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
 		}
@@ -396,7 +404,7 @@ class TicketControllerTests {
 	@DisplayName("Delete an Archived Ticket by it's id")
 	@Disabled
 //		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-	public void testDeleteArchivedTicket() {
+	public void testDeleteArchivedTicket() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket archivedTicket = createdResponse.getBody();
 		assert archivedTicket != null;
@@ -413,6 +421,7 @@ class TicketControllerTests {
 //		it should be HttpStatus.NOT_FOUND
 //		but HttpStatus.OK is default behaviour or freshdesk API
 		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+		LOGGER.info(objectMapper.writeValueAsString(notFoundResponse));
 	}
 
 }

@@ -1,5 +1,7 @@
 package freshdesk.epharma.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
 import freshdesk.epharma.model.TicketFields.TicketFields;
 import freshdesk.epharma.model.TicketForm.TicketForm;
@@ -24,6 +26,9 @@ public class TickerFormControllerTests {
 
     @Autowired
     private TicketFormService ticketFormService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketFormController.class);
 //    private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
@@ -53,13 +58,13 @@ public class TickerFormControllerTests {
     @Test
     @DisplayName("Get a Ticket Form by its id")
     @Disabled
-    void testGetTicketFormById() {
+    void testGetTicketFormById() throws JsonProcessingException {
         long ticketFormId = 103000131305L;
         ResponseEntity<TicketForm> response = ticketFormService.getTicketFormById(ticketFormId);
         if (response.getStatusCode() == HttpStatus.OK) {
             TicketForm ticketForm = response.getBody();
             assert ticketForm != null;
-            LOGGER.info("Retrieved Ticket Form: {}", ticketForm);
+            LOGGER.info(objectMapper.writeValueAsString(ticketForm));
         } else {
             LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
         }
@@ -69,14 +74,14 @@ public class TickerFormControllerTests {
 //    @DisplayName("Create a new Ticket Form")
 //    @Disabled
 //    @Order(3)
-//    void testCreateTicket() {
+//    void testCreateTicket() throws JsonProcessingException {
 //        ResponseEntity<TicketForm> response = ticketFormService.createTicketForm(newTicketForm);
 //        HttpStatusCode httpStatus = response.getStatusCode();
 //
 //        if (httpStatus == HttpStatus.CREATED) {
 //            TicketForm createdTicketForm = response.getBody();
 //            assert createdTicketForm != null;
-//            LOGGER.info(createdTicketForm.toString());
+//            LOGGER.info(objectMapper.writeValueAsString(createdTicketForm));
 //        } else {
 //            LOGGER.error("Failed to create Ticket Form");
 //        }
@@ -85,16 +90,16 @@ public class TickerFormControllerTests {
     @Test
     @DisplayName("Create new Ticket Fields with custom dropdown")
     @Disabled
-    void testCreateTicketFieldsWithCustomDropdown() {
+    void testCreateTicketFieldsWithCustomDropdown() throws JsonProcessingException {
         ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomDropDown);
         HttpStatusCode httpStatus = response.getStatusCode();
 
         if (httpStatus == HttpStatus.CREATED) {
             TicketFields createdTicketField = response.getBody();
             assertNotNull(createdTicketField);
-            LOGGER.info(createdTicketField.toString());
             assertEquals("custom_dropdown", createdTicketField.getType());
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            LOGGER.info(objectMapper.writeValueAsString(createdTicketField));
         } else {
             LOGGER.error("Failed to create Ticket Fields");
         }
@@ -102,16 +107,16 @@ public class TickerFormControllerTests {
 
     @Test
     @DisplayName("Create new Ticket Fields with a custom text")
-    void testCreateTicketFieldsWithCustomText() {
+    void testCreateTicketFieldsWithCustomText() throws JsonProcessingException {
         ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomText);
         HttpStatusCode httpStatus = response.getStatusCode();
 
         if (httpStatus == HttpStatus.CREATED) {
             TicketFields createdTicketField = response.getBody();
             assertNotNull(createdTicketField);
-            LOGGER.info(createdTicketField.toString());
             assertEquals("custom_text", createdTicketField.getType());
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
+            LOGGER.info(objectMapper.writeValueAsString(createdTicketField));
         } else {
             LOGGER.error("Failed to create Ticket Fields");
         }
@@ -121,7 +126,7 @@ public class TickerFormControllerTests {
 //    @DisplayName("Update a Ticket Form by it's id")
 //    @Order(4)
 //    @Disabled
-//    public void testUpdateTicketById() {
+//    public void testUpdateTicketById() throws JsonProcessingException {
 //        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
 //        TicketForm createdTicketForm = createdResponse.getBody();
 //
@@ -133,13 +138,14 @@ public class TickerFormControllerTests {
 //        assertNotEquals(updatedTicketForm.getTitle(), createdResponse.getBody().getTitle());
 //        assertNotEquals(updatedTicketForm.getDescription(), createdResponse.getBody().getDescription());
 //        assertNotEquals(updatedTicketForm.getFields(), createdResponse.getBody().getFields());
+//        LOGGER.info(objectMapper.writeValueAsString(updatedResponse.getBody()));
 //    }
 
 //    @Test
-//    @DisplayName("Delete a Ticket Form by it's id")
+//    @DisplayName("Delete a Ticket Form by its id")
 //    @Disabled
 //    @Order(5)
-//    public void testDeleteTicketForm() {
+//    public void testDeleteTicketForm() throws JsonProcessingException {
 //        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
 //        TicketForm createdTicket = createdResponse.getBody();
 //        assert createdTicket != null;
@@ -154,5 +160,6 @@ public class TickerFormControllerTests {
 //        ResponseEntity<TicketForm> notFoundResponse = ticketFormService.getTicketFormById(ticketFormId);
 ////		it should be HttpStatus.NOT_FOUND but HttpStatus.OK is default behaviour or freshdesk API
 //        assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+//        LOGGER.info(objectMapper.writeValueAsString(notFoundResponse));
 //    }
 }
