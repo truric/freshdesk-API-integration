@@ -21,7 +21,10 @@ public class TicketFormService implements TicketFormApi {
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
-    private RestTemplate tickeFormtRestTemplate;
+    private RestTemplate ticketRestTemplate;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping("/ticket-forms")
     public ResponseEntity<List<TicketForm>> getAllTicketForms() {
@@ -29,7 +32,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketForm[]> responseEntity = tickeFormtRestTemplate.exchange(
+        ResponseEntity<TicketForm[]> responseEntity = ticketRestTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.GET,
                 requestEntity,
@@ -45,7 +48,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketForm> response = tickeFormtRestTemplate.exchange(
+        ResponseEntity<TicketForm> response = ticketRestTemplate.exchange(
                 MAIN_URL + "/ticket-forms/" + ticketFormId,
                 HttpMethod.GET,
                 requestEntity,
@@ -66,99 +69,11 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketForm, headers);
 
-        return tickeFormtRestTemplate.exchange(
+        return ticketRestTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.POST,
                 requestEntity,
                 TicketForm.class);
-    }
-
-    private TicketFields createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
-        Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
-        boolean canEdit = customersCanEdit != null && customersCanEdit;
-
-        Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
-        boolean displayed = displayedToCustomers != null && displayedToCustomers;
-
-        TicketFields ticketFields = TicketFields.builder()
-                .labelForCustomers((String) ticketFieldsMap.get("label_for_customers"))
-                .customerCanEdit(canEdit)
-                .displayedToCustomers(displayed)
-                .label((String) ticketFieldsMap.get("label"))
-                .type((String) ticketFieldsMap.get("type"))
-                .build();
-
-        return ticketFields;
-    }
-@Autowired
-private ObjectMapper objectMapper;
-    private TicketFields createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
-        Map<String, Object>[] choicesMapArray = (Map<String, Object>[]) ticketFieldsMap.get("choices");
-
-        Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
-        boolean canEdit = customersCanEdit != null && customersCanEdit;
-
-        Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
-        boolean displayed = displayedToCustomers != null && displayedToCustomers;
-
-        TicketFields ticketFields = new TicketFields();
-        ticketFields.setCustomerCanEdit(canEdit);
-        ticketFields.setLabelForCustomers((String) ticketFieldsMap.get("label_for_customers"));
-        ticketFields.setDisplayedToCustomers(displayed);
-        ticketFields.setLabel((String) ticketFieldsMap.get("label"));
-        ticketFields.setPosition((Integer) ticketFieldsMap.get("position"));
-        ticketFields.setType((String) ticketFieldsMap.get("type"));
-
-        List<TicketFieldChoices> choices = new ArrayList<>();
-
-        for (Map<String, Object> choiceMap : choicesMapArray) {
-            String value = (String) choiceMap.get("value");
-            Integer position = 0;
-
-            if(choiceMap.get("position") instanceof Integer p){
-                position = p;
-            }
-
-            choices.add(new TicketFieldChoices(value, position));
-        }
-        ticketFields.setChoices(choices);
-
-        return ticketFields;
-    }
-
-    @PostMapping("/admin/ticket_fields")
-    public ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
-        String type = ticketFieldsMap.get("type").toString();
-
-        TicketFields ticketFields;
-        switch (type) {
-            case "custom_text":
-                ticketFields = createCustomTextFieldFromMap(ticketFieldsMap);
-                break;
-            case "custom_dropdown":
-                ticketFields = createCustomDropdownFieldFromMap(ticketFieldsMap);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid ticket field type: " + type);
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        String payload = "";
-        try {
-             payload = objectMapper.writeValueAsString(ticketFields);
-            System.out.println(" payload -> " + payload);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
-
-        return tickeFormtRestTemplate.exchange(
-                MAIN_URL + "admin/ticket_fields",
-                HttpMethod.POST,
-                requestEntity,
-                TicketFields.class);
     }
 
     @PutMapping("/ticket-forms/{id}")
@@ -170,7 +85,7 @@ private ObjectMapper objectMapper;
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketFormDetails, headers);
 
-        ResponseEntity<TicketForm> response = tickeFormtRestTemplate.exchange(
+        ResponseEntity<TicketForm> response = ticketRestTemplate.exchange(
                 MAIN_URL + "ticket-forms/" + ticketFormId,
                 HttpMethod.PUT,
                 requestEntity,
@@ -198,7 +113,7 @@ private ObjectMapper objectMapper;
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = tickeFormtRestTemplate.exchange(
+        ResponseEntity<Void> response = ticketRestTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketFormId,
                 HttpMethod.DELETE,
                 requestEntity,

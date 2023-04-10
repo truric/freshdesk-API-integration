@@ -32,11 +32,6 @@ public class TicketFormController {
         return ticketFormService.createTicketForm(ticketForm);
     }
 
-    @PostMapping("/admin/ticket_fields")
-    ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
-        return ticketFormService.createTicketFields(ticketFieldsMap);
-    }
-
     @PutMapping("/ticket-forms/{id}")
     public ResponseEntity<TicketForm> updateTicketForm(
             @PathVariable (value = "id") Long ticketFormId,

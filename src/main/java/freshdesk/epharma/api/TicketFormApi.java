@@ -19,9 +19,6 @@ public interface TicketFormApi {
     @PostMapping("/ticket-forms")
     ResponseEntity<TicketForm> createTicketForm(@RequestBody TicketForm ticketForm);
 
-    @PostMapping("/admin/ticket_fields")
-    ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap);
-
     @PutMapping("/ticket-forms/{id}")
     ResponseEntity<TicketForm> updateTicketForm(
             @PathVariable (value = "id") Long ticketFormId,

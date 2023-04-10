@@ -87,41 +87,6 @@ public class TickerFormControllerTests {
 //        }
 //    }
 
-    @Test
-    @DisplayName("Create new Ticket Fields with custom dropdown")
-    @Disabled
-    void testCreateTicketFieldsWithCustomDropdown() throws JsonProcessingException {
-        ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomDropDown);
-        HttpStatusCode httpStatus = response.getStatusCode();
-
-        if (httpStatus == HttpStatus.CREATED) {
-            TicketFields createdTicketField = response.getBody();
-            assertNotNull(createdTicketField);
-            assertEquals("custom_dropdown", createdTicketField.getType());
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            LOGGER.info(objectMapper.writeValueAsString(createdTicketField));
-        } else {
-            LOGGER.error("Failed to create Ticket Fields");
-        }
-    }
-
-    @Test
-    @DisplayName("Create new Ticket Fields with a custom text")
-    void testCreateTicketFieldsWithCustomText() throws JsonProcessingException {
-        ResponseEntity<TicketFields> response = ticketFormService.createTicketFields(newTicketFieldCustomText);
-        HttpStatusCode httpStatus = response.getStatusCode();
-
-        if (httpStatus == HttpStatus.CREATED) {
-            TicketFields createdTicketField = response.getBody();
-            assertNotNull(createdTicketField);
-            assertEquals("custom_text", createdTicketField.getType());
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            LOGGER.info(objectMapper.writeValueAsString(createdTicketField));
-        } else {
-            LOGGER.error("Failed to create Ticket Fields");
-        }
-    }
-
 //    @Test
 //    @DisplayName("Update a Ticket Form by it's id")
 //    @Order(4)
