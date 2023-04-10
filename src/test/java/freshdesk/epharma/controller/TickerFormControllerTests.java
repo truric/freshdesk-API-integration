@@ -3,7 +3,6 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.TicketFields.TicketFields;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.junit.jupiter.api.*;
@@ -17,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

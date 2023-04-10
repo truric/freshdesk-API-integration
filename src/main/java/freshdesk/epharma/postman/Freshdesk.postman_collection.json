@@ -1,9 +1,8 @@
 {
 	"info": {
-		"_postman_id": "0c48d271-ec92-423c-8436-57743b8cc2e5",
+		"_postman_id": "28a8df77-0ee5-4397-8284-9b3170ac44b9",
 		"name": "Freshdesk",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "14707147"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
@@ -300,76 +299,6 @@
 									"key": "query",
 									"value": "\"priority:4\""
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get list of ticket_fields",
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "x",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{API_KEY}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{MAIN_DOMAIN}}ticket_fields",
-							"host": [
-								"{{MAIN_DOMAIN}}ticket_fields"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get list of admin ticket_fields",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "x",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "{{API_KEY}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\",\r\n    \"product_id\": null,\r\n    \"type\": null\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{MAIN_DOMAIN}}admin",
-							"host": [
-								"{{MAIN_DOMAIN}}admin"
 							]
 						}
 					},
@@ -767,6 +696,291 @@
 							"raw": "{{MAIN_DOMAIN}}ticket-forms",
 							"host": [
 								"{{MAIN_DOMAIN}}ticket-forms"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ticket Field",
+			"item": [
+				{
+					"name": "Get list of ticket_fields",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket_fields",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket_fields"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list of admin ticket_fields",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"priority\": 3,\r\n    \"status\": 3,\r\n    \"subject\": \"Hello I'm a subject\",\r\n    \"product_id\": null,\r\n    \"type\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get ticket_field by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000875124",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields",
+								"103000875124"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create custom ticket_fields (custom_dropdown)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customers_can_edit\": true,\r\n    \"label_for_customers\": \"Issue Type\",\r\n    \"displayed_to_customers\": true,\r\n    \"label\": \"Issue Type\",\r\n    \"position\": 1,\r\n    \"type\": \"custom_dropdown\",\r\n    \"choices\": [\r\n        {\r\n            \"value\": \"Refund\",\r\n            \"position\": 1\r\n        },\r\n        {\r\n            \"value\": \"Faulty Product\",\r\n            \"position\": 2\r\n        },\r\n        {\r\n            \"value\": \"Item Not Delivered\",\r\n            \"position\": 3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create custom ticket_fields (custom_text)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customers_can_edit\": true,\r\n    \"label_for_customers\": \"Feedback\",\r\n    \"displayed_to_customers\": true,\r\n    \"label\": \"Feedback\",\r\n    \"type\": \"custom_text\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create custom ticket_fields (nested_field)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"customers_can_edit\": true,\r\n    \"label_for_customers\": \"Bank\",\r\n    \"displayed_to_customers\": true,\r\n    \"label\": \"Bank\",\r\n    \"position\": 13,\r\n    \"type\": \"nested_field\",\r\n    \"choices\": [\r\n        {\r\n            \"value\": \"HDFC\",\r\n            \"position\": 1,\r\n            \"choices\": [\r\n                {\r\n                    \"value\": \"Chennai\",\r\n                    \"position\": 1,\r\n                    \"choices\": [\r\n                        {\r\n                            \"value\": \"Porur\",\r\n                            \"position\": 1\r\n                        },\r\n                        {\r\n                            \"value\": \"OMR\",\r\n                            \"position\": 2\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"value\": \"Madurai\",\r\n                    \"position\": 2,\r\n                    \"choices\": [\r\n                        {\r\n                            \"value\": \"Thirumangalam\",\r\n                            \"position\": 1\r\n                        },\r\n                        {\r\n                            \"value\": \"SB Colony\",\r\n                            \"position\": 2\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"value\": \"SBI\",\r\n            \"position\": 2,\r\n            \"choices\": [\r\n                {\r\n                    \"value\": \"Chennai\",\r\n                    \"position\": 1,\r\n                    \"choices\": [\r\n                        {\r\n                            \"value\": \"Tambaram\",\r\n                            \"position\": 1\r\n                        },\r\n                        {\r\n                            \"value\": \"Guindy\",\r\n                            \"position\": 2\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"value\": \"Trichy\",\r\n                    \"position\": 2,\r\n                    \"choices\": [\r\n                        {\r\n                            \"value\": \"AGS Colony\",\r\n                            \"position\": 1\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        },\r\n        {\r\n            \"value\": \"ICICI\",\r\n            \"position\": 3,\r\n            \"choices\": [\r\n                {\r\n                    \"value\": \"Chennai\",\r\n                    \"position\": 1,\r\n                    \"choices\": [\r\n                        {\r\n                            \"value\": \"Avadi\",\r\n                            \"position\": 1\r\n                        }\r\n                    ]\r\n                }\r\n            ]\r\n        }\r\n    ],\r\n    \"dependent_fields\": [\r\n        {\r\n            \"label\": \"District\",\r\n            \"label_for_customers\": \"District\",\r\n            \"level\": 2\r\n        },\r\n        {\r\n            \"label\": \"Branch\",\r\n            \"label_for_customers\": \"Branch\",\r\n            \"level\": 3\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update a ticket_field",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label_for_customers\": \"Issue Type\",\r\n    \"label\": \"Issue Type\",\r\n    \"position\": 2,\r\n    \"choices\": [\r\n        {\r\n            \"deleted\": true,\r\n            \"id\": 131\r\n        },\r\n        {\r\n            \"value\": \"Returns/Refund\",\r\n            \"id\": 129\r\n        },\r\n        {\r\n            \"value\": \"Faulty Product\",\r\n            \"id\": 130\r\n        },\r\n        {\r\n            \"value\": \"payments\",\r\n            \"position\": 4\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000875124",
+							"host": [
+								"{{MAIN_DOMAIN}}admin"
+							],
+							"path": [
+								"ticket_fields",
+								"103000875124"
 							]
 						}
 					},

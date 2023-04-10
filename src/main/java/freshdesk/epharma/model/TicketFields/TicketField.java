@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class TicketFields {
+public class TicketField {
 
     @JsonProperty("id")
     @JsonInclude(JsonInclude.Include.NON_NULL)

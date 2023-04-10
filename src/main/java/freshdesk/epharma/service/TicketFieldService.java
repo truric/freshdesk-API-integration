@@ -2,40 +2,77 @@ package freshdesk.epharma.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFieldApi;
+import freshdesk.epharma.model.Ticket.Ticket;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
-import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.TicketFields.TicketField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TicketFieldService implements TicketFieldApi {
 
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
-    private RestTemplate ticketRestTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     ObjectMapper objectMapper;
 
+    @Override
+    public ResponseEntity<List<TicketField>> getAllTicketFields() {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<TicketField[]> responseEntity = restTemplate.exchange(
+                MAIN_URL + "ticket_fields",
+                HttpMethod.GET,
+                requestEntity,
+                TicketField[].class);
+
+        List<TicketField> tickets = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<TicketField> getTicketFieldById(Long ticketFieldId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<TicketField> response = restTemplate.exchange(
+                MAIN_URL + "/admin/ticket_fields/" + ticketFieldId,
+                HttpMethod.GET,
+                requestEntity,
+                TicketField.class);
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            TicketField ticketField = response.getBody();
+            return ResponseEntity.ok().body(ticketField);
+        } else {
+            throw new ResourceNotFoundException("Ticket field with id: #" + ticketFieldId + " not found");
+        }
+    }
+
     @PostMapping("/admin/ticket_fields")
-    public ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
+    public ResponseEntity<TicketField> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
         String type = ticketFieldsMap.get("type").toString();
 
-        TicketFields ticketFields;
+        TicketField ticketField;
         switch (type) {
             case "custom_text":
-                ticketFields = createCustomTextFieldFromMap(ticketFieldsMap);
+                ticketField = createCustomTextFieldFromMap(ticketFieldsMap);
                 break;
             case "custom_dropdown":
-                ticketFields = createCustomDropdownFieldFromMap(ticketFieldsMap);
+                ticketField = createCustomDropdownFieldFromMap(ticketFieldsMap);
                 break;
             default:
                 throw new IllegalArgumentException("Invalid ticket field type: " + type);
@@ -46,28 +83,28 @@ public class TicketFieldService implements TicketFieldApi {
 
         String payload = "";
         try {
-            payload = objectMapper.writeValueAsString(ticketFields);
+            payload = objectMapper.writeValueAsString(ticketField);
             System.out.println(" payload -> " + payload);
         } catch (Exception e){
             e.printStackTrace();
         }
         HttpEntity<String> requestEntity = new HttpEntity<>(payload, headers);
 
-        return ticketRestTemplate.exchange(
+        return restTemplate.exchange(
                 MAIN_URL + "admin/ticket_fields",
                 HttpMethod.POST,
                 requestEntity,
-                TicketFields.class);
+                TicketField.class);
     }
 
-    private TicketFields createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
+    private TicketField createCustomTextFieldFromMap(Map<String, Object> ticketFieldsMap) {
         Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
         boolean canEdit = customersCanEdit != null && customersCanEdit;
 
         Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
         boolean displayed = displayedToCustomers != null && displayedToCustomers;
 
-        TicketFields ticketFields = TicketFields.builder()
+        TicketField ticketField = TicketField.builder()
                 .labelForCustomers((String) ticketFieldsMap.get("label_for_customers"))
                 .customerCanEdit(canEdit)
                 .displayedToCustomers(displayed)
@@ -75,10 +112,10 @@ public class TicketFieldService implements TicketFieldApi {
                 .type((String) ticketFieldsMap.get("type"))
                 .build();
 
-        return ticketFields;
+        return ticketField;
     }
 
-    private TicketFields createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
+    private TicketField createCustomDropdownFieldFromMap(Map<String, Object> ticketFieldsMap) {
         Map<String, Object>[] choicesMapArray = (Map<String, Object>[]) ticketFieldsMap.get("choices");
 
         Boolean customersCanEdit = (Boolean) ticketFieldsMap.get("customers_can_edit");
@@ -87,13 +124,13 @@ public class TicketFieldService implements TicketFieldApi {
         Boolean displayedToCustomers = (Boolean) ticketFieldsMap.get("displayed_to_customers");
         boolean displayed = displayedToCustomers != null && displayedToCustomers;
 
-        TicketFields ticketFields = new TicketFields();
-        ticketFields.setCustomerCanEdit(canEdit);
-        ticketFields.setLabelForCustomers((String) ticketFieldsMap.get("label_for_customers"));
-        ticketFields.setDisplayedToCustomers(displayed);
-        ticketFields.setLabel((String) ticketFieldsMap.get("label"));
-        ticketFields.setPosition((Integer) ticketFieldsMap.get("position"));
-        ticketFields.setType((String) ticketFieldsMap.get("type"));
+        TicketField ticketField = new TicketField();
+        ticketField.setCustomerCanEdit(canEdit);
+        ticketField.setLabelForCustomers((String) ticketFieldsMap.get("label_for_customers"));
+        ticketField.setDisplayedToCustomers(displayed);
+        ticketField.setLabel((String) ticketFieldsMap.get("label"));
+        ticketField.setPosition((Integer) ticketFieldsMap.get("position"));
+        ticketField.setType((String) ticketFieldsMap.get("type"));
 
         List<TicketFieldChoices> choices = new ArrayList<>();
 
@@ -107,8 +144,8 @@ public class TicketFieldService implements TicketFieldApi {
 
             choices.add(new TicketFieldChoices(value, position));
         }
-        ticketFields.setChoices(choices);
+        ticketField.setChoices(choices);
 
-        return ticketFields;
+        return ticketField;
     }
 }

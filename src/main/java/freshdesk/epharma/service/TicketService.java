@@ -27,7 +27,7 @@ public class TicketService implements TicketApi {
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
-    private RestTemplate ticketRestTemplate;
+    private RestTemplate restTemplate;
 
     @Override
     public ResponseEntity<List<Ticket>> getAllTickets() {
@@ -35,7 +35,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket[]> responseEntity = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket[]> responseEntity = restTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.GET,
                 requestEntity,
@@ -52,7 +52,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "/tickets/" + ticketId,
                 HttpMethod.GET,
                 requestEntity,
@@ -72,7 +72,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "/tickets/" + ticketId + "summary",
                 HttpMethod.GET,
                 requestEntity,
@@ -93,7 +93,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "tickets/archived/" + archivedTicketId,
                 HttpMethod.GET,
                 requestEntity,
@@ -114,7 +114,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "tickets/archived/" + archivedTicketId + "/conversations",
                 HttpMethod.GET,
                 requestEntity,
@@ -132,7 +132,7 @@ public class TicketService implements TicketApi {
     public ResponseEntity<List<Ticket>> getTicketsWithPagination(@RequestParam int page) {
         HttpHeaders headers = new HttpHeaders();
 
-        ResponseEntity<Ticket[]> response = ticketRestTemplate.getForEntity(
+        ResponseEntity<Ticket[]> response = restTemplate.getForEntity(
                 MAIN_URL + "tickets?page=" + page,
                 Ticket[].class
         );
@@ -148,7 +148,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticket, headers);
 
-        return ticketRestTemplate.exchange(
+        return restTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
@@ -184,7 +184,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-        return ticketRestTemplate.exchange(
+        return restTemplate.exchange(
                 MAIN_URL + "tickets",
                 HttpMethod.POST,
                 requestEntity,
@@ -199,7 +199,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<Ticket> requestEntity = new HttpEntity<>(ticketDetails, headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId,
                 HttpMethod.PUT,
                 requestEntity,
@@ -242,7 +242,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBodyMap, headers);
 
-        ResponseEntity<TicketBulkUpdateResponse> responseEntity = ticketRestTemplate.exchange(
+        ResponseEntity<TicketBulkUpdateResponse> responseEntity = restTemplate.exchange(
                 uri,
                 HttpMethod.POST,
                 requestEntity,
@@ -265,7 +265,7 @@ public class TicketService implements TicketApi {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> responseEntity = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> responseEntity = restTemplate.exchange(
                 uri,
                 HttpMethod.GET,
                 requestEntity,
@@ -282,7 +282,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = ticketRestTemplate.exchange(
+        ResponseEntity<Void> response = restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId,
                 HttpMethod.DELETE,
                 requestEntity,
@@ -303,7 +303,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = ticketRestTemplate.exchange(
+        ResponseEntity<Void> response = restTemplate.exchange(
                 MAIN_URL + "tickets/archived/" + archivedTicketId,
                 HttpMethod.DELETE,
                 requestEntity,
@@ -323,7 +323,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = ticketRestTemplate.exchange(
+        ResponseEntity<Ticket> response = restTemplate.exchange(
                 MAIN_URL + "tickets/" + id + "/restore",
                 HttpMethod.PUT,
                 requestEntity,
@@ -351,7 +351,7 @@ public class TicketService implements TicketApi {
 
         HttpEntity<Map<String, List<Long>>> requestEntity = new HttpEntity<>(requestMap, headers);
 
-        ResponseEntity<Void> response = ticketRestTemplate.exchange(
+        ResponseEntity<Void> response = restTemplate.exchange(
                 MAIN_URL + "tickets/bulk_delete",
                 HttpMethod.POST,
                 requestEntity,

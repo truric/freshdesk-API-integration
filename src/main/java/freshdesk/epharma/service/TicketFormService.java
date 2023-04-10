@@ -2,8 +2,6 @@ package freshdesk.epharma.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFormApi;
-import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
-import freshdesk.epharma.model.TicketFields.TicketFields;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +19,7 @@ public class TicketFormService implements TicketFormApi {
     @Value("${freshdesk.url.main}")
     private String MAIN_URL;
     @Autowired
-    private RestTemplate ticketRestTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -32,7 +30,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketForm[]> responseEntity = ticketRestTemplate.exchange(
+        ResponseEntity<TicketForm[]> responseEntity = restTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.GET,
                 requestEntity,
@@ -48,7 +46,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketForm> response = ticketRestTemplate.exchange(
+        ResponseEntity<TicketForm> response = restTemplate.exchange(
                 MAIN_URL + "/ticket-forms/" + ticketFormId,
                 HttpMethod.GET,
                 requestEntity,
@@ -69,7 +67,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketForm, headers);
 
-        return ticketRestTemplate.exchange(
+        return restTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.POST,
                 requestEntity,
@@ -85,7 +83,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketFormDetails, headers);
 
-        ResponseEntity<TicketForm> response = ticketRestTemplate.exchange(
+        ResponseEntity<TicketForm> response = restTemplate.exchange(
                 MAIN_URL + "ticket-forms/" + ticketFormId,
                 HttpMethod.PUT,
                 requestEntity,
@@ -113,7 +111,7 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response = ticketRestTemplate.exchange(
+        ResponseEntity<Void> response = restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketFormId,
                 HttpMethod.DELETE,
                 requestEntity,

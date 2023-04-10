@@ -3,7 +3,7 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.service.TicketFieldService;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -35,11 +35,11 @@ public class TicketFieldControllerTests {
     @DisplayName("Create new Ticket Fields with custom dropdown")
     @Disabled
     void testCreateTicketFieldsWithCustomDropdown() throws JsonProcessingException {
-        ResponseEntity<TicketFields> response = ticketFieldService.createTicketFields(newTicketFieldCustomDropDown);
+        ResponseEntity<TicketField> response = ticketFieldService.createTicketFields(newTicketFieldCustomDropDown);
         HttpStatusCode httpStatus = response.getStatusCode();
 
         if (httpStatus == HttpStatus.CREATED) {
-            TicketFields createdTicketField = response.getBody();
+            TicketField createdTicketField = response.getBody();
             assertNotNull(createdTicketField);
             assertEquals("custom_dropdown", createdTicketField.getType());
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -52,11 +52,11 @@ public class TicketFieldControllerTests {
     @Test
     @DisplayName("Create new Ticket Fields with a custom text")
     void testCreateTicketFieldsWithCustomText() throws JsonProcessingException {
-        ResponseEntity<TicketFields> response = ticketFieldService.createTicketFields(newTicketFieldCustomText);
+        ResponseEntity<TicketField> response = ticketFieldService.createTicketFields(newTicketFieldCustomText);
         HttpStatusCode httpStatus = response.getStatusCode();
 
         if (httpStatus == HttpStatus.CREATED) {
-            TicketFields createdTicketField = response.getBody();
+            TicketField createdTicketField = response.getBody();
             assertNotNull(createdTicketField);
             assertEquals("custom_text", createdTicketField.getType());
             assertEquals(HttpStatus.CREATED, response.getStatusCode());

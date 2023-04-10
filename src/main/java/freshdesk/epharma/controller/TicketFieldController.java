@@ -1,24 +1,33 @@
 package freshdesk.epharma.controller;
 
-import freshdesk.epharma.model.TicketFields.TicketFields;
+import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.service.TicketFieldService;
-import freshdesk.epharma.service.TicketFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/ticket_fields")
+@RequestMapping("")
 public class TicketFieldController {
     @Autowired
     private TicketFieldService ticketFieldService;
+
+    @GetMapping("/ticket_fields")
+    public ResponseEntity<List<TicketField>> getAllTickets() {
+        List<TicketField> tickets = ticketFieldService.getAllTicketFields().getBody();
+        return ResponseEntity.ok(tickets);
+    }
+
+    @GetMapping("/admin/ticket_fields/{id}")
+    public ResponseEntity<TicketField> getTicketFieldById(@PathVariable Long ticketFieldId) {
+        return ticketFieldService.getTicketFieldById(ticketFieldId);
+    }
     @PostMapping("/admin/ticket_fields")
-    ResponseEntity<TicketFields> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
+    ResponseEntity<TicketField> createTicketFields(@RequestBody Map<String, Object> ticketFieldsMap) {
         return ticketFieldService.createTicketFields(ticketFieldsMap);
     }
 }

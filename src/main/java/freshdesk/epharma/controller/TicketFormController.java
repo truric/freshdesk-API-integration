@@ -1,6 +1,5 @@
 package freshdesk.epharma.controller;
 
-import freshdesk.epharma.model.TicketFields.TicketFields;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/ticket-forms")
