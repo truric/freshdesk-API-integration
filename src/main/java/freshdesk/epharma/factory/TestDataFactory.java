@@ -2,7 +2,9 @@ package freshdesk.epharma.factory;
 
 import freshdesk.epharma.model.Ticket.Ticket;
 import freshdesk.epharma.model.Ticket.TicketAttachment;
+import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
+import freshdesk.epharma.model.TicketForm.TicketForm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -127,74 +129,52 @@ public class TestDataFactory {
         return fieldMap;
     }
 
-//    public static TicketForm createNewTicketForm() {
-//        int numberOfFields = 2;
-//        Map<String, TicketFields>[] fields = new HashMap[numberOfFields];
-//
-//        Map<String, TicketFields> field1 = new HashMap<>();
-//        TicketFields ticketFields1 = new TicketFields();
-//        ticketFields1.setCustomerCanEdit(true);
-//        ticketFields1.setLabelForCustomer("Label for customers test 1");
-//        ticketFields1.setDisplayedToCustomers(true);
-//        ticketFields1.setLabel("Label test 1");
-//        ticketFields1.setType("custom_text");
-//        field1.put("field1", ticketFields1);
-//        fields[0] = field1;
-//
-//        Map<String, TicketFields> field2 = new HashMap<>();
-//        TicketFields ticketFields2 = new TicketFields();
-//        ticketFields2.setCustomerCanEdit(true);
-//        ticketFields2.setLabelForCustomer("Label for customers test 2");
-//        ticketFields2.setDisplayedToCustomers(true);
-//        ticketFields2.setLabel("Label test 2");
-//        ticketFields2.setPosition(1);
-//        ticketFields2.setType("custom_dropdown");
-//
-//
-//        TicketFieldChoices[] choices = new TicketFieldChoices[]{
-//                new TicketFieldChoices("Refund", 1),
-//                new TicketFieldChoices("Faulty Product", 2),
-//                new TicketFieldChoices("Item Not Delivered", 3)
-//        };
-//        Map<String, TicketFieldChoices>[] choicesArray = new Map[choices.length];
-//        for (int i = 0; i < choices.length; i++) {
-//            Map<String, TicketFieldChoices> choiceMap = new HashMap<>();
-//            choiceMap.put("choice" + i, choices[i]);
-//            choicesArray[i] = choiceMap;
+    public static TicketForm createNewTicketForm() {
+        Map<String, Object> field1 = new HashMap<>();
+        field1.put("id", 103000803251L);
+        field1.put("label_for_customers", "requester");
+        field1.put("customers_can_edit", true);
+        field1.put("required_for_customers", true);
+        field1.put("placeholder_for_customers", "requester");
+        field1.put("hint_for_customers", "requester");
+
+        Map<String, Object> field2 = new HashMap<>();
+        field2.put("id", 103000803261L);
+        field2.put("label_for_customers", "company");
+        field2.put("customers_can_edit", true);
+        field2.put("required_for_customers", true);
+        field2.put("placeholder_for_customers", "company");
+        field2.put("hint_for_customers", "company");
+
+        Map<String, Object> field3 = new HashMap<>();
+        field3.put("id", 103000803252L);
+        field3.put("label_for_customers", "subject");
+        field3.put("customers_can_edit", true);
+        field3.put("required_for_customers", true);
+        field3.put("placeholder_for_customers", "subject");
+        field3.put("hint_for_customers", "subject");
+
+        Map<String, Object> field4 = new HashMap<>();
+        field4.put("id", 103000803260L);
+        field4.put("label_for_customers", "description");
+        field4.put("customers_can_edit", true);
+        field4.put("required_for_customers", true);
+        field4.put("placeholder_for_customers", "description");
+        field4.put("hint_for_customers", "description");
+
+        Map<String, TicketField>[] fields = new Map[] {field1, field2, field3, field4};
+
+        return new TicketForm("Custom ticket for testing", "This is a custom ticket form", fields);
+    }
+
+//    generating random string generates RestClientException:
+//    Error while extracting response for type [class freshdesk.epharma.model.TicketForm.TicketForm]
+//    and content type [application/json;charset=utf-8]
+//    public class randomStringGenerator {
+//        public static String generate() {
+//            return UUID.randomUUID().toString();
 //        }
-//        ticketFields2.setChoices(choicesArray);
-//
-//        field2.put("field2", ticketFields2);
-//        fields[1] = field2;
-//
-//        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
 //    }
 
-
-//    public static TicketForm createUpdatedTicketForm() {
-//        List<TicketFields> fields = new ArrayList<>();
-//
-//        TicketFields field3 = new TicketFields();
-//        field3.setId(2L);
-//        field3.setLabelForCustomer("Field 3");
-//        field3.setCustomerCanEdit(false);
-//        field3.setRequiredForCustomers(false);
-//        field3.setHintForCustomers("Hint for Field 3");
-//        field3.setPlaceholderForCustomers("Placeholder for Field 3");
-//
-//        fields.add(field3);
-//
-//        TicketFields field4 = new TicketFields();
-//        field4.setId(3L);
-//        field4.setLabelForCustomer("Field 4");
-//        field4.setCustomerCanEdit(false);
-//        field4.setRequiredForCustomers(false);
-//        field4.setHintForCustomers("Hint for Field 4");
-//        field4.setPlaceholderForCustomers("Placeholder for Field 4");
-//
-//        fields.add(field4);
-//
-//        return new TicketForm("Ticket Form Title", "Ticket Form Description", fields);
-//    }
 
 }

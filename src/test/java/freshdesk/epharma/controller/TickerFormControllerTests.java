@@ -28,7 +28,7 @@ public class TickerFormControllerTests {
     ObjectMapper objectMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketFormController.class);
-//    private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
+    private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
     private final Map<String, Object> newTicketFieldCustomText = TestDataFactory.createNewTicketFieldCustomText();
     private final Map<String, Object> newTicketFieldCustomDropDown = TestDataFactory.createNewTicketFieldCustomDropdown();
 
@@ -62,27 +62,31 @@ public class TickerFormControllerTests {
             TicketForm ticketForm = response.getBody();
             assert ticketForm != null;
             LOGGER.info(objectMapper.writeValueAsString(ticketForm));
+            System.out.println("worked bro");
         } else {
             LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
         }
     }
 
-//    @Test
-//    @DisplayName("Create a new Ticket Form")
-//    @Disabled
-//    @Order(3)
-//    void testCreateTicket() throws JsonProcessingException {
-//        ResponseEntity<TicketForm> response = ticketFormService.createTicketForm(newTicketForm);
-//        HttpStatusCode httpStatus = response.getStatusCode();
-//
-//        if (httpStatus == HttpStatus.CREATED) {
-//            TicketForm createdTicketForm = response.getBody();
-//            assert createdTicketForm != null;
+//    TicketForm object creating rules:
+//    title must be unique
+//    must have fields: requester, company, subject and description with their respective ids
+    @Test
+    @DisplayName("Create a new Ticket Form")
+    @Disabled
+    @Order(3)
+    void testCreateTicket() throws JsonProcessingException {
+        ResponseEntity<TicketForm> response = ticketFormService.createTicketForm(newTicketForm);
+        HttpStatusCode httpStatus = response.getStatusCode();
+
+        if (httpStatus == HttpStatus.CREATED) {
+            TicketForm createdTicketForm = response.getBody();
+            assert createdTicketForm != null;
 //            LOGGER.info(objectMapper.writeValueAsString(createdTicketForm));
-//        } else {
-//            LOGGER.error("Failed to create Ticket Form");
-//        }
-//    }
+        } else {
+            LOGGER.error("Failed to create Ticket Form");
+        }
+    }
 
 //    @Test
 //    @DisplayName("Update a Ticket Form by it's id")

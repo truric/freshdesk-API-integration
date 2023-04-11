@@ -1,5 +1,6 @@
 package freshdesk.epharma.model.TicketFields;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
@@ -13,7 +14,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class TicketField {
@@ -64,6 +64,11 @@ public class TicketField {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TicketFieldChoices> choices;
 
+    @JsonCreator
+    public TicketField(@JsonProperty("id") Long id) {
+        this.id = id;
+    }
+
     public TicketField(String labelForCustomers, boolean isCustomersCanEdit, boolean isDisplayedToCustomers, String label,
                        boolean isRequiredForCustomers, Integer position) {
         this.labelForCustomers = labelForCustomers;
@@ -72,5 +77,21 @@ public class TicketField {
         this.label = label;
         this.isRequiredForCustomers = isRequiredForCustomers;
         this.position = position;
+    }
+
+    public TicketField(Long id, String labelForCustomers, boolean isCustomersCanEdit, boolean isDisplayedToCustomers,
+                       String label, String type, boolean isRequiredForCustomers, String placeholderForCustomers,
+                       String hintForCustomers, Integer position, List<TicketFieldChoices> choices) {
+        this.id = id;
+        this.labelForCustomers = labelForCustomers;
+        this.isCustomersCanEdit = isCustomersCanEdit;
+        this.isDisplayedToCustomers = isDisplayedToCustomers;
+        this.label = label;
+        this.type = type;
+        this.isRequiredForCustomers = isRequiredForCustomers;
+        this.placeholderForCustomers = placeholderForCustomers;
+        this.hintForCustomers = hintForCustomers;
+        this.position = position;
+        this.choices = choices;
     }
 }
