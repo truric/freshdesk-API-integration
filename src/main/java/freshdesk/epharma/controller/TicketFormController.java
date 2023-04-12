@@ -1,5 +1,6 @@
 package freshdesk.epharma.controller;
 
+import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,20 @@ public class TicketFormController {
         return ResponseEntity.ok(ticketForms);
     }
     @GetMapping("/ticket-forms/{id}")
-    public ResponseEntity<TicketForm> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
+    public ResponseEntity<String> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
         return ticketFormService.getTicketFormById(ticketFormId);
+    }
+
+    @GetMapping("/ticket-forms/{id}/clone")
+    public ResponseEntity<TicketForm> cloneTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
+        return ticketFormService.cloneTicketFormById(ticketFormId);
+    }
+
+    @GetMapping("/ticket-forms/{form-id}/fields/{field-id}")
+    public ResponseEntity<TicketField> viewTicketFormsField(
+            @PathVariable(value = "form-id") Long ticketFormId,
+            @PathVariable(value = "field-id") Long ticketFieldId) throws ResourceNotFoundException {
+        return ticketFormService.viewTicketFormsField(ticketFormId, ticketFieldId);
     }
 
     @PostMapping("/ticket-forms")
@@ -35,6 +48,14 @@ public class TicketFormController {
             @PathVariable (value = "id") Long ticketFormId,
             @RequestBody TicketForm ticketFormDetails) throws ResourceNotFoundException {
         return ticketFormService.updateTicketForm(ticketFormId, ticketFormDetails);
+    }
+
+    @PutMapping("/ticket-forms/{form-id}/fields/{field-id}")
+    public ResponseEntity<TicketField> updateTicketFormsField(
+            @PathVariable (value = "form-id") Long ticketFormId,
+            @PathVariable (value = "field-id") Long ticketFieldId,
+            @RequestBody TicketField ticketFieldDetails) throws ResourceNotFoundException {
+        return ticketFormService.updateTicketFormsField(ticketFormId, ticketFieldId, ticketFieldDetails);
     }
 
     @DeleteMapping("/ticket-forms/{id}")

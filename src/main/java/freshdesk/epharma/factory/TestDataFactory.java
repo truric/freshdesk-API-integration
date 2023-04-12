@@ -164,17 +164,28 @@ public class TestDataFactory {
 
         Map<String, TicketField>[] fields = new Map[] {field1, field2, field3, field4};
 
-        return new TicketForm("Custom ticket for testing", "This is a custom ticket form", fields);
+        return new TicketForm(randomStringGenerator.generate(), "This is a custom ticket form", fields);
+    }
+
+    public static TicketField createNewTicketField() {
+        TicketField ticketField = new TicketField();
+        ticketField.setLabel("Issue Type");
+        ticketField.setCustomersCanEdit(true);
+        ticketField.setRequiredForCustomers(true);
+        ticketField.setHintForCustomers("New Hint For Customers");
+        ticketField.setPlaceholderForCustomers("New Placeholder For Customers");
+//        ticketField.setPosition(1);
+        return ticketField;
     }
 
 //    generating random string generates RestClientException:
 //    Error while extracting response for type [class freshdesk.epharma.model.TicketForm.TicketForm]
 //    and content type [application/json;charset=utf-8]
-//    public class randomStringGenerator {
-//        public static String generate() {
-//            return UUID.randomUUID().toString();
-//        }
-//    }
+    public class randomStringGenerator {
+        public static String generate() {
+            return UUID.randomUUID().toString();
+        }
+    }
 
 
 }

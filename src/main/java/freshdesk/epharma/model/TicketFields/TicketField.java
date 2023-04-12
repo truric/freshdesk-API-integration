@@ -94,4 +94,14 @@ public class TicketField {
         this.position = position;
         this.choices = choices;
     }
+
+    public TicketField(String label, boolean customersCanEdit, boolean requiredForCustomers, String hintForCustomers,
+                       String placeholderForCustomers) {
+        this.label = label;
+        this.isCustomersCanEdit = customersCanEdit;
+        this.isRequiredForCustomers = requiredForCustomers;
+        this.hintForCustomers = hintForCustomers;
+        this.placeholderForCustomers = placeholderForCustomers;
+//        this.position = position;
+    }
 }

@@ -3,6 +3,7 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
+import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.service.TicketFormService;
 import org.junit.jupiter.api.*;
@@ -17,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TickerFormControllerTests {
+public class TicketFormControllerTests {
 
     @Autowired
     private TicketFormService ticketFormService;
@@ -27,12 +30,14 @@ public class TickerFormControllerTests {
     @Autowired
     ObjectMapper objectMapper;
 
+    long ticketFormId = 103000131305L;
+    long ticketFieldId = 103000876014L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketFormController.class);
     private final TicketForm newTicketForm = TestDataFactory.createNewTicketForm();
-    private final Map<String, Object> newTicketFieldCustomText = TestDataFactory.createNewTicketFieldCustomText();
-    private final Map<String, Object> newTicketFieldCustomDropDown = TestDataFactory.createNewTicketFieldCustomDropdown();
+    private final TicketField createNewTicketField = TestDataFactory.createNewTicketField();
 
 //    private final TicketForm updatedTicketForm = TestDataFactory.createUpdatedTicketForm();
+
 
     @Test
     @DisplayName("Get all Ticket Forms")
@@ -56,13 +61,51 @@ public class TickerFormControllerTests {
     @DisplayName("Get a Ticket Form by its id")
     @Disabled
     void testGetTicketFormById() throws JsonProcessingException {
-        long ticketFormId = 103000131305L;
-        ResponseEntity<TicketForm> response = ticketFormService.getTicketFormById(ticketFormId);
+        ResponseEntity<String> response = ticketFormService.getTicketFormById(ticketFormId);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            LOGGER.info(response.getBody());
+        } else {
+            LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
+        }
+    }
+
+    @Test
+    @DisplayName("Clone a Ticket Form by its id")
+    @Disabled
+    void testCloneTicketFormById() throws JsonProcessingException {
+        ResponseEntity<TicketForm> response = ticketFormService.cloneTicketFormById(ticketFormId);
         if (response.getStatusCode() == HttpStatus.OK) {
             TicketForm ticketForm = response.getBody();
             assert ticketForm != null;
             LOGGER.info(objectMapper.writeValueAsString(ticketForm));
-            System.out.println("worked bro");
+        } else {
+            LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
+        }
+    }
+
+    @Test
+    @DisplayName("View A Ticket Form's Field")
+    @Disabled
+    void testViewTicketsFormField() throws JsonProcessingException {
+        ResponseEntity<TicketField> response = ticketFormService.viewTicketFormsField(ticketFormId, ticketFieldId);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            TicketField ticketField = response.getBody();
+            assert ticketField != null;
+            LOGGER.info(objectMapper.writeValueAsString(ticketField));
+        } else {
+            LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
+        }
+    }
+
+    @Test
+    @DisplayName("View A Ticket Form's Field")
+    @Disabled
+    void testUpdateTicketsFormField() throws JsonProcessingException {
+        ResponseEntity<TicketField> response = ticketFormService.viewTicketFormsField(ticketFormId, ticketFieldId);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            TicketField ticketField = response.getBody();
+            assert ticketField != null;
+            LOGGER.info(objectMapper.writeValueAsString(ticketField));
         } else {
             LOGGER.error("Unable to retrieve Ticket Form with ID " + ticketFormId + ". HTTP status: " + response.getStatusCode());
         }
@@ -93,7 +136,8 @@ public class TickerFormControllerTests {
 //    @Order(4)
 //    @Disabled
 //    public void testUpdateTicketById() throws JsonProcessingException {
-//        ResponseEntity<TicketForm> createdResponse = ticketFormService.createTicketForm(newTicketForm);
+//
+//        ResponseEntity<TicketForm> createdResponse = ticketFormService.updateTicketForm(ticketFormId, updatedTicketForm);
 //        TicketForm createdTicketForm = createdResponse.getBody();
 //
 //        assert createdTicketForm != null;
@@ -101,12 +145,39 @@ public class TickerFormControllerTests {
 //
 //        HttpStatusCode httpStatus = updatedResponse.getStatusCode();
 //        assertEquals(HttpStatus.OK, httpStatus);
-//        assertNotEquals(updatedTicketForm.getTitle(), createdResponse.getBody().getTitle());
-//        assertNotEquals(updatedTicketForm.getDescription(), createdResponse.getBody().getDescription());
-//        assertNotEquals(updatedTicketForm.getFields(), createdResponse.getBody().getFields());
+//        assertEquals(updatedTicketForm.getTitle(), createdResponse.getBody().getTitle());
+//        assertEquals(updatedTicketForm.getDescription(), createdResponse.getBody().getDescription());
+//        assertEquals(updatedTicketForm.getFields(), createdResponse.getBody().getFields());
 //        LOGGER.info(objectMapper.writeValueAsString(updatedResponse.getBody()));
 //    }
 
+    @Test
+    @DisplayName("Update a Ticket Form's field by id")
+    @Disabled
+    public void testUpdateTicketFormsFieldById() throws JsonProcessingException {
+        ResponseEntity<TicketField> responseUpdate = ticketFormService.updateTicketFormsField(ticketFormId, ticketFieldId, createNewTicketField);
+        assertEquals(HttpStatus.OK, responseUpdate.getStatusCode());
+
+        ResponseEntity<String> responseGetId = ticketFormService.getTicketFormById(ticketFormId);
+        assertEquals(HttpStatus.OK, responseGetId.getStatusCode());
+
+        TicketForm ticketForm = objectMapper.convertValue(responseGetId, TicketForm.class);
+
+//        TODO need to change datatype from String to Class but without json/utf-8 deserialize error
+//        assertEquals(createNewTicketField.getLabel(), ticketForm.getFields().getLabel());
+//        assertEquals(createNewTicketField.isCustomersCanEdit(), ticketForm.getFields().isCustomersCanEdit());
+//        assertEquals(createNewTicketField.isRequiredForCustomers(), ticketForm.getFields().isRequiredForCustomers());
+//        assertEquals(createNewTicketField.getHintForCustomers(), ticketForm.getFields().getHintForCustomers());
+//        assertEquals(createNewTicketField.getPlaceholderForCustomers(), ticketForm.getFields().getPlaceholderForCustomers());
+//        assertEquals(createNewTicketField.getPosition(), ticketForm.getFields().getPosition());
+
+        LOGGER.info(objectMapper.writeValueAsString(createNewTicketField));
+        LOGGER.info(objectMapper.writeValueAsString(ticketForm));
+
+    }
+
+//    Note: Be cautious about deleting a ticket form since this action is irreversible.
+//    You will not be able to restore a ticket form if you delete it.
 //    @Test
 //    @DisplayName("Delete a Ticket Form by its id")
 //    @Disabled
