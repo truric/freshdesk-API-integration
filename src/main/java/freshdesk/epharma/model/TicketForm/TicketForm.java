@@ -1,20 +1,15 @@
 package freshdesk.epharma.model.TicketForm;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import freshdesk.epharma.model.TicketFields.TicketField;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.UniqueElements;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +21,7 @@ public class TicketForm {
         this.description = (String) map.get("description");
     }
 
-    public TicketForm(String title, String description, Map<String, TicketField>[] fields) {
+    public TicketForm(String title, String description, List<TicketField> fields) {
         this.title = title;
         this.description = description;
         this.fields = fields;
@@ -60,7 +55,7 @@ public class TicketForm {
 
     @JsonProperty("fields")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Map<String, TicketField>[] fields;
+    private List<TicketField> fields;
 
     @JsonProperty("last_updated_by")
     @JsonInclude(JsonInclude.Include.NON_NULL)
