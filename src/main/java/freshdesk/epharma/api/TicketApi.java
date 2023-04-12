@@ -1,7 +1,7 @@
 package freshdesk.epharma.api;
 
 import freshdesk.epharma.model.Ticket.Ticket;
-import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
+import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
 import freshdesk.epharma.model.Ticket.TicketQueryDTO;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public interface TicketApi {
 
     @PostMapping("/bulk-update")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    ResponseEntity<TicketBulkUpdateResponse> bulkUpdateTickets(@RequestBody TicketBulkUpdateResponse bulkUpdateRequest);
+    ResponseEntity<String> bulkUpdateTickets(@RequestBody TicketBulkUpdate bulkAction);
 
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
     Ticket searchTickets(@ModelAttribute TicketQueryDTO query);

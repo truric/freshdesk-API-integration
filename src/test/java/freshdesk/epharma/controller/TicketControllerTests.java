@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
 import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
 import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
 import freshdesk.epharma.model.Ticket.TicketQueryDTO;
 import freshdesk.epharma.service.TicketService;
@@ -334,94 +335,67 @@ class TicketControllerTests {
 		LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
 	}
 
-//	@Test
-//	@DisplayName("Bulk Update Tickets")
-////	@Order(6)
-//	@Disabled
-//	public void testBulkUpdateTickets() throws JsonProcessingException {
-//		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
-//		Ticket createdTicket1 = createdResponse1.getBody();
-//		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
-//		Ticket createdTicket2 = createdResponse2.getBody();
-//		ResponseEntity<Ticket> createdResponse3 = ticketService.createTicket(newTicket);
-//		Ticket createdTicket3 = createdResponse3.getBody();
-//
-//		Map<String, Ticket> properties = new HashMap<>();
-//
-//		Ticket statusTicket1 = new Ticket();
-//		statusTicket1.setStatus(3);
-//		properties.put("status", statusTicket1);
-//
-//		Ticket sourceTicket = new Ticket();
-//		sourceTicket.setSource(1);
-//		properties.put("source", sourceTicket);
-//
-//		Ticket priorityTicket = new Ticket();
-//		priorityTicket.setPriority(4);
-//		properties.put("priority", priorityTicket);
-//
-//		assert createdTicket1 != null;
-//		assert createdTicket2 != null;
-//		assert createdTicket3 != null;
-//		List<Long> ids = Arrays.asList(
-//				createdTicket1.getId(),
-//				createdTicket2.getId(),
-//				createdTicket3.getId()
-//		);
-//
-//		TicketBulkUpdateResponse bulkUpdateRequest = new TicketBulkUpdateResponse(ids, properties, null);
-//
-//		ResponseEntity<TicketBulkUpdateResponse> bulkUpdateResponseEntity = ticketService.bulkUpdateTickets(bulkUpdateRequest);
-//
-//		assertNotNull(bulkUpdateResponseEntity);
-//
-//		//TODO
-//		assertEquals(3, Objects.requireNonNull(bulkUpdateResponseEntity.getBody()).getIds().size());
-//		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().size());
-//		assertEquals(3, bulkUpdateResponseEntity.getBody().getProperties().get("status").getStatus().intValue());
-//		assertEquals(1, bulkUpdateResponseEntity.getBody().getProperties().get("source").getSource().intValue());
-//		assertEquals(4, bulkUpdateResponseEntity.getBody().getProperties().get("priority").getPriority().intValue());
-//		LOGGER.info(objectMapper.writeValueAsString(bulkUpdateResponseEntity));
-//	}
-//
-//	@Test
-//	@DisplayName("Get all conversations of archived ticket by id")
-//	@Disabled
-////	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-//	void testGetAllConversationsOfArchivedTicketById() throws JsonProcessingException {
-//		long archivedTicketId = 2;
-//		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
-//		if (response.getStatusCode() == HttpStatus.OK) {
-//			Ticket ticket = response.getBody();
-//			assert ticket != null;
-//			LOGGER.info(objectMapper.writeValueAsString(ticket));
-//		} else {
-//			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
-//		}
-//	}
-//
-//	@Test
-//	@DisplayName("Delete an Archived Ticket by it's id")
-//	@Disabled
-////		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
-//	public void testDeleteArchivedTicket() throws JsonProcessingException {
-//		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
-//		Ticket archivedTicket = createdResponse.getBody();
-//		assert archivedTicket != null;
-//		Long archivedTicketId = archivedTicket.getId();
-//
-//		ResponseEntity<String> deleteResponse = ticketService.deleteArchivedTicket(archivedTicket.getId());
-//		String message = deleteResponse.getBody();
-//
-//		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
-//		assertEquals("Archived Ticket [#"+archivedTicketId+"] deleted successfully", message);
-//
-//		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(archivedTicketId);
-//
-////		it should be HttpStatus.NOT_FOUND
-////		but HttpStatus.OK is default behaviour or freshdesk API
-//		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
-//		LOGGER.info(objectMapper.writeValueAsString(notFoundResponse));
-//	}
+	@Test
+	public void testUpdateTicketsInBulk() {
+		TicketBulkUpdate bulkAction = new TicketBulkUpdate();
+		bulkAction.setIds(Arrays.asList(15, 26, 37));
+		Map<String, Integer> properties = new HashMap<>();
+		properties.put("status", 2);
+		properties.put("priority", 4);
+		properties.put("source", 1);
+		bulkAction.setProperties(properties);
+		ResponseEntity<String> responseEntity = ticketService.bulkUpdateTickets(bulkAction);
+		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+
+		TicketBulkUpdateResponse bulkUpdateResponse = new TicketBulkUpdateResponse();
+		try {
+			bulkUpdateResponse = new ObjectMapper().readValue(responseEntity.getBody(), TicketBulkUpdateResponse.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("jobId: " + bulkUpdateResponse.getJobId());
+		System.out.println("href: " + bulkUpdateResponse.getHref());
+	}
+
+	@Test
+	@DisplayName("Get all conversations of archived ticket by id")
+	@Disabled
+//	The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	void testGetAllConversationsOfArchivedTicketById() throws JsonProcessingException {
+		long archivedTicketId = 2;
+		ResponseEntity<Ticket> response = ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
+		if (response.getStatusCode() == HttpStatus.OK) {
+			Ticket ticket = response.getBody();
+			assert ticket != null;
+			LOGGER.info(objectMapper.writeValueAsString(ticket));
+		} else {
+			LOGGER.error("Unable to retrieve conversations from archived ticket with ID " + archivedTicketId + ". HTTP status: " + response.getStatusCode());
+		}
+	}
+
+	@Test
+	@DisplayName("Delete an Archived Ticket by its id")
+	@Disabled
+//		The Archive Tickets feature(s) is/are not supported in your plan. Please upgrade your account to use it.
+	public void testDeleteArchivedTicket() throws JsonProcessingException {
+		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
+		Ticket archivedTicket = createdResponse.getBody();
+		assert archivedTicket != null;
+		Long archivedTicketId = archivedTicket.getId();
+
+		ResponseEntity<String> deleteResponse = ticketService.deleteArchivedTicket(archivedTicket.getId());
+		String message = deleteResponse.getBody();
+
+		assertEquals(HttpStatus.OK, deleteResponse.getStatusCode());
+		assertEquals("Archived Ticket [#"+archivedTicketId+"] deleted successfully", message);
+
+		ResponseEntity<Ticket> notFoundResponse = ticketService.getTicketById(archivedTicketId);
+
+//		it should be HttpStatus.NOT_FOUND
+//		but HttpStatus.OK is default behaviour or freshdesk API
+		assertEquals(HttpStatus.OK, notFoundResponse.getStatusCode());
+		LOGGER.info(objectMapper.writeValueAsString(notFoundResponse));
+	}
 
 }

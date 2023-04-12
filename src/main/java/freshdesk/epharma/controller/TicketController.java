@@ -1,6 +1,7 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
 import freshdesk.epharma.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -40,6 +41,12 @@ public class TicketController {
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
         return ticketService.updateTicket(id, ticket);
+    }
+
+    @PostMapping("/bulk-update")
+    public @ResponseStatus(HttpStatus.ACCEPTED)
+    ResponseEntity<String> bulkUpdateTickets(@RequestBody TicketBulkUpdate bulkAction) {
+        return ticketService.bulkUpdateTickets(bulkAction);
     }
 
     @DeleteMapping("/{id}")

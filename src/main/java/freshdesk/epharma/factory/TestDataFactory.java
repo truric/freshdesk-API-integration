@@ -131,7 +131,7 @@ public class TestDataFactory {
 
     public static List<TicketField> createMandatoryTicketFields() {
         TicketField field1 = new TicketField();
-        field1.setId(103000803251L);
+        field1.setId(103000878346L);
         field1.setLabelForCustomers("requester");
         field1.setIsCustomersCanEdit(true);
         field1.setIsRequiredForCustomers(true);
@@ -139,7 +139,7 @@ public class TestDataFactory {
         field1.setHintForCustomers("requester");
 
         TicketField field2 = new TicketField();
-        field2.setId(103000803261L);
+        field2.setId(103000878356L);
         field2.setLabelForCustomers( "company");
         field2.setIsCustomersCanEdit(true);
         field2.setIsRequiredForCustomers(true);
@@ -147,7 +147,7 @@ public class TestDataFactory {
         field2.setHintForCustomers("company");
 
         TicketField field3 = new TicketField();
-        field3.setId(103000803252L);
+        field3.setId(103000878347L);
         field3.setLabelForCustomers("subject");
         field3.setIsCustomersCanEdit(true);
         field3.setIsRequiredForCustomers(true);
@@ -155,7 +155,7 @@ public class TestDataFactory {
         field3.setHintForCustomers("subject");
 
         TicketField field4 = new TicketField();
-        field4.setId(103000803260L);
+        field4.setId(103000878355L);
         field4.setLabelForCustomers("description");
         field4.setIsCustomersCanEdit(true);
         field4.setIsRequiredForCustomers(true);
@@ -173,7 +173,7 @@ public class TestDataFactory {
 
     public static TicketForm createNewTicketForm() {
         TicketForm ticketForm = new TicketForm();
-        ticketForm.setTitle(randomStringGenerator.generate());
+        ticketForm.setTitle(randomStringGenerator());
         ticketForm.setDescription("This is a custom ticket form");
         ticketForm.setFields(createMandatoryTicketFields());
 
@@ -191,7 +191,7 @@ public class TestDataFactory {
         List<TicketField> fields = new ArrayList<>();
         fields.add(field1);
 
-        return new TicketForm(randomStringGenerator.generate(), "This is a custom ticket form 2", fields);
+        return new TicketForm(randomStringGenerator() + "x", "This is a custom ticket form 2", fields);
     }
 
     public static TicketField createNewTicketField() {
@@ -201,17 +201,12 @@ public class TestDataFactory {
         ticketField.setIsRequiredForCustomers(true);
         ticketField.setHintForCustomers("New Hint For Customers");
         ticketField.setPlaceholderForCustomers("New Placeholder For Customers");
-//  position is not mandatory field
+//      position is not mandatory field
 //      ticketField.setPosition(1);
         return ticketField;
     }
 
-//    generating random string generates RestClientException:
-//    Error while extracting response for type [class freshdesk.epharma.model.TicketForm.TicketForm]
-//    and content type [application/json;charset=utf-8]
-    public class randomStringGenerator {
-        public static String generate() {
+    public static String randomStringGenerator() {
             return UUID.randomUUID().toString();
-        }
     }
 }

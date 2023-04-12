@@ -61,4 +61,12 @@ public class TicketForm {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Long lastUpdatedBy;
 
+    public TicketForm(Long id, String title, String description, String name, List<TicketField> fields, Long lastUpdatedBy) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.name = name;
+        this.fields = fields;
+        this.lastUpdatedBy = lastUpdatedBy;
+    }
 }

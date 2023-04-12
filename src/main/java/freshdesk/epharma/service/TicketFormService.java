@@ -2,8 +2,11 @@ package freshdesk.epharma.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFormApi;
+import freshdesk.epharma.controller.TicketFormController;
 import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketForm.TicketForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -24,6 +27,8 @@ public class TicketFormService implements TicketFormApi {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    private static final Logger LOG = LoggerFactory.getLogger(TicketFormController.class);
 
     @GetMapping("/ticket-forms")
     public ResponseEntity<List<TicketForm>> getAllTicketForms() {
@@ -137,9 +142,12 @@ public class TicketFormService implements TicketFormApi {
             assert updatedTicketForm != null;
 
             TicketForm updated = new TicketForm(
+                    updatedTicketForm.getId(),
                     updatedTicketForm.getTitle(),
                     updatedTicketForm.getDescription(),
-                    updatedTicketForm.getFields()
+                    updatedTicketForm.getName(),
+                    updatedTicketForm.getFields(),
+                    updatedTicketForm.getLastUpdatedBy()
             );
             return ResponseEntity.ok(updated);
         } else {
@@ -162,7 +170,8 @@ public class TicketFormService implements TicketFormApi {
                 requestEntity,
                 TicketField.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
+//TODO getting forbidden
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.FORBIDDEN) {
             TicketField updatedTicketFormsField = response.getBody();
             assert updatedTicketFormsField != null;
 
@@ -179,7 +188,7 @@ public class TicketFormService implements TicketFormApi {
         }
     }
 
-    @DeleteMapping("/ticket-forms/{id}")
+    @Override
     public ResponseEntity<String> deleteTicketForm(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -187,13 +196,13 @@ public class TicketFormService implements TicketFormApi {
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                MAIN_URL + "tickets/" + ticketFormId,
+                MAIN_URL + "ticket-forms/" + ticketFormId,
                 HttpMethod.DELETE,
                 requestEntity,
                 Void.class);
 
         if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
-            return ResponseEntity.ok().body("Ticket [#" + ticketFormId + "] deleted successfully");
+            return ResponseEntity.ok().body("Ticket form [#" + ticketFormId + "] deleted successfully");
         } else {
             throw new ResourceNotFoundException("Ticket not deleted");
         }

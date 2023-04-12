@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -64,4 +65,5 @@ public class Ticket {
     @JsonProperty("attachments")
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<TicketAttachment> attachments;
+
 }

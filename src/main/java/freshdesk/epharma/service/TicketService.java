@@ -1,10 +1,7 @@
 package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketApi;
-import freshdesk.epharma.model.Ticket.Ticket;
-import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
-import freshdesk.epharma.model.Ticket.TicketQueryDTO;
-import freshdesk.epharma.model.Ticket.TicketReply;
+import freshdesk.epharma.model.Ticket.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -225,31 +222,53 @@ public class TicketService implements TicketApi {
     }
 
     @Override
-    public ResponseEntity<TicketBulkUpdateResponse> bulkUpdateTickets(
-            @RequestBody TicketBulkUpdateResponse bulkUpdateRequest) {
+    public ResponseEntity<String> bulkUpdateTickets(@RequestBody TicketBulkUpdate bulkAction) {
 
-        List<Long> ids = bulkUpdateRequest.getIds();
-        Map<String, Ticket> updatedProperties = bulkUpdateRequest.getProperties();
-        TicketReply reply = bulkUpdateRequest.getTicketReply();
+        List<Integer> ids = bulkAction.getIds();
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.badRequest().body("No ticket ids provided for bulk update");
+        }
 
-        URI uri = URI.create(MAIN_URL + "tickets/bulk_update");
+        Integer status = bulkAction.getProperties().get("status");
+        Integer priority = bulkAction.getProperties().get("priority");
+        Integer source = bulkAction.getProperties().get("source");
+        if (status == null && priority == null && source == null) {
+            return ResponseEntity.badRequest().body("No properties provided for bulk update");
+        }
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("status", status);
+        properties.put("priority", priority);
+        properties.put("source", source);
+
+        Map<String, Object> requestMap = new HashMap<>();
+        requestMap.put("ids", ids);
+        requestMap.put("properties", properties);
+
+        Map<String, Object> bulkActionMap = new HashMap<>();
+        bulkActionMap.put("bulk_action", requestMap);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        Map<String, Object> requestBodyMap = buildBulkUpdateRequestBody(updatedProperties, reply);
-        requestBodyMap.put("ids", ids);
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(bulkActionMap, headers);
 
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBodyMap, headers);
-
-        ResponseEntity<TicketBulkUpdateResponse> responseEntity = restTemplate.exchange(
-                uri,
+        ResponseEntity<TicketBulkUpdateResponse> response = restTemplate.exchange(
+                MAIN_URL + "tickets/bulk_update",
                 HttpMethod.POST,
                 requestEntity,
-                TicketBulkUpdateResponse.class
-        );
+                TicketBulkUpdateResponse.class);
 
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(responseEntity.getBody());
+        TicketBulkUpdateResponse bulkUpdateResponse = response.getBody();
+        assert bulkUpdateResponse != null;
+        String jobId = bulkUpdateResponse.getJobId();
+        String href = bulkUpdateResponse.getHref();
+
+        if (response.getStatusCode() == HttpStatus.ACCEPTED) {
+            return ResponseEntity.ok().body("Tickets " + ids + " updated successfully");
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update tickets " + ids);
+        }
     }
 
     @Override
