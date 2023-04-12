@@ -28,11 +28,11 @@ public class TicketField {
 
     @JsonProperty("customers_can_edit")
     @NotNull
-    private boolean isCustomersCanEdit;
+    private Boolean isCustomersCanEdit;
 
     @JsonProperty("displayed_to_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean isDisplayedToCustomers;
+    private Boolean isDisplayedToCustomers;
 
     @JsonProperty("label")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -44,7 +44,7 @@ public class TicketField {
 
     @JsonProperty("required_for_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private boolean isRequiredForCustomers;
+    private Boolean isRequiredForCustomers;
 
     @JsonProperty("placeholder_for_customers")
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -69,8 +69,8 @@ public class TicketField {
         this.id = id;
     }
 
-    public TicketField(String labelForCustomers, boolean isCustomersCanEdit, boolean isDisplayedToCustomers, String label,
-                       boolean isRequiredForCustomers, Integer position) {
+    public TicketField(String labelForCustomers, Boolean isCustomersCanEdit, Boolean isDisplayedToCustomers, String label,
+                       Boolean isRequiredForCustomers, Integer position) {
         this.labelForCustomers = labelForCustomers;
         this.isCustomersCanEdit = isCustomersCanEdit;
         this.isDisplayedToCustomers = isDisplayedToCustomers;
@@ -79,8 +79,8 @@ public class TicketField {
         this.position = position;
     }
 
-    public TicketField(Long id, String labelForCustomers, boolean isCustomersCanEdit, boolean isDisplayedToCustomers,
-                       String label, String type, boolean isRequiredForCustomers, String placeholderForCustomers,
+    public TicketField(Long id, String labelForCustomers, Boolean isCustomersCanEdit, Boolean isDisplayedToCustomers,
+                       String label, String type, Boolean isRequiredForCustomers, String placeholderForCustomers,
                        String hintForCustomers, Integer position, List<TicketFieldChoices> choices) {
         this.id = id;
         this.labelForCustomers = labelForCustomers;
@@ -95,7 +95,7 @@ public class TicketField {
         this.choices = choices;
     }
 
-    public TicketField(String label, boolean customersCanEdit, boolean requiredForCustomers, String hintForCustomers,
+    public TicketField(String label, Boolean customersCanEdit, Boolean requiredForCustomers, String hintForCustomers,
                        String placeholderForCustomers) {
         this.label = label;
         this.isCustomersCanEdit = customersCanEdit;
