@@ -22,7 +22,7 @@ public class TicketFormController {
         return ResponseEntity.ok(ticketForms);
     }
     @GetMapping("/ticket-forms/{id}")
-    public ResponseEntity<String> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
+    public ResponseEntity<TicketForm> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
         return ticketFormService.getTicketFormById(ticketFormId);
     }
 

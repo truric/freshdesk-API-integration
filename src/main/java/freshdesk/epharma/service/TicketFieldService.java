@@ -190,10 +190,10 @@ public class TicketFieldService implements TicketFieldApi {
 
             TicketField updated = new TicketField(
                     updatedTicketField.getLabelForCustomers(),
-                    updatedTicketField.isCustomersCanEdit(),
-                    updatedTicketField.isDisplayedToCustomers(),
+                    updatedTicketField.getIsCustomersCanEdit(),
+                    updatedTicketField.getIsDisplayedToCustomers(),
                     updatedTicketField.getLabel(),
-                    updatedTicketField.isRequiredForCustomers(),
+                    updatedTicketField.getIsRequiredForCustomers(),
                     updatedTicketField.getPosition()
             );
             return ResponseEntity.ok(updated);
@@ -299,9 +299,9 @@ public class TicketFieldService implements TicketFieldApi {
         boolean displayed = displayedToCustomers != null && displayedToCustomers;
 
         TicketField ticketField = new TicketField();
-        ticketField.setCustomersCanEdit(canEdit);
+        ticketField.setIsCustomersCanEdit(canEdit);
         ticketField.setLabelForCustomers((String) ticketFieldsMap.get("label_for_customers"));
-        ticketField.setDisplayedToCustomers(displayed);
+        ticketField.setIsDisplayedToCustomers(displayed);
         ticketField.setLabel((String) ticketFieldsMap.get("label"));
         ticketField.setPosition((Integer) ticketFieldsMap.get("position"));
         ticketField.setType((String) ticketFieldsMap.get("type"));

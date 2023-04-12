@@ -13,7 +13,7 @@ public interface TicketFormApi {
     ResponseEntity<List<TicketForm>> getAllTicketForms();
 
     @GetMapping("/ticket-forms/{id}")
-    ResponseEntity<String> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException;
+    ResponseEntity<TicketForm> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException;
 
     @GetMapping("/ticket-forms/{id}/clone")
     ResponseEntity<TicketForm> cloneTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException;

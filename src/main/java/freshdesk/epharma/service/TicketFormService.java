@@ -3,7 +3,6 @@ package freshdesk.epharma.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFormApi;
 import freshdesk.epharma.model.TicketFields.TicketField;
-import freshdesk.epharma.model.TicketFields.TicketFieldSection;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,19 +42,19 @@ public class TicketFormService implements TicketFormApi {
         return new ResponseEntity<>(ticketForms, HttpStatus.OK);
     }
     @GetMapping("/ticket-forms/{id}")
-    public ResponseEntity<String> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
+    public ResponseEntity<TicketForm> getTicketFormById(@PathVariable(value = "id") Long ticketFormId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
+        ResponseEntity<TicketForm> response = restTemplate.exchange(
                 MAIN_URL + "/ticket-forms/" + ticketFormId,
                 HttpMethod.GET,
                 requestEntity,
-                String.class);
+                TicketForm.class);
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return ResponseEntity.ok().body(response.getBody());
+        if (response.getStatusCode() == HttpStatus.OK || response.getStatusCode() == HttpStatus.FORBIDDEN) {
+            return ResponseEntity.ok().body(response).getBody();
         } else {
             throw new ResourceNotFoundException("Ticket with id: #" + ticketFormId + " not found");
         }
@@ -111,21 +110,11 @@ public class TicketFormService implements TicketFormApi {
 
         HttpEntity<TicketForm> requestEntity = new HttpEntity<>(ticketForm, headers);
 
-        String a = restTemplate.exchange(
+        return restTemplate.exchange(
                 MAIN_URL + "ticket-forms",
                 HttpMethod.POST,
                 requestEntity,
-                String.class).getBody();
-
-        System.out.println("----> " + a);
-
-        return null;
-
-//        return restTemplate.exchange(
-//                MAIN_URL + "ticket-forms",
-//                HttpMethod.POST,
-//                requestEntity,
-//                TicketForm.class);
+                TicketForm.class);
     }
 
     @PutMapping("/ticket-forms/{id}")
@@ -179,11 +168,10 @@ public class TicketFormService implements TicketFormApi {
 
             TicketField updated = new TicketField(
                     updatedTicketFormsField.getLabel(),
-                    updatedTicketFormsField.isCustomersCanEdit(),
-                    updatedTicketFormsField.isRequiredForCustomers(),
+                    updatedTicketFormsField.getIsCustomersCanEdit(),
+                    updatedTicketFormsField.getIsRequiredForCustomers(),
                     updatedTicketFormsField.getHintForCustomers(),
                     updatedTicketFormsField.getPlaceholderForCustomers()
-//                    updatedTicketFormsField.getPosition()
             );
             return ResponseEntity.ok(updated);
         } else {
