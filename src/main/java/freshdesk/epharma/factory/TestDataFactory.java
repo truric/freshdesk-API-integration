@@ -129,52 +129,80 @@ public class TestDataFactory {
         return fieldMap;
     }
 
+    public static List<TicketField> createMandatoryTicketFields() {
+        TicketField field1 = new TicketField();
+        field1.setId(103000803251L);
+        field1.setLabelForCustomers("requester");
+        field1.setIsCustomersCanEdit(true);
+        field1.setIsRequiredForCustomers(true);
+        field1.setPlaceholderForCustomers("requester");
+        field1.setHintForCustomers("requester");
+
+        TicketField field2 = new TicketField();
+        field2.setId(103000803261L);
+        field2.setLabelForCustomers( "company");
+        field2.setIsCustomersCanEdit(true);
+        field2.setIsRequiredForCustomers(true);
+        field2.setPlaceholderForCustomers("company");
+        field2.setHintForCustomers("company");
+
+        TicketField field3 = new TicketField();
+        field3.setId(103000803252L);
+        field3.setLabelForCustomers("subject");
+        field3.setIsCustomersCanEdit(true);
+        field3.setIsRequiredForCustomers(true);
+        field3.setPlaceholderForCustomers("subject");
+        field3.setHintForCustomers("subject");
+
+        TicketField field4 = new TicketField();
+        field4.setId(103000803260L);
+        field4.setLabelForCustomers("description");
+        field4.setIsCustomersCanEdit(true);
+        field4.setIsRequiredForCustomers(true);
+        field4.setPlaceholderForCustomers("description");
+        field4.setHintForCustomers("description");
+
+        List<TicketField> fields = new ArrayList<>();
+        fields.add(field1);
+        fields.add(field2);
+        fields.add(field3);
+        fields.add(field4);
+
+        return fields;
+    }
+
     public static TicketForm createNewTicketForm() {
-        Map<String, Object> field1 = new HashMap<>();
-        field1.put("id", 103000803251L);
-        field1.put("label_for_customers", "requester");
-        field1.put("customers_can_edit", true);
-        field1.put("required_for_customers", true);
-        field1.put("placeholder_for_customers", "requester");
-        field1.put("hint_for_customers", "requester");
+        TicketForm ticketForm = new TicketForm();
+        ticketForm.setTitle(randomStringGenerator.generate());
+        ticketForm.setDescription("This is a custom ticket form");
+        ticketForm.setFields(createMandatoryTicketFields());
 
-        Map<String, Object> field2 = new HashMap<>();
-        field2.put("id", 103000803261L);
-        field2.put("label_for_customers", "company");
-        field2.put("customers_can_edit", true);
-        field2.put("required_for_customers", true);
-        field2.put("placeholder_for_customers", "company");
-        field2.put("hint_for_customers", "company");
+        return ticketForm;
+    }
 
-        Map<String, Object> field3 = new HashMap<>();
-        field3.put("id", 103000803252L);
-        field3.put("label_for_customers", "subject");
-        field3.put("customers_can_edit", true);
-        field3.put("required_for_customers", true);
-        field3.put("placeholder_for_customers", "subject");
-        field3.put("hint_for_customers", "subject");
+    public static TicketForm createNewTicketForm2() {
+        TicketField field1 = new TicketField();
+        field1.setLabelForCustomers("tester");
+        field1.setIsCustomersCanEdit(true);
+        field1.setIsRequiredForCustomers(true);
+        field1.setPlaceholderForCustomers("tester");
+        field1.setHintForCustomers("tester");
 
-        Map<String, Object> field4 = new HashMap<>();
-        field4.put("id", 103000803260L);
-        field4.put("label_for_customers", "description");
-        field4.put("customers_can_edit", true);
-        field4.put("required_for_customers", true);
-        field4.put("placeholder_for_customers", "description");
-        field4.put("hint_for_customers", "description");
+        List<TicketField> fields = new ArrayList<>();
+        fields.add(field1);
 
-        Map<String, TicketField>[] fields = new Map[] {field1, field2, field3, field4};
-
-        return new TicketForm(randomStringGenerator.generate(), "This is a custom ticket form", fields);
+        return new TicketForm(randomStringGenerator.generate(), "This is a custom ticket form 2", fields);
     }
 
     public static TicketField createNewTicketField() {
         TicketField ticketField = new TicketField();
         ticketField.setLabel("Issue Type");
-        ticketField.setCustomersCanEdit(true);
-        ticketField.setRequiredForCustomers(true);
+        ticketField.setIsCustomersCanEdit(true);
+        ticketField.setIsRequiredForCustomers(true);
         ticketField.setHintForCustomers("New Hint For Customers");
         ticketField.setPlaceholderForCustomers("New Placeholder For Customers");
-//        ticketField.setPosition(1);
+//  position is not mandatory field
+//      ticketField.setPosition(1);
         return ticketField;
     }
 
@@ -186,6 +214,4 @@ public class TestDataFactory {
             return UUID.randomUUID().toString();
         }
     }
-
-
 }
