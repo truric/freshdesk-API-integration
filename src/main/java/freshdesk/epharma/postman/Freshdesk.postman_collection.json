@@ -50,7 +50,7 @@
 					"response": []
 				},
 				{
-					"name": "Get archived ticket by id",
+					"name": "Get archived ticket",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -130,7 +130,7 @@
 					"response": []
 				},
 				{
-					"name": "Get ticket per id",
+					"name": "Get ticket",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -620,7 +620,7 @@
 					"response": []
 				},
 				{
-					"name": "Get ticket form by id",
+					"name": "Get ticket form",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -644,7 +644,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -658,6 +658,97 @@
 							],
 							"path": [
 								"103000131305"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clone a ticket form",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Custom ticket form 2\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 103000803251,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 103000803261,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        },\r\n        {\r\n            \"id\": 103000803252,\r\n            \"label_for_customers\": \"subject\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"subject\",\r\n            \"hint_for_customers\": \"subject\"\r\n        },\r\n        {\r\n            \"id\": 103000803260,\r\n            \"label_for_customers\": \"description\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"description\",\r\n            \"hint_for_customers\": \"description\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305/clone",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305",
+								"clone"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View ticket form's field",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Custom ticket form 2\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 103000803251,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 103000803261,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        },\r\n        {\r\n            \"id\": 103000803252,\r\n            \"label_for_customers\": \"subject\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"subject\",\r\n            \"hint_for_customers\": \"subject\"\r\n        },\r\n        {\r\n            \"id\": 103000803260,\r\n            \"label_for_customers\": \"description\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"description\",\r\n            \"hint_for_customers\": \"description\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305/fields/103000876014",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305",
+								"fields",
+								"103000876014"
 							]
 						}
 					},
@@ -685,7 +776,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Custom ticket form 2\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 103000803251,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 103000803261,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        },\r\n                {\r\n            \"id\": 103000803252,\r\n            \"label_for_customers\": \"subject\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"subject\",\r\n            \"hint_for_customers\": \"subject\"\r\n        },\r\n                {\r\n            \"id\": 103000803260,\r\n            \"label_for_customers\": \"description\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"description\",\r\n            \"hint_for_customers\": \"description\"\r\n        }\r\n    ]\r\n}",
+							"raw": "{\r\n    \"title\": \"Custom ticket form 2\",\r\n    \"description\": \"This is a custom ticket form\",\r\n    \"fields\": [\r\n        {\r\n            \"id\": 103000803251,\r\n            \"label_for_customers\": \"requester\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"requester\",\r\n            \"hint_for_customers\": \"requester\"\r\n        },\r\n        {\r\n            \"id\": 103000803261,\r\n            \"label_for_customers\": \"company\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"company\",\r\n            \"hint_for_customers\": \"company\"\r\n        },\r\n        {\r\n            \"id\": 103000803252,\r\n            \"label_for_customers\": \"subject\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"subject\",\r\n            \"hint_for_customers\": \"subject\"\r\n        },\r\n        {\r\n            \"id\": 103000803260,\r\n            \"label_for_customers\": \"description\",\r\n            \"customers_can_edit\": true,\r\n            \"required_for_customers\": true,\r\n            \"placeholder_for_customers\": \"description\",\r\n            \"hint_for_customers\": \"description\"\r\n        }\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -700,6 +791,131 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update ticket form",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label_for_customers\": \"Requester email\",\r\n    \"customers_can_edit\": true,\r\n    \"required_for_customers\": true,\r\n    \"hint_for_customers\": \"Requester email\",\r\n    \"placeholder_for_customers\": \"Requester Email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update ticket form's field",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label_for_customers\": \"Requester email\",\r\n    \"customers_can_edit\": true,\r\n    \"required_for_customers\": true,\r\n    \"hint_for_customers\": \"Requester email\",\r\n    \"placeholder_for_customers\": \"Requester Email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305/fields/103000876014",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305",
+								"fields",
+								"103000876014"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete ticket form",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "x",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{API_KEY}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"label_for_customers\": \"Requester email\",\r\n    \"customers_can_edit\": true,\r\n    \"required_for_customers\": true,\r\n    \"hint_for_customers\": \"Requester email\",\r\n    \"placeholder_for_customers\": \"Requester Email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"host": [
+								"{{MAIN_DOMAIN}}ticket-forms"
+							],
+							"path": [
+								"103000131305"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -710,7 +926,7 @@
 					"name": "Section",
 					"item": [
 						{
-							"name": "Get list of ticket_field sections by id",
+							"name": "Get list of ticket_field sections",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -803,7 +1019,7 @@
 							"response": []
 						},
 						{
-							"name": "Create section for ticket_field by id",
+							"name": "Create section for ticket_field",
 							"request": {
 								"auth": {
 									"type": "basic",
@@ -890,7 +1106,7 @@
 							"response": []
 						},
 						{
-							"name": "Get list of ticket_field sections by id Copy",
+							"name": "Delete a ticket_field's section",
 							"request": {
 								"auth": {
 									"type": "basic",
@@ -1009,7 +1225,7 @@
 					"response": []
 				},
 				{
-					"name": "Get ticket_field by id",
+					"name": "Get ticket_field",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -1033,7 +1249,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"bulk_action\": \r\n        {\"ids\": [2,3,4]\r\n    }\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1041,13 +1257,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000868715",
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014",
 							"host": [
 								"{{MAIN_DOMAIN}}admin"
 							],
 							"path": [
 								"ticket_fields",
-								"103000868715"
+								"103000876014"
 							]
 						}
 					},
@@ -1177,7 +1393,7 @@
 					"response": []
 				},
 				{
-					"name": "Update a ticket_field by id",
+					"name": "Update a ticket_field",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -1219,7 +1435,7 @@
 					"response": []
 				},
 				{
-					"name": "Delete a ticket_field by id",
+					"name": "Delete a ticket_field",
 					"request": {
 						"auth": {
 							"type": "basic",
