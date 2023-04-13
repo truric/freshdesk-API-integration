@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "28a8df77-0ee5-4397-8284-9b3170ac44b9",
+		"_postman_id": "01999604-2c4a-47db-b285-3854fa96ed04",
 		"name": "Freshdesk",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26887857"
 	},
 	"item": [
 		{
@@ -18,13 +19,13 @@
 							"type": "basic",
 							"basic": [
 								{
-									"key": "password",
-									"value": "x",
+									"key": "username",
+									"value": "{{API_KEY}}",
 									"type": "string"
 								},
 								{
-									"key": "username",
-									"value": "{{API_KEY}}",
+									"key": "password",
+									"value": "x",
 									"type": "string"
 								}
 							]
@@ -150,12 +151,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}tickets/1",
+							"raw": "{{MAIN_DOMAIN}}tickets/50",
 							"host": [
 								"{{MAIN_DOMAIN}}tickets"
 							],
 							"path": [
-								"1"
+								"50"
 							]
 						}
 					},
@@ -364,7 +365,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"bulk_action\": {\r\n        \"ids\": [\r\n            15,\r\n            26,\r\n            37\r\n        ],\r\n        \"properties\": {\r\n            \"status\": 2,\r\n            \"priority\": 4\r\n        }\r\n    }\r\n}",
+							"raw": "{\r\n    \"bulk_action\": {\r\n        \"ids\": [\r\n            15,\r\n            26,\r\n            37\r\n        ],\r\n        \"properties\": {\r\n            \"status\": 2,\r\n            \"priority\": 4,\r\n            \"source\": 1\r\n        }\r\n    }\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -372,12 +373,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}tickets/bulk_update",
+							"raw": "{{MAIN_DOMAIN}}/tickets/bulk_delete",
 							"host": [
-								"{{MAIN_DOMAIN}}tickets"
+								"{{MAIN_DOMAIN}}"
 							],
 							"path": [
-								"bulk_update"
+								"tickets",
+								"bulk_delete"
 							]
 						}
 					},
@@ -652,12 +654,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000143290",
 							"host": [
 								"{{MAIN_DOMAIN}}ticket-forms"
 							],
 							"path": [
-								"103000131305"
+								"103000143290"
 							]
 						}
 					},
@@ -814,7 +816,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"label_for_customers\": \"Requester email\",\r\n    \"customers_can_edit\": true,\r\n    \"required_for_customers\": true,\r\n    \"hint_for_customers\": \"Requester email\",\r\n    \"placeholder_for_customers\": \"Requester Email\"\r\n}",
+							"raw": "{\r\n    \"title\": \"Customm ticket form for testing\",\r\n    \"description\": \"This is a custom ticket form for testing\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -822,12 +824,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000143290",
 							"host": [
 								"{{MAIN_DOMAIN}}ticket-forms"
 							],
 							"path": [
-								"103000131305"
+								"103000143290"
 							]
 						}
 					},
@@ -878,6 +880,9 @@
 				},
 				{
 					"name": "Delete ticket form",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -894,11 +899,11 @@
 								}
 							]
 						},
-						"method": "DELETE",
+						"method": "GET",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"label_for_customers\": \"Requester email\",\r\n    \"customers_can_edit\": true,\r\n    \"required_for_customers\": true,\r\n    \"hint_for_customers\": \"Requester email\",\r\n    \"placeholder_for_customers\": \"Requester Email\"\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -906,12 +911,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000131305",
+							"raw": "{{MAIN_DOMAIN}}ticket-forms/103000145061",
 							"host": [
 								"{{MAIN_DOMAIN}}ticket-forms"
 							],
 							"path": [
-								"103000131305"
+								"103000145061"
 							]
 						}
 					},
@@ -1257,13 +1262,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000876014",
+							"raw": "{{MAIN_DOMAIN}}admin/ticket_fields/103000878353",
 							"host": [
 								"{{MAIN_DOMAIN}}admin"
 							],
 							"path": [
 								"ticket_fields",
-								"103000876014"
+								"103000878353"
 							]
 						}
 					},
@@ -1479,14 +1484,34 @@
 			]
 		}
 	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
 	"variable": [
 		{
 			"key": "API_KEY",
-			"value": "SFwYEiL3MAdxtTqepSv"
+			"value": "IbsY0hNHmt7GMXfPVvgL"
 		},
 		{
 			"key": "MAIN_DOMAIN",
-			"value": "https://eixpharma.freshdesk.com/api/v2/"
+			"value": "https://e-pharma.freshdesk.com/api/v2/"
 		}
 	]
 }
