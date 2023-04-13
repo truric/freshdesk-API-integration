@@ -18,7 +18,11 @@ target/
 *.iws
 *.iml
 *.ipr
-!**src/main/resources/
+
+
+### Sensitive Data ###
+src/main/resources/
+
 
 ### NetBeans ###
 /nbproject/private/
