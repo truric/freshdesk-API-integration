@@ -2,6 +2,7 @@ package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketApi;
 import freshdesk.epharma.model.Ticket.*;
+import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -64,20 +65,19 @@ public class TicketService implements TicketApi {
     }
 
     @Override
-    public ResponseEntity<Ticket> getTicketSummary(Long ticketId) throws ResourceNotFoundException {
+    public ResponseEntity<TicketSummary> getTicketSummary(Long ticketId) throws ResourceNotFoundException {
         HttpHeaders headers = new HttpHeaders();
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<TicketSummary> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ticket> response = restTemplate.exchange(
-                MAIN_URL + "/tickets/" + ticketId + "summary",
+        ResponseEntity<TicketSummary> response = restTemplate.exchange(
+                MAIN_URL + "/tickets/" + ticketId + "/summary",
                 HttpMethod.GET,
                 requestEntity,
-                Ticket.class);
+                TicketSummary.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            Ticket ticket = response.getBody();
-            return ResponseEntity.ok().body(ticket);
+            return ResponseEntity.ok().body(response.getBody());
         } else {
             throw new ResourceNotFoundException("Ticket with id: #" + ticketId + " not found");
         }
@@ -222,6 +222,23 @@ public class TicketService implements TicketApi {
     }
 
     @Override
+    public ResponseEntity<TicketSummary> updateTicketsSummary(
+            @PathVariable (value = "id") Long ticketId,
+            @RequestBody TicketSummary ticketSummaryDetails) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<TicketSummary> requestEntity = new HttpEntity<>(ticketSummaryDetails, headers);
+
+        return restTemplate.exchange(
+                MAIN_URL + "tickets/" + ticketId + "/summary",
+                HttpMethod.PUT,
+                requestEntity,
+                TicketSummary.class);
+    }
+
+    @Override
     public ResponseEntity<String> bulkUpdateTickets(@RequestBody TicketBulkUpdate bulkAction) {
 
         List<Integer> ids = bulkAction.getIds();
@@ -232,6 +249,7 @@ public class TicketService implements TicketApi {
         Integer status = bulkAction.getProperties().get("status");
         Integer priority = bulkAction.getProperties().get("priority");
         Integer source = bulkAction.getProperties().get("source");
+        String body = bulkAction.getTicketReply().getBody();
         if (status == null && priority == null && source == null) {
             return ResponseEntity.badRequest().body("No properties provided for bulk update");
         }
@@ -241,9 +259,13 @@ public class TicketService implements TicketApi {
         properties.put("priority", priority);
         properties.put("source", source);
 
+        Map<String, Object> reply = new HashMap<>();
+        reply.put("body", body);
+
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("ids", ids);
         requestMap.put("properties", properties);
+        requestMap.put("reply", reply);
 
         Map<String, Object> bulkActionMap = new HashMap<>();
         bulkActionMap.put("bulk_action", requestMap);
@@ -265,7 +287,7 @@ public class TicketService implements TicketApi {
         String href = bulkUpdateResponse.getHref();
 
         if (response.getStatusCode() == HttpStatus.ACCEPTED) {
-            return ResponseEntity.ok().body("Tickets " + ids + " updated successfully");
+            return ResponseEntity.ok().body("jobId: " + jobId + "\n" + "href: " + href);
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update tickets " + ids);
         }
@@ -311,6 +333,46 @@ public class TicketService implements TicketApi {
             return ResponseEntity.ok().body("Ticket [#" + ticketId + "] deleted successfully");
         } else {
             throw new ResourceNotFoundException("Ticket not deleted");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Ticket> deleteTicketsSummary(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Ticket> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<Ticket> response = restTemplate.exchange(
+                MAIN_URL + "tickets/" + ticketId + "/summary",
+                HttpMethod.DELETE,
+                requestEntity,
+                Ticket.class);
+
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            return ResponseEntity.ok().body(response.getBody());
+        } else {
+            throw new ResourceNotFoundException("Ticket not deleted");
+        }
+    }
+
+    @Override
+    public ResponseEntity<TicketAttachment> deleteAnAttachment(@PathVariable(value = "id") Long attachmentId) throws ResourceNotFoundException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<TicketAttachment> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<TicketAttachment> response = restTemplate.exchange(
+                MAIN_URL + "attachments/" + attachmentId,
+                HttpMethod.DELETE,
+                requestEntity,
+                TicketAttachment.class);
+
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            return ResponseEntity.ok().body(response.getBody());
+        } else {
+            throw new ResourceNotFoundException("Attachment not deleted");
         }
     }
 

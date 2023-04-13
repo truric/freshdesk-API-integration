@@ -5,6 +5,7 @@ import freshdesk.epharma.model.Ticket.TicketAttachment;
 import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketForm.TicketForm;
+import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -46,11 +47,11 @@ public class TestDataFactory {
     }
 
     public static Ticket createNewTicketWithAttachment() throws IOException {
-        Resource resource = new FileSystemResource("src/main/resources/epharma.jpeg");
+        Resource resource = new FileSystemResource("src/main/resources/assets/epharma.jpeg");
         byte[] attachmentData = StreamUtils.copyToByteArray(resource.getInputStream());
 
         TicketAttachment attachment = new TicketAttachment();
-        attachment.setName("epharma.jpeg");
+        attachment.setName("assets/epharma.jpeg");
         attachment.setData(attachmentData);
 
         Ticket ticket = new Ticket();
@@ -65,13 +66,13 @@ public class TestDataFactory {
     }
 
     public static Ticket createNewTicketWithMultiAttachments() throws IOException {
-        Resource resource1 = new FileSystemResource("src/main/resources/epharma.jpeg");
+        Resource resource1 = new FileSystemResource("src/main/resources/assets/epharma.jpeg");
         byte[] attachmentData1 = StreamUtils.copyToByteArray(resource1.getInputStream());
         TicketAttachment attachment1 = new TicketAttachment();
         attachment1.setName("attachment1.jpg");
         attachment1.setData(attachmentData1);
 
-        Resource resource2 = new FileSystemResource("src/main/resources/equipa.jpeg");
+        Resource resource2 = new FileSystemResource("src/main/resources/assets/equipa.jpeg");
         byte[] attachmentData2 = StreamUtils.copyToByteArray(resource2.getInputStream());
         TicketAttachment attachment2 = new TicketAttachment();
         attachment2.setName("attachment2.jpg");
@@ -204,6 +205,12 @@ public class TestDataFactory {
 //      position is not mandatory field
 //      ticketField.setPosition(1);
         return ticketField;
+    }
+
+    public static TicketSummary createNewTicketSummary() {
+        return new TicketSummary(
+                "Summary body goes here as test"
+        );
     }
 
     public static String randomStringGenerator() {

@@ -3,10 +3,8 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.Ticket.Ticket;
-import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
-import freshdesk.epharma.model.Ticket.TicketBulkUpdateResponse;
-import freshdesk.epharma.model.Ticket.TicketQueryDTO;
+import freshdesk.epharma.model.Ticket.*;
+import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import freshdesk.epharma.service.TicketService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +45,7 @@ class TicketControllerTests {
 	private final Ticket updatedTicket = TestDataFactory.createUpdatedTicket();
 	private final Ticket newTicketWithAttachment = TestDataFactory.createNewTicketWithAttachment();
 	private final Ticket newTicketWithMultiAttachments = TestDataFactory.createNewTicketWithMultiAttachments();
+	private final TicketSummary newTicketSummary = TestDataFactory.createNewTicketSummary();
 
 	TicketControllerTests() throws IOException {
 	}
@@ -88,15 +87,18 @@ class TicketControllerTests {
 	@DisplayName("Get a Tickets summary")
 	@Order(3)
 	void testGetTicketSummary() throws JsonProcessingException {
-		long ticketId = 2;
-		ResponseEntity<Ticket> response = ticketService.getTicketSummary(ticketId);
-		if (response.getStatusCode() == HttpStatus.OK) {
-			Ticket ticket = response.getBody();
-			assert ticket != null;
-			LOGGER.info(objectMapper.writeValueAsString(ticket));
-		} else {
-			LOGGER.error("Unable to retrieve ticket with ID " + ticketId + ". HTTP status: " + response.getStatusCode());
-		}
+		ResponseEntity<Ticket> responseCreate = ticketService.createTicket(newTicket);
+		assertEquals(HttpStatus.CREATED, responseCreate.getStatusCode());
+
+		ResponseEntity<TicketSummary> responseUpdate = ticketService.updateTicketsSummary(
+				Objects.requireNonNull(responseCreate.getBody()).getId(), newTicketSummary);
+		assertEquals(HttpStatus.OK, responseUpdate.getStatusCode());
+
+		ResponseEntity<TicketSummary> responseSummary = ticketService.getTicketSummary(
+				Objects.requireNonNull(responseCreate.getBody()).getId());
+		assertEquals(HttpStatus.OK, responseSummary.getStatusCode());
+
+		LOGGER.info(objectMapper.writeValueAsString(responseSummary.getBody()));
 	}
 
 	@Test
@@ -130,6 +132,20 @@ class TicketControllerTests {
 		assertNotNull(response.getBody());
 		assertNotNull(response.getBody().getId());
 		LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
+	}
+
+	@Test
+	@DisplayName("Update a tickets summary")
+	@Order(5)
+	void testUpdateTicketsSummary() throws JsonProcessingException {
+		ResponseEntity<Ticket> responseCreate = ticketService.createTicket(newTicket);
+		assertEquals(HttpStatus.CREATED, responseCreate.getStatusCode());
+
+		ResponseEntity<TicketSummary> responseUpdate = ticketService.updateTicketsSummary(
+				Objects.requireNonNull(responseCreate.getBody()).getId(), newTicketSummary);
+		assertEquals(HttpStatus.OK, responseUpdate.getStatusCode());
+
+		LOGGER.info(objectMapper.writeValueAsString(responseUpdate.getBody()));
 	}
 
 	/**
@@ -216,8 +232,25 @@ class TicketControllerTests {
 	}
 
 	@Test
-	@DisplayName("Restore a deleted Ticket by it's id")
+	@DisplayName("Delete a Tickets summary")
 	@Order(8)
+	public void testDeleteTicketsSummary() {
+		ResponseEntity<Ticket> responseCreate = ticketService.createTicket(newTicket);
+		assertEquals(HttpStatus.CREATED, responseCreate.getStatusCode());
+
+		ResponseEntity<TicketSummary> responseUpdate = ticketService.updateTicketsSummary(
+				Objects.requireNonNull(responseCreate.getBody()).getId(), newTicketSummary);
+		assertEquals(HttpStatus.OK, responseUpdate.getStatusCode());
+
+		ResponseEntity<Ticket> responseDelete = ticketService.deleteTicketsSummary(
+				Objects.requireNonNull(responseCreate.getBody()).getId());
+		assertEquals(HttpStatus.OK, responseDelete.getStatusCode());
+		LOGGER.info("Tickets summary #" + Objects.requireNonNull(responseUpdate.getBody()).getId() + " successfully deleted");
+	}
+
+	@Test
+	@DisplayName("Restore a deleted Ticket by it's id")
+	@Order(9)
 	public void testRestoreDeletedTicket() throws ResourceNotFoundException, JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse = ticketService.createTicket(newTicket);
 		Ticket createdTicket = createdResponse.getBody();
@@ -250,7 +283,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Filter Tickets by query")
-	@Order(9)
+	@Order(10)
 	public void testFilterTicketsByQuery() throws JsonProcessingException {
 		TicketQueryDTO query = new TicketQueryDTO();
 
@@ -275,7 +308,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Delete multiple Tickets in bulk")
-	@Order(10)
+	@Order(11)
 	public void testDeleteTicketsInBulk() throws JsonProcessingException {
 		ResponseEntity<Ticket> createdResponse1 = ticketService.createTicket(newTicket);
 		ResponseEntity<Ticket> createdResponse2 = ticketService.createTicket(newTicket);
@@ -313,7 +346,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket with an attachment")
-	@Order(11)
+	@Order(12)
 	void testCreateTicketWithAttachmentTest() throws JsonProcessingException {
 		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithAttachment);
 
@@ -325,7 +358,7 @@ class TicketControllerTests {
 
 	@Test
 	@DisplayName("Create a new Ticket with multi attachments")
-	@Order(12)
+	@Order(13)
 	void testCreateTicketWithMultiAttachmentTest() throws JsonProcessingException {
 		ResponseEntity<Ticket> response = ticketService.createTicketWithAttachment(newTicketWithMultiAttachments);
 
@@ -336,26 +369,45 @@ class TicketControllerTests {
 	}
 
 	@Test
+	@DisplayName("Delete an attachment")
+	@Order(14)
+	void testDeleteAnAttachmentTest() throws JsonProcessingException {
+		ResponseEntity<Ticket> responseCreate = ticketService.createTicketWithAttachment(newTicketWithAttachment);
+		assertEquals(HttpStatus.CREATED, responseCreate.getStatusCode());
+
+		Long attachmentId = Objects.requireNonNull(responseCreate.getBody()).getAttachments().get(0).getId();
+
+		ResponseEntity<TicketAttachment> responseDelete = ticketService.deleteAnAttachment(attachmentId);
+
+		if (HttpStatus.OK == responseDelete.getStatusCode()) {
+			LOGGER.info("Attachment #"+ attachmentId + " successfully deleted");
+		} else {
+			LOGGER.error("Failed to delete attachment");
+		}
+	}
+
+	@Test
+	@DisplayName("Update Tickets in bulk")
+	@Order(15)
 	public void testUpdateTicketsInBulk() {
 		TicketBulkUpdate bulkAction = new TicketBulkUpdate();
 		bulkAction.setIds(Arrays.asList(15, 26, 37));
+
 		Map<String, Integer> properties = new HashMap<>();
 		properties.put("status", 2);
 		properties.put("priority", 4);
 		properties.put("source", 1);
+
+		TicketReply reply = new TicketReply();
+		reply.setBody("body goes here for testing");
+
 		bulkAction.setProperties(properties);
+		bulkAction.setTicketReply(reply);
+
 		ResponseEntity<String> responseEntity = ticketService.bulkUpdateTickets(bulkAction);
 		assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
 
-		TicketBulkUpdateResponse bulkUpdateResponse = new TicketBulkUpdateResponse();
-		try {
-			bulkUpdateResponse = new ObjectMapper().readValue(responseEntity.getBody(), TicketBulkUpdateResponse.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		System.out.println("jobId: " + bulkUpdateResponse.getJobId());
-		System.out.println("href: " + bulkUpdateResponse.getHref());
+		System.out.println(responseEntity.getBody());
 	}
 
 	@Test

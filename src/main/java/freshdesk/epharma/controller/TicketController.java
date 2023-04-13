@@ -1,7 +1,9 @@
 package freshdesk.epharma.controller;
 
 import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketAttachment;
 import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
+import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import freshdesk.epharma.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -29,8 +31,8 @@ public class TicketController {
     }
 
     @GetMapping("/{id}/summary")
-    public ResponseEntity<Ticket> getTicketSummary(@PathVariable Long id) {
-        return ticketService.getTicketById(id);
+    public ResponseEntity<TicketSummary> getTicketSummary(@PathVariable Long id) {
+        return ticketService.getTicketSummary(id);
     }
 
     @PostMapping("/tickets")
@@ -41,6 +43,13 @@ public class TicketController {
     @PutMapping("/{id}")
     public ResponseEntity<Ticket> updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
         return ticketService.updateTicket(id, ticket);
+    }
+
+    @PutMapping("/tickets/{id}/summary")
+    public ResponseEntity<TicketSummary> updateTicketsSummary(
+            @PathVariable (value = "id") Long ticketId,
+            @RequestBody TicketSummary ticketSummaryDetails) {
+        return ticketService.updateTicketsSummary(ticketId, ticketSummaryDetails);
     }
 
     @PostMapping("/bulk-update")
@@ -55,6 +64,16 @@ public class TicketController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/tickets/{id}/summary")
+    public ResponseEntity<Ticket> deleteTicketsSummary(@PathVariable(value = "id") Long ticketId) {
+        return ticketService.deleteTicketsSummary(ticketId);
+    }
+
+    @DeleteMapping("/attachments/{id}")
+    public ResponseEntity<TicketAttachment> deleteAnAttachment(@PathVariable(value = "id") Long attachmentId) {
+        return ticketService.deleteAnAttachment(attachmentId);
+    }
+
     @GetMapping("/archived/{id}")
     public ResponseEntity<Ticket> getArchivedTicketById(@PathVariable Long id) {
         return ticketService.getArchivedTicketById(id);
@@ -62,7 +81,7 @@ public class TicketController {
 
     @GetMapping("/archived/{id}/conversations")
     public ResponseEntity<Ticket> getAllConversationsOfArchivedTicketById(
-            @PathVariable(value = "id") Long archivedTicketId) throws ResourceNotFoundException {
+            @PathVariable(value = "id") Long archivedTicketId) {
         return ticketService.getAllConversationsOfArchivedTicketById(archivedTicketId);
 
     }

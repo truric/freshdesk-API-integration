@@ -1,8 +1,10 @@
 package freshdesk.epharma.api;
 
 import freshdesk.epharma.model.Ticket.Ticket;
+import freshdesk.epharma.model.Ticket.TicketAttachment;
 import freshdesk.epharma.model.Ticket.TicketBulkUpdate;
 import freshdesk.epharma.model.Ticket.TicketQueryDTO;
+import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,7 +22,7 @@ public interface TicketApi {
     ResponseEntity<Ticket> getTicketById(Long ticketId) throws ResourceNotFoundException;
 
     @GetMapping("/tickets/{id}/summary")
-    ResponseEntity<Ticket> getTicketSummary(Long ticketId) throws ResourceNotFoundException;
+    ResponseEntity<TicketSummary> getTicketSummary(Long ticketId) throws ResourceNotFoundException;
 
     @GetMapping("/archived/{id}")
     ResponseEntity<Ticket> getArchivedTicketById(@PathVariable Long id);
@@ -42,8 +44,12 @@ public interface TicketApi {
     ResponseEntity<Ticket> updateTicket(@PathVariable (value = "id") Long ticketId,
                                         @RequestBody Ticket ticketDetails) throws ResourceNotFoundException;
 
+    @PutMapping("/tickets/{id}/summary")
+    ResponseEntity<TicketSummary> updateTicketsSummary(
+            @PathVariable (value = "id") Long ticketId,
+            @RequestBody TicketSummary ticketSummaryDetails);
+
     @PostMapping("/bulk-update")
-    @ResponseStatus(HttpStatus.ACCEPTED)
     ResponseEntity<String> bulkUpdateTickets(@RequestBody TicketBulkUpdate bulkAction);
 
     @GetMapping(path = "/search/tickets", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -51,6 +57,12 @@ public interface TicketApi {
 
     @DeleteMapping("/tickets/{id}")
     ResponseEntity<String> deleteTicket(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException;
+
+    @DeleteMapping("/tickets/{id}/summary")
+    ResponseEntity<Ticket> deleteTicketsSummary(@PathVariable(value = "id") Long ticketId) throws ResourceNotFoundException;
+
+    @DeleteMapping("/attachments/{id}")
+    ResponseEntity<TicketAttachment> deleteAnAttachment(@PathVariable(value = "id") Long attachmentId) throws ResourceNotFoundException;
 
     @DeleteMapping("/archived/{id}")
     ResponseEntity<String> deleteArchivedTicket(@PathVariable(value = "id") Long archivedTicketId);
