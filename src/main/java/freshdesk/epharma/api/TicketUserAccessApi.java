@@ -14,7 +14,7 @@ public interface TicketUserAccessApi {
     @PostMapping("/tickets/{id}/accesses")
     ResponseEntity<TicketUserAccess> createTicketUserAccess(
             @PathVariable (value = "id") Long ticketId,
-            @RequestBody Long userIds);
+            @RequestBody TicketUserAccess ticketUserAccessDetails);
 
     @PatchMapping("/tickets/{id}/accesses")
     ResponseEntity<TicketUserAccessPatch> updateTicketUserAccess(

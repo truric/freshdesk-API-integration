@@ -23,15 +23,15 @@ public class TicketUserAccessController {
     @PostMapping("/tickets/{id}/accesses")
     public ResponseEntity<TicketUserAccess> createTicketUserAccess(
             @PathVariable (value = "id") Long ticketId,
-            @RequestBody Long userIds) {
-        return ticketUserAccessService.createTicketUserAccess(ticketId,userIds);
+            @RequestBody TicketUserAccess ticketUserAccessDetails) {
+        return ticketUserAccessService.createTicketUserAccess(ticketId, ticketUserAccessDetails);
     }
 
     @PatchMapping("/tickets/{id}/accesses")
     public ResponseEntity<TicketUserAccessPatch> updateTicketUserAccess(
             @PathVariable (value = "id") Long ticketId,
             @RequestBody TicketUserAccessPatch ticketUserAccessPatchDetails) {
-        return ticketUserAccessService.updateTicketUserAccess(ticketId,ticketUserAccessPatchDetails);
+        return ticketUserAccessService.updateTicketUserAccess(ticketId, ticketUserAccessPatchDetails);
     }
 
     @DeleteMapping("/tickets/{id}/accesses")

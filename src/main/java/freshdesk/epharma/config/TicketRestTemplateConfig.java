@@ -1,6 +1,7 @@
 package freshdesk.epharma.config;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +29,8 @@ public class TicketRestTemplateConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        RestTemplate restTemplate = restTemplateBuilder.build();
 //        restTemplate.getMessageConverters().add(jacksonMessageConverter());
         restTemplate.setInterceptors(Collections.singletonList(new AuthHeaderInterceptor(API_KEY)));
 

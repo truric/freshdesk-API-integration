@@ -6,6 +6,8 @@ import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.model.TicketSummary.TicketSummary;
+import freshdesk.epharma.model.TicketUserAccess.TicketUserAccess;
+import freshdesk.epharma.model.TicketUserAccess.TicketUserAccessPatch;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -211,6 +213,22 @@ public class TestDataFactory {
         return new TicketSummary(
                 "Summary body goes here as test"
         );
+    }
+
+    public static TicketUserAccess createNewTicketUserAccess() {
+        return new TicketUserAccess(Collections.singletonList(103078968746L));
+    }
+
+    public static TicketUserAccessPatch createNewTicketUserAccessPatch() {
+        List<TicketUserAccessPatch.UserAccessPatch> userAccessPatchList = new ArrayList<>();
+        TicketUserAccessPatch.UserAccessPatch userAccessPatch = new TicketUserAccessPatch.UserAccessPatch();
+        userAccessPatch.setId(103078968746L);
+        userAccessPatch.setDeleted(true);
+        userAccessPatchList.add(userAccessPatch);
+        TicketUserAccessPatch ticketUserAccessPatch = new TicketUserAccessPatch();
+        ticketUserAccessPatch.setUserIds(userAccessPatchList);
+
+        return ticketUserAccessPatch;
     }
 
     public static String randomStringGenerator() {

@@ -28,23 +28,23 @@ public class TicketUserAccessService implements TicketUserAccessApi {
 
         HttpEntity<TicketUserAccess> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketUserAccess[]> responseEntity = restTemplate.exchange(
+        ResponseEntity<TicketUserAccess> responseEntity = restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId + "/accesses",
                 HttpMethod.GET,
                 requestEntity,
-                TicketUserAccess[].class);
+                TicketUserAccess.class);
 
-        List<TicketUserAccess> ticketUserAccessList = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+        List<TicketUserAccess> ticketUserAccessList = List.of(Objects.requireNonNull(responseEntity.getBody()));
 
         return new ResponseEntity<>(ticketUserAccessList, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<TicketUserAccess> createTicketUserAccess(Long ticketId, Long userIds) {
+    public ResponseEntity<TicketUserAccess> createTicketUserAccess(Long ticketId, TicketUserAccess TicketUserAccessDetails) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<Long> requestEntity = new HttpEntity<>(userIds, headers);
+        HttpEntity<TicketUserAccess> requestEntity = new HttpEntity<>(TicketUserAccessDetails, headers);
 
         return restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId + "/accesses",
@@ -62,7 +62,7 @@ public class TicketUserAccessService implements TicketUserAccessApi {
 
         return restTemplate.exchange(
                 MAIN_URL + "tickets/" + ticketId + "/accesses",
-                HttpMethod.POST,
+                HttpMethod.PATCH,
                 requestEntity,
                 TicketUserAccessPatch.class);
     }
