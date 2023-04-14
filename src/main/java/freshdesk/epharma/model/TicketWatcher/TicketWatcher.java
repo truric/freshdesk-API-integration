@@ -1,6 +1,6 @@
 package freshdesk.epharma.model.TicketWatcher;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,9 +12,8 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class TicketWatcher {
-    @JsonProperty("id")
+    @JsonProperty("ids")
     @NotNull
     private List<Integer> ids = new ArrayList<>();
 
@@ -22,7 +21,8 @@ public class TicketWatcher {
     @NotNull
     private Long userId;
 
-    @JsonProperty("watcher_ids")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<Integer> watcherIds = new ArrayList<>();
+    public TicketWatcher(List<Integer> ids, Long user_id) {
+        this.ids = ids;
+        this.userId = user_id;
+    }
 }

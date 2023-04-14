@@ -8,6 +8,7 @@ import freshdesk.epharma.model.TicketForm.TicketForm;
 import freshdesk.epharma.model.TicketSummary.TicketSummary;
 import freshdesk.epharma.model.TicketUserAccess.TicketUserAccess;
 import freshdesk.epharma.model.TicketUserAccess.TicketUserAccessPatch;
+import freshdesk.epharma.model.TicketWatcher.TicketWatcher;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -229,6 +230,12 @@ public class TestDataFactory {
         ticketUserAccessPatch.setUserIds(userAccessPatchList);
 
         return ticketUserAccessPatch;
+    }
+
+    public static TicketWatcher addWatcherToMultipleTickets() {
+        List<Integer> ids = Arrays.asList(91, 90, 92, 98);
+        long userId = 103078968746L;
+        return new TicketWatcher(ids, userId);
     }
 
     public static String randomStringGenerator() {

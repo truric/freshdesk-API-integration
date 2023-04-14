@@ -1,7 +1,10 @@
 package freshdesk.epharma.service;
 
 import freshdesk.epharma.api.TicketWatcherApi;
+import freshdesk.epharma.model.TicketWatcher.MultiTicketWatcherResult;
 import freshdesk.epharma.model.TicketWatcher.TicketWatcher;
+import freshdesk.epharma.model.TicketWatcher.TicketWatcherBulkUnwatchRequest;
+import freshdesk.epharma.model.TicketWatcher.TicketWatcherResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -9,7 +12,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,37 +28,45 @@ public class TicketWatcherService implements TicketWatcherApi {
     private RestTemplate restTemplate;
 
     @Override
-    public ResponseEntity<List<TicketWatcher>> getAllTicketWatchers(@PathVariable(value = "id") Long ticketWatcherId) {
+    public ResponseEntity<List<TicketWatcherResponse>> getAllTicketWatchers(@PathVariable(value = "id") Long ticketId) {
         HttpHeaders headers = new HttpHeaders();
 
         HttpEntity<TicketWatcher> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketWatcher[]> responseEntity = restTemplate.exchange(
-                MAIN_URL + "tickets/" + ticketWatcherId + "/watchers",
+        ResponseEntity<TicketWatcherResponse> responseEntity = restTemplate.exchange(
+                MAIN_URL + "tickets/" + ticketId + "/watchers",
                 HttpMethod.GET,
                 requestEntity,
-                TicketWatcher[].class);
+                TicketWatcherResponse.class);
 
-        List<TicketWatcher> tickets = Arrays.asList(Objects.requireNonNull(responseEntity.getBody()));
+        List<TicketWatcherResponse> ticketUserAccessList = List.of(Objects.requireNonNull(responseEntity.getBody()));
 
-        return new ResponseEntity<>(tickets, HttpStatus.OK);
+        return new ResponseEntity<>(ticketUserAccessList, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<TicketWatcher> createTicketWatcher(
-            @PathVariable (value = "id") Long ticketId,
-            @RequestBody Long ticketWatcherId) {
-
+    public ResponseEntity<String> createTicketWatcher(@PathVariable(value = "id") Long ticketId,
+                                                 @RequestBody Long ticketWatcherId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<TicketWatcher> requestEntity = new HttpEntity<>(headers);
 
-        return restTemplate.exchange(
-                MAIN_URL + "tickets/" + ticketWatcherId + "/watchers",
-                HttpMethod.POST,
-                requestEntity,
-                TicketWatcher.class);
+        try {
+            ResponseEntity<TicketWatcher> responseEntity = restTemplate.exchange(
+                    MAIN_URL + "tickets/" + ticketId + "/watchers",
+                    HttpMethod.POST,
+                    requestEntity,
+                    TicketWatcher.class);
+
+            return ResponseEntity.ok(HttpStatus.CREATED.toString());
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.METHOD_NOT_ALLOWED) {
+                return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body("POST method is not allowed. It should be one of these method(s): GET");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing the request.");
+            }
+        }
     }
 
     @Override
@@ -77,30 +90,33 @@ public class TicketWatcherService implements TicketWatcherApi {
     }
 
     @Override
-    public ResponseEntity<TicketWatcher> addTicketWatcherToMultipleTickets(@RequestBody TicketWatcher ticketWatcherDetails) {
+    public ResponseEntity<MultiTicketWatcherResult> addTicketWatcherToMultipleTickets(@RequestBody TicketWatcher ticketWatcherDetails) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<TicketWatcher> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<TicketWatcher> requestEntity = new HttpEntity<>(ticketWatcherDetails, headers);
 
-        return restTemplate.exchange(
+        ResponseEntity<MultiTicketWatcherResult> responseEntity = restTemplate.exchange(
                 MAIN_URL + "tickets/bulk_watch",
                 HttpMethod.PUT,
                 requestEntity,
-                TicketWatcher.class);
+                MultiTicketWatcherResult.class);
+        return ResponseEntity.ok(responseEntity.getBody());
     }
 
     @Override
-    public ResponseEntity<TicketWatcher> deleteTicketWatcherFromMultipleTickers(@RequestBody List<Long> ticketWatcherIds) {
+    public ResponseEntity<MultiTicketWatcherResult> deleteTicketWatcherFromMultipleTickers(@RequestBody TicketWatcherBulkUnwatchRequest request) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<TicketWatcher> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<TicketWatcherBulkUnwatchRequest> requestEntity = new HttpEntity<>(request, headers);
 
-        return restTemplate.exchange(
+        ResponseEntity<MultiTicketWatcherResult> responseEntity = restTemplate.exchange(
                 MAIN_URL + "tickets/bulk_unwatch",
                 HttpMethod.PUT,
                 requestEntity,
-                TicketWatcher.class);
+                MultiTicketWatcherResult.class);
+
+        return ResponseEntity.ok(responseEntity.getBody());
     }
 }
