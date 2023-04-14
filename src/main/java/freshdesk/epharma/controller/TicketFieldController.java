@@ -1,6 +1,8 @@
 package freshdesk.epharma.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import freshdesk.epharma.model.TicketFields.TicketField;
+import freshdesk.epharma.model.TicketFields.TicketFieldResponse;
 import freshdesk.epharma.model.TicketFields.TicketFieldSection;
 import freshdesk.epharma.service.TicketFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,14 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/tickets/")
 public class TicketFieldController {
     @Autowired
     private TicketFieldService ticketFieldService;
 
     @GetMapping("/ticket_fields")
-    public ResponseEntity<List<TicketField>> getAllTickets() {
-        List<TicketField> ticketsFields = ticketFieldService.getAllTicketFields().getBody();
+    public ResponseEntity<TicketFieldResponse> getAllTickets() throws JsonProcessingException {
+        TicketFieldResponse ticketsFields = ticketFieldService.getAllTicketFields().getBody();
         return ResponseEntity.ok(ticketsFields);
     }
 

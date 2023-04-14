@@ -1,9 +1,11 @@
 package freshdesk.epharma.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFieldApi;
 import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketFields.TicketField;
+import freshdesk.epharma.model.TicketFields.TicketFieldResponse;
 import freshdesk.epharma.model.TicketFields.TicketFieldSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,20 +30,18 @@ public class TicketFieldService implements TicketFieldApi {
     ObjectMapper objectMapper;
 
     @Override
-    public ResponseEntity<List<TicketField>> getAllTicketFields() {
+    public ResponseEntity<TicketFieldResponse> getAllTicketFields() {
         HttpHeaders headers = new HttpHeaders();
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        HttpEntity<TicketFieldResponse> requestEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<TicketField[]> response = restTemplate.exchange(
+        ResponseEntity<TicketFieldResponse> response = restTemplate.exchange(
                 MAIN_URL + "ticket_fields",
                 HttpMethod.GET,
                 requestEntity,
-                TicketField[].class);
+                TicketFieldResponse.class);
 
-        List<TicketField> tickets = Arrays.asList(Objects.requireNonNull(response.getBody()));
-
-        return new ResponseEntity<>(tickets, HttpStatus.OK);
+        return ResponseEntity.ok(response.getBody());
     }
 
     @Override
