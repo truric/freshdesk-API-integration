@@ -3,7 +3,6 @@ package freshdesk.epharma.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.factory.TestDataFactory;
-import freshdesk.epharma.model.Ticket.Ticket;
 import freshdesk.epharma.model.TicketFields.TicketField;
 import freshdesk.epharma.model.TicketFields.TicketFieldResponse;
 import freshdesk.epharma.service.TicketFieldService;
@@ -39,10 +38,9 @@ public class TicketFieldControllerTests {
     @DisplayName("Get Ticket Field list")
     @Order(1)
     void testGetTicketFields() throws JsonProcessingException {
-        ResponseEntity<TicketFieldResponse> response = ticketFieldService.getAllTicketFields();
+        ResponseEntity<List<TicketFieldResponse>> response = ticketFieldService.getAllTicketFields();
         assertEquals(HttpStatus.OK, response.getStatusCode());
         System.out.println(response.getBody());
-        LOGGER.info(objectMapper.writeValueAsString(response.getBody()));
     }
 
     @Test

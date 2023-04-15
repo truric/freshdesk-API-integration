@@ -19,8 +19,8 @@ public class TicketFieldController {
     private TicketFieldService ticketFieldService;
 
     @GetMapping("/ticket_fields")
-    public ResponseEntity<TicketFieldResponse> getAllTickets() throws JsonProcessingException {
-        TicketFieldResponse ticketsFields = ticketFieldService.getAllTicketFields().getBody();
+    public ResponseEntity<List<TicketFieldResponse>> getAllTickets() throws JsonProcessingException {
+        List<TicketFieldResponse> ticketsFields = ticketFieldService.getAllTicketFields().getBody();
         return ResponseEntity.ok(ticketsFields);
     }
 

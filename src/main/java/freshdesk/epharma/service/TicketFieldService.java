@@ -1,10 +1,11 @@
 package freshdesk.epharma.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import freshdesk.epharma.api.TicketFieldApi;
-import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketFields.TicketField;
+import freshdesk.epharma.model.TicketFields.TicketFieldChoices;
 import freshdesk.epharma.model.TicketFields.TicketFieldResponse;
 import freshdesk.epharma.model.TicketFields.TicketFieldSection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,12 @@ public class TicketFieldService implements TicketFieldApi {
     ObjectMapper objectMapper;
 
     @Override
-    public ResponseEntity<TicketFieldResponse> getAllTicketFields() {
-        HttpHeaders headers = new HttpHeaders();
-
-        HttpEntity<TicketFieldResponse> requestEntity = new HttpEntity<>(headers);
-
-        ResponseEntity<TicketFieldResponse> response = restTemplate.exchange(
-                MAIN_URL + "ticket_fields",
-                HttpMethod.GET,
-                requestEntity,
-                TicketFieldResponse.class);
-
-        return ResponseEntity.ok(response.getBody());
+    public ResponseEntity<List<TicketFieldResponse>> getAllTicketFields() throws JsonProcessingException {
+        String json = restTemplate.getForObject(MAIN_URL + "/ticket_fields", String.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode root = objectMapper.readTree(json);
+        List<TicketFieldResponse> ticketFields = extractTicketFieldResponses(root);
+        return new ResponseEntity<>(ticketFields, HttpStatus.OK);
     }
 
     @Override
@@ -322,4 +317,42 @@ public class TicketFieldService implements TicketFieldApi {
 
         return ticketField;
     }
+
+    private void setTicketFieldChoices(TicketFieldResponse ticketFieldResponse, JsonNode node) {
+        List<String> choices = new ArrayList<>();
+        JsonNode choicesNode = node.get("choices");
+        if (choicesNode != null) {
+            for (JsonNode choiceNode : choicesNode) {
+                choices.add(choiceNode.asText());
+            }
+        }
+        ticketFieldResponse.setChoices(choices);
+    }
+
+    private List<TicketFieldResponse> extractTicketFieldResponses(JsonNode root) {
+        List<TicketFieldResponse> ticketFields = new ArrayList<>();
+        for (JsonNode node : root) {
+            TicketFieldResponse ticketFieldResponse = new TicketFieldResponse();
+            ticketFieldResponse.setId(node.get("id").asLong());
+            ticketFieldResponse.setName(node.get("name").asText());
+            ticketFieldResponse.setLabel(node.get("label").asText());
+            ticketFieldResponse.setDescription(node.get("description").asText());
+            ticketFieldResponse.setPosition(node.get("position").asInt());
+            ticketFieldResponse.setRequiredForClosure(node.get("required_for_closure").asBoolean());
+            ticketFieldResponse.setRequiredForAgents(node.get("required_for_agents").asBoolean());
+            ticketFieldResponse.setType(node.get("type").asText());
+            ticketFieldResponse.setDefaultField(node.get("default").asBoolean());
+            ticketFieldResponse.setCustomersCanEdit(node.get("customers_can_edit").asBoolean());
+            ticketFieldResponse.setCustomersCanFilter(node.get("customers_can_filter").asBoolean());
+            ticketFieldResponse.setLabelForCustomers(node.get("label_for_customers").asText());
+            ticketFieldResponse.setRequiredForCustomers(node.get("required_for_customers").asBoolean());
+            ticketFieldResponse.setDisplayedToCustomers(node.get("displayed_to_customers").asBoolean());
+            ticketFieldResponse.setCreatedAt(node.get("created_at").asText());
+            ticketFieldResponse.setUpdatedAt(node.get("updated_at").asText());
+            setTicketFieldChoices(ticketFieldResponse, node);
+            ticketFields.add(ticketFieldResponse);
+        }
+        return ticketFields;
+    }
+
 }

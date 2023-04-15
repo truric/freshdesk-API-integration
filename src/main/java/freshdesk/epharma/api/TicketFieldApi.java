@@ -14,7 +14,7 @@ import java.util.Map;
 public interface TicketFieldApi {
 
     @GetMapping("/ticket_fields")
-    ResponseEntity<TicketFieldResponse> getAllTicketFields();
+    ResponseEntity<List<TicketFieldResponse>> getAllTicketFields() throws JsonProcessingException;
 
     @GetMapping("/admin/ticket_fields")
     ResponseEntity<List<TicketField>> getAllAdminTicketFields();
